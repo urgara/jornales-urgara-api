@@ -1,0 +1,68 @@
+# Build stage
+FROM node:22.12.0-alpine3.20 AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
+
+# Install pnpm and dependencies
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
+# Copy source code first
+COPY . .
+
+# Generate Prisma client after copying source
+# Use placeholder DATABASE_URL for prisma generate (actual DB not needed)
+RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" pnpm prisma generate
+
+# Build application
+RUN pnpm run build
+
+# Production stage
+FROM node:22.12.0-alpine3.20 AS production
+
+# Install dumb-init for signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001 -G nodejs
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
+
+# Install pnpm and production dependencies only
+# Use --shamefully-hoist to avoid symlink issues with Prisma in Docker
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile --prod --shamefully-hoist
+
+# Copy built application from builder stage
+COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nestjs:nodejs /app/generated ./generated
+COPY --from=builder --chown=nestjs:nodejs /app/prisma.config.ts ./prisma.config.ts
+
+# Pre-download Prisma engines to avoid runtime downloads
+# This must be done as root before switching to nestjs user
+# Use placeholder DATABASE_URL as actual DB is not needed for generate
+RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" pnpm prisma generate --schema=./prisma/schema.prisma
+
+# Copy entrypoint script
+COPY --chown=nestjs:nodejs scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh
+
+# Switch to non-root user
+USER nestjs
+
+# Expose port dynamically based on environment variable
+ARG PORT=3000
+EXPOSE ${PORT}
+
+# Use dumb-init and start application
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["./docker-entrypoint.sh"]

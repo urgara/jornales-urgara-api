@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id       String @id @db.Uuid
+  name     String @db.VarChar(30)
+  surname  String @db.VarChar(30)
+  dni      String @unique @db.VarChar(9)
+  password String @db.VarChar
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+  role      Role
+  Session   Session[]
+}
+
+model Session {
+  id      String @id
+  token   String @unique
+  adminId String @db.Uuid
+  ip      String
+  agent   String
+  Admin   Admin  @relation(fields: [adminId], references: [id])
+}
+
+
+enum Role {
+  ADMIN    @map("1") /* acceso total */
+  JORNAL   @map("5") /* Administra la carga de datos de los jornales */
+  PAYMENTS @map("10") /* se encarga solo de realizar los pagos a los peritos */
+}
+
+
+
+

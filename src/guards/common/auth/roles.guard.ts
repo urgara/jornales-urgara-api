@@ -1,0 +1,65 @@
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { type AdminTypeRole } from 'src/types/auth';
+import type { ReqAdmin } from '../../../types/auth/request.type';
+import { ROLE_KEY } from '../../../decorators/common/auth/access-level.decorator';
+import {
+  ForbiddenException,
+  UnauthorizedException,
+} from 'src/exceptions/common/auth';
+
+@Injectable()
+export class RoleGuard implements CanActivate {
+  private readonly roleHierarchy: Record<AdminTypeRole, number> = {
+    ADMIN: 1, // Mayor nivel de acceso
+    JORNAL: 5, // Nivel medio
+    PAYMENTS: 10, // Menor nivel de acceso
+  };
+
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    // Obtener el rol requerido del decorador @Roles
+    const classRole: AdminTypeRole = this.reflector.get<AdminTypeRole>(
+      ROLE_KEY,
+      context.getClass(),
+    );
+    const methodRole: AdminTypeRole = this.reflector.get<AdminTypeRole>(
+      ROLE_KEY,
+      context.getHandler(),
+    );
+
+    // El rol del método tiene prioridad sobre el de la clase
+    const requiredRole: AdminTypeRole = methodRole || classRole;
+
+    if (!requiredRole) {
+      // Si no se especifica rol, la ruta es pública
+      return true;
+    }
+
+    // Obtener el admin del request (añadido por JwtGuard)
+    const request: ReqAdmin = context.switchToHttp().getRequest();
+    const { admin } = request;
+
+    // Verificar que el admin existe
+    if (!admin) {
+      throw new UnauthorizedException('Authentication required');
+    }
+
+    // Verificar que el admin tiene rol asignado
+    if (!admin.role) {
+      throw new ForbiddenException('User role not found');
+    }
+
+    // Verificar permisos: menor número = mayor acceso
+    const userLevel = this.roleHierarchy[admin.role];
+    const requiredLevel = this.roleHierarchy[requiredRole];
+    if (userLevel <= requiredLevel) {
+      return true;
+    } else {
+      throw new ForbiddenException(
+        `Access denied. Required role: ${requiredRole}, current role: ${admin.role}`,
+      );
+    }
+  }
+}
