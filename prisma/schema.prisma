@@ -14,16 +14,18 @@ datasource db {
 }
 
 model Admin {
-  id       String @id @db.Uuid
-  name     String @db.VarChar(30)
-  surname  String @db.VarChar(30)
-  dni      String @unique @db.VarChar(9)
-  password String @db.VarChar
+  id         String @id @db.Uuid
+  name       String @db.VarChar(30)
+  surname    String @db.VarChar(30)
+  dni        String @unique @db.VarChar(9)
+  password   String @db.VarChar
+  localityId Int?
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
   role      Role
   Session   Session[]
+  Locality  Locality? @relation(fields: [localityId], references: [id])
 }
 
 model Session {
@@ -35,11 +37,19 @@ model Session {
   Admin   Admin  @relation(fields: [adminId], references: [id])
 }
 
+model Locality {
+  id          Int   @id @default(autoincrement())
+  name        String @db.VarChar(100)
+  province    String @db.VarChar(100)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  deletedAt   DateTime? @db.Timestamptz()
+  Admin       Admin[]
+}
 
 enum Role {
   ADMIN    @map("1") /* acceso total */
-  JORNAL   @map("5") /* Administra la carga de datos de los jornales */
-  PAYMENTS @map("10") /* se encarga solo de realizar los pagos a los peritos */
+  LOCAL    @map("5") /* El LOCAL es como un ADMIN pero solo tiene poder sobre la localidad que maneja*/
+
 }
 
 

@@ -12,8 +12,7 @@ import {
 export class RoleGuard implements CanActivate {
   private readonly roleHierarchy: Record<AdminTypeRole, number> = {
     ADMIN: 1, // Mayor nivel de acceso
-    JORNAL: 5, // Nivel medio
-    PAYMENTS: 10, // Menor nivel de acceso
+    LOCAL: 5, // Administrador local
   };
 
   constructor(private reflector: Reflector) {}

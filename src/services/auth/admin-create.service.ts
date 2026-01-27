@@ -33,8 +33,8 @@ export class AdminCreateService {
         dni,
         password: hashedPassword,
         // Cast necesario por bug de Prisma 7 con enums mapeados
-        // AdminTypeRole es 'ADMIN' | 'JORNAL' | 'PAYMENTS'
-        // pero Prisma espera Role que es '1' | '5' | '10'
+        // AdminTypeRole es 'ADMIN' | 'LOCAL'
+        // pero Prisma espera Role que es '1' | '5'
         role: role as unknown as PrismaAdmin['role'],
       },
     });

@@ -2,6 +2,7 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { AdminRole, type AdminTypeRole } from 'src/types/auth';
 import type { Admin } from 'src/types/auth';
+import { LocalityResponseDto } from './locality-response.dto';
 
 export class AdminResponseDto implements Admin {
   @ApiProperty({
@@ -31,6 +32,22 @@ export class AdminResponseDto implements Admin {
   })
   @Expose()
   dni: string;
+
+  @ApiProperty({
+    description: 'Locality ID - null for global administrators',
+    example: null,
+    nullable: true,
+  })
+  @Expose()
+  localityId: number | null;
+
+  @ApiProperty({
+    description: 'Locality information - included when available',
+    type: LocalityResponseDto,
+    nullable: true,
+  })
+  @Expose()
+  Locality?: LocalityResponseDto | null;
 
   @ApiProperty({
     description: 'Admin role',

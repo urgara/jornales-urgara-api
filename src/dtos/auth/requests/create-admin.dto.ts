@@ -5,6 +5,8 @@ import {
   Matches,
   IsEnum,
   IsStrongPassword,
+  IsInt,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AdminRole, type AdminTypeRole } from 'src/types/auth';
@@ -52,6 +54,15 @@ export class CreateAdminDto implements CreateAdmin {
   @IsString()
   @IsStrongPassword()
   password: string;
+
+  @ApiProperty({
+    description: 'ID de la localidad - null para administradores globales',
+    example: null,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsInt()
+  localityId?: number | null;
 
   @ApiProperty({
     description: 'Rol',

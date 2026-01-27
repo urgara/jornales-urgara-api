@@ -7,12 +7,12 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from '../controllers/app.controller';
-
 import secrestsConfig from '../config/secrests.config';
 import apiConfig from '../config/api.config';
 import { IpMiddleware } from '../middlewares/common/network';
 import { AuthModule } from './auth.module';
 import { CommonModule } from './common.module';
+import { LocalityModule } from './locality.module';
 
 @Module({
   imports: [
@@ -23,6 +23,7 @@ import { CommonModule } from './common.module';
     ScheduleModule.forRoot(),
     CommonModule,
     AuthModule,
+    LocalityModule,
   ],
   controllers: [AppController],
 })

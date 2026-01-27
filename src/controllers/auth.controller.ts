@@ -155,7 +155,7 @@ export class AuthController {
   }
 
   @Get('admin')
-  @AccessLevel(AdminRole.PAYMENTS) /* Aca tiene q estar el Rol mas bajo */
+  @AccessLevel(AdminRole.LOCAL) /* Aca tiene q estar el Rol mas bajo */
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Admin retrieved successfully',
