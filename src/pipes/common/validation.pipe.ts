@@ -8,6 +8,9 @@ export default class CustomValidationPipe extends ValidationPipe {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // Convierte strings de query params a números automáticamente
+      },
       exceptionFactory: (validationErrors: ValidationError[] = []) => {
         const formattedErrors = this.formatErrors(validationErrors);
 

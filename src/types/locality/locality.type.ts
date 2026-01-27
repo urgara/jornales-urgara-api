@@ -1,10 +1,18 @@
 import type { Locality as PrismaLocality } from '../../../generated/prisma/client';
+import type { PaginationRequest, Sorting } from '../common';
 
 type Locality = PrismaLocality;
 
 type CreateLocality = Omit<Locality, 'id' | 'createdAt' | 'deletedAt'>;
 
 type UpdateLocality = Partial<CreateLocality>;
+
+type LocalitySortBy = keyof Locality;
+
+interface FindLocalitiesQuery
+  extends Sorting<LocalitySortBy>,
+    PaginationRequest,
+    Partial<Pick<Locality, 'name' | 'province'>> {}
 
 interface LocalityCreatedResponse {
   success: boolean;
@@ -27,6 +35,8 @@ export type {
   Locality,
   CreateLocality,
   UpdateLocality,
+  LocalitySortBy,
+  FindLocalitiesQuery,
   LocalityCreatedResponse,
   LocalityUpdatedResponse,
   LocalityDeletedResponse,

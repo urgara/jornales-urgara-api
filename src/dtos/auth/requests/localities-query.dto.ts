@@ -1,43 +1,31 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsIn } from 'class-validator';
+import { PaginationRequestDto } from 'src/dtos/common';
+import type { LocalitySortBy, FindLocalitiesQuery } from 'src/types/locality';
 
-export class LocalitiesQueryDto {
-  @ApiProperty({
-    description: 'Número de página',
-    example: 1,
-    default: 1,
-    minimum: 1,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  page?: number = 1;
+const localitySortBy: LocalitySortBy[] = [
+  'id',
+  'name',
+  'province',
+  'createdAt',
+];
 
-  @ApiProperty({
-    description: 'Cantidad de elementos por página',
-    example: 10,
-    default: 10,
-    minimum: 1,
-    maximum: 100,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  limit?: number = 10;
-
-  @ApiProperty({
+export class LocalitiesQueryDto
+  extends PaginationRequestDto
+  implements FindLocalitiesQuery
+{
+  @ApiPropertyOptional({
     description: 'Campo por el cual ordenar',
     example: 'name',
-    enum: ['id', 'name', 'province', 'createdAt'],
+    enum: localitySortBy,
     default: 'name',
   })
   @IsOptional()
   @IsString()
-  @IsIn(['id', 'name', 'province', 'createdAt'])
-  sortBy?: string = 'name';
+  @IsIn(localitySortBy)
+  sortBy?: LocalitySortBy = 'name';
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Dirección de ordenamiento',
     example: 'asc',
     enum: ['asc', 'desc'],
@@ -48,19 +36,17 @@ export class LocalitiesQueryDto {
   @IsIn(['asc', 'desc'])
   sortOrder?: 'asc' | 'desc' = 'asc';
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Filtrar por nombre de localidad',
     example: 'Buenos Aires',
-    required: false,
   })
   @IsOptional()
   @IsString()
   name?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Filtrar por nombre de provincia',
     example: 'Buenos Aires',
-    required: false,
   })
   @IsOptional()
   @IsString()
