@@ -39,11 +39,35 @@ model Session {
 
 model Locality {
   id          Int   @id @default(autoincrement())
-  name        String @db.VarChar(100)
+  name        String @db.VarChar(100) // Nombre de la localidad donde está el puerto
   province    String @db.VarChar(100)
   createdAt   DateTime @default(now()) @db.Timestamptz()
   deletedAt   DateTime? @db.Timestamptz()
-  Admin       Admin[]
+
+  Admin              Admin[]
+  BaseValueWorkShift BaseValueWorkShift[]
+}
+
+model LegalEntity {
+  id           Int    @id @default(autoincrement())
+  abbreviation String @db.VarChar(15)
+  description  String @db.VarChar(150)
+
+  isActive Boolean @default(true)
+
+  Company Company[]
+}
+
+model Company {
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(150)
+  cuit          String?   @db.VarChar(11)
+  legalEntityId Int
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+
+  LegalEntity LegalEntity @relation(fields: [legalEntityId], references: [id])
 }
 
 // Turno
@@ -71,28 +95,18 @@ model Category {
   BaseValueWorkShift BaseValueWorkShift[]
 }
 
-model Port {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(100)
-
-  createdAt DateTime  @default(now()) @db.Timestamptz()
-  deletedAt DateTime? @db.Timestamptz()
-
-  BaseValueWorkShift BaseValueWorkShift[]
-}
-
 model BaseValueWorkShift {
   id                  Int           @id @default(autoincrement())
   remuneratedValue    Decimal
   notRemuneratedValue Decimal
   categoryId          Int
-  portId              Int
+  localityId          Int // Localidad donde está el puerto
 
   startDate           DateTime      @db.Timestamptz()
   endDate             DateTime?     @db.Timestamptz()
 
   Category Category @relation(fields: [categoryId], references: [id])
-  Port     Port     @relation(fields: [portId], references: [id])
+  Locality Locality @relation(fields: [localityId], references: [id])
 
   ValueWorkShift ValueWorkShift[]
 }
@@ -113,7 +127,7 @@ model ValueWorkShift {
 }
 
 model WorkShiftConfig{
-  id Int @id  // Id de puerto
+  id Int @id  // Id de localidad (donde está el puerto)
   config Json
 }
 

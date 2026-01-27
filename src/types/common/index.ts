@@ -4,3 +4,4 @@ export * from './pagination.type';
 export * from './prisma.type';
 export * from './response.type';
 export * from './sorting.type';
+export * from './utility.type';
