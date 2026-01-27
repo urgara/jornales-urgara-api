@@ -9,7 +9,7 @@ import { PaginationRequestDto } from 'src/dtos/common';
 
 const baseValueWorkShiftSortBy: BaseValueWorkShiftSortBy[] = [
   'id',
-  'portId',
+  'localityId',
   'categoryId',
   'startDate',
   'endDate',
@@ -38,13 +38,13 @@ export class BaseValueWorkShiftsQueryDto
   sortOrder?: 'asc' | 'desc';
 
   @ApiPropertyOptional({
-    description: 'Filtrar por ID del puerto',
+    description: 'Filtrar por ID de localidad (donde está el puerto)',
     example: 1,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  portId?: number;
+  localityId?: number;
 
   @ApiPropertyOptional({
     description: 'Filtrar por ID de categoría',

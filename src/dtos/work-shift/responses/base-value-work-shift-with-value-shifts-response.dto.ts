@@ -16,10 +16,10 @@ export class BaseValueWorkShiftWithValueShiftsResponseDto
   id: number;
 
   @ApiProperty({
-    description: 'Port id del valor base del turno',
+    description: 'ID de la localidad (donde está el puerto)',
     example: 1,
   })
-  portId: number;
+  localityId: number;
 
   @ApiProperty({
     description: 'Valor remunerado base',

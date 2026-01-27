@@ -27,7 +27,7 @@ export class CreateValuesWorkShiftService {
 
   async create({
     initialDate,
-    portId,
+    localityId,
     list,
     values,
     jc,
@@ -42,7 +42,7 @@ export class CreateValuesWorkShiftService {
           this.dateService.toArgentinaStartOfDay(initialDate);
 
         await tx.baseValueWorkShift.updateMany({
-          where: { portId, endDate: null },
+          where: { localityId, endDate: null },
           data: { endDate: previousDayEndDate },
         });
 
@@ -54,7 +54,7 @@ export class CreateValuesWorkShiftService {
             remuneratedValue: elem.remunerated,
             notRemuneratedValue: elem.notRemunerated,
             categoryId: elem.categoryId,
-            portId,
+            localityId,
             startDate: normalizedStartDate,
           });
         }

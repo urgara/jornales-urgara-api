@@ -77,11 +77,11 @@ class WorkShiftConfigDataDto {
   @Type(() => WorkShiftTypesDto)
   types: WorkShiftTypesDto;
 
-  @ApiProperty({ description: 'Port ID', example: 1 })
+  @ApiProperty({ description: 'Locality ID (donde está el puerto)', example: 1 })
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  portId: number;
+  localityId: number;
 
   @ApiProperty({
     description: 'List of work shifts',
@@ -97,7 +97,7 @@ class WorkShiftConfigDataDto {
 export class CreateOrUpdateWorkShiftConfigDto
   implements CreateOrUpdateWorkShiftConfig
 {
-  @ApiProperty({ description: 'Port ID', example: 1 })
+  @ApiProperty({ description: 'Locality ID (donde está el puerto)', example: 1 })
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()

@@ -2,6 +2,7 @@ import type { Locality as PrismaLocality } from '../../../generated/prisma/clien
 import type { PaginationRequest, Sorting } from '../common';
 
 type Locality = PrismaLocality;
+type LocalityId = Locality['id'];
 
 type CreateLocality = Omit<Locality, 'id' | 'createdAt' | 'deletedAt'>;
 
@@ -33,6 +34,7 @@ interface LocalityDeletedResponse {
 
 export type {
   Locality,
+  LocalityId,
   CreateLocality,
   UpdateLocality,
   LocalitySortBy,

@@ -7,7 +7,7 @@ import type {
 } from 'src/types/work-shift';
 import { Prisma } from '../../../generated/prisma/client';
 import { NotFoundException } from 'src/exceptions/common';
-import { PortId } from '../../types/port';
+import { LocalityId } from '../../types/locality';
 
 @Injectable()
 export class ReadWorkShiftsService {
@@ -89,9 +89,9 @@ export class ReadWorkShiftsService {
     });
   }
 
-  async selectValueWorkShifts(portId: PortId, date?: string) {
+  async selectValueWorkShifts(localityId: LocalityId, date?: string) {
     let baseValueWorkShiftWhere: Prisma.BaseValueWorkShiftWhereInput = {
-      portId,
+      localityId,
     };
     if (date) {
       // Crear fecha con hora del mediodía para evitar problemas de zona horaria
@@ -100,13 +100,13 @@ export class ReadWorkShiftsService {
 
       const endOfDayDate = this.dateService.toArgentinaEndOfDay(filterDate);
       baseValueWorkShiftWhere = {
-        portId,
+        localityId,
         startDate: { lte: endOfDayDate },
         OR: [{ endDate: { gte: filterDate } }, { endDate: null }],
       };
     } else {
       baseValueWorkShiftWhere = {
-        portId,
+        localityId,
         endDate: null,
       };
     }
@@ -141,7 +141,7 @@ export class ReadWorkShiftsService {
       limit = 10,
       sortBy = 'startDate',
       sortOrder = 'desc',
-      portId,
+      localityId,
       categoryId,
       startDate,
       endDate,
@@ -151,8 +151,8 @@ export class ReadWorkShiftsService {
 
     const where: Prisma.BaseValueWorkShiftWhereInput = {};
 
-    if (portId !== undefined) {
-      where.portId = portId;
+    if (localityId !== undefined) {
+      where.localityId = localityId;
     }
 
     if (categoryId !== undefined) {

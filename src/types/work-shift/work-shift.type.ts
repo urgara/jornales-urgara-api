@@ -4,7 +4,7 @@ import type {
   ValueWorkShift as PrismaValueWorkShift,
   Prisma,
   Category,
-  Port,
+  Locality,
 } from '../../../generated/prisma/client';
 import { $Enums, DayOfWeek } from '../../../generated/prisma/client';
 import type {
@@ -16,6 +16,7 @@ import type {
   GenericPaginationResponse,
 } from 'src/types/common';
 import type { CategoryId } from '../category';
+import type { LocalityId } from '../locality';
 
 type WorkShift = PrismaWorkShift;
 type WorkShifts = WorkShift[];
@@ -65,7 +66,7 @@ interface WorkShiftCategoryValue {
 
 interface CreateValuesWorkShiftsData {
   initialDate: BaseValueWorkShift['startDate'];
-  portId: BaseValueWorkShift['portId'];
+  localityId: BaseValueWorkShift['localityId']; // Localidad donde está el puerto
   jc: boolean;
   values: {
     STANDART: WorkShiftCategoryValue[];
@@ -95,7 +96,7 @@ interface FindBaseValueWorkShiftQuery
     Partial<
       Pick<
         BaseValueWorkShift,
-        'portId' | 'categoryId' | 'startDate' | 'endDate'
+        'localityId' | 'categoryId' | 'startDate' | 'endDate'
       >
     > {}
 
@@ -166,7 +167,7 @@ type WorkShiftConfigData = {
   types: {
     STANDART: number[];
   };
-  portId: number;
+  localityId: number; // Localidad donde está el puerto
   list: Array<{
     id: string;
     description?: string;

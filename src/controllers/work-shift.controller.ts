@@ -52,10 +52,7 @@ import {
   ReadWorkShiftsService,
   UpdateWorkShiftService,
 } from 'src/services/work-shift';
-import type {
-  WorkShiftConfigId,
-  WorkShiftId,
-} from '../types/work-shift';
+import type { WorkShiftConfigId, WorkShiftId } from '../types/work-shift';
 
 @ApiTags('Work Shifts')
 @Controller('work-shifts')
@@ -127,13 +124,13 @@ export class WorkShiftController {
 
   @Get('values/select/:id/:date')
   @ApiOperation({
-    summary: 'Get list of value work shifts by port and date',
+    summary: 'Get list of value work shifts by locality and date',
     description:
-      'Get a list of active value work shifts filtered by port ID and date',
+      'Get a list of active value work shifts filtered by locality ID (donde está el puerto) and date',
   })
   @ApiParam({
     name: 'id',
-    description: 'Port ID',
+    description: 'Locality ID (donde está el puerto)',
     type: 'number',
   })
   @ApiParam({
@@ -170,12 +167,12 @@ export class WorkShiftController {
 
   @Get('values/select/:id')
   @ApiOperation({
-    summary: 'Get list of value work shifts by port',
-    description: 'Get a list of active value work shifts filtered by port ID',
+    summary: 'Get list of value work shifts by locality',
+    description: 'Get a list of active value work shifts filtered by locality ID (donde está el puerto)',
   })
   @ApiParam({
     name: 'id',
-    description: 'Port ID',
+    description: 'Locality ID (donde está el puerto)',
     type: 'number',
   })
   @ApiResponse({
@@ -280,10 +277,10 @@ export class WorkShiftController {
   }
 
   @Get('config/:id')
-  @ApiOperation({ summary: 'Get work shift configuration by ID' })
+  @ApiOperation({ summary: 'Get work shift configuration by locality ID' })
   @ApiParam({
     name: 'id',
-    description: 'Work shift configuration ID (Port ID)',
+    description: 'Work shift configuration ID (Locality ID - donde está el puerto)',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -309,7 +306,7 @@ export class WorkShiftController {
   @ApiOperation({
     summary: 'Create or update work shift configuration (upsert)',
     description:
-      'Creates a new work shift configuration if it does not exist, or updates it if it already exists',
+      'Creates a new work shift configuration for a locality if it does not exist, or updates it if it already exists',
   })
   @ApiBody({ type: CreateOrUpdateWorkShiftConfigDto })
   @ApiResponse({

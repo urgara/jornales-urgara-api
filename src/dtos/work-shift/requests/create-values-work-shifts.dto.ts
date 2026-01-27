@@ -116,13 +116,13 @@ export class CreateValuesWorkShiftsDto implements CreateValuesWorkShiftsData {
   initialDate: Date;
 
   @ApiProperty({
-    description: 'ID del puerto donde se crean los turnos',
+    description: 'ID de la localidad donde está el puerto',
     example: 1,
   })
   @IsNotEmpty()
   @IsInt()
   @Type(() => Number)
-  portId: number;
+  localityId: number;
 
   @ApiProperty({
     description: 'Indica si se incluyen valores para la categoría JC',
