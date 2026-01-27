@@ -46,10 +46,95 @@ model Locality {
   Admin       Admin[]
 }
 
+// Turno
+model WorkShift {
+  id          String       @id @db.Uuid
+  days        DayOfWeek[] // Días aplicables: M, T, W, Th, F, S, Su. Si está vacío, usar description
+  startTime   DateTime     @db.Time
+  endTime     DateTime     @db.Time
+  description String?      @db.VarChar(60)
+  coefficient Decimal      @db.Decimal(5, 2) // Coeficiente del turno (ej: 1.50, 2.00, máximo 999.99)
+
+  createdAt DateTime  @db.Timestamptz() @default(now())
+  deletedAt DateTime? @db.Timestamptz()
+
+  ValueWorkShift ValueWorkShift[]
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  isSpecial Boolean   @default(false) // true para categorías especiales (ej: Encargado Vapor) que aplican a todos los turnos
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+
+  BaseValueWorkShift BaseValueWorkShift[]
+}
+
+model Port {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(100)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+
+  BaseValueWorkShift BaseValueWorkShift[]
+}
+
+model BaseValueWorkShift {
+  id                  Int           @id @default(autoincrement())
+  remuneratedValue    Decimal
+  notRemuneratedValue Decimal
+  categoryId          Int
+  portId              Int
+
+  startDate           DateTime      @db.Timestamptz()
+  endDate             DateTime?     @db.Timestamptz()
+
+  Category Category @relation(fields: [categoryId], references: [id])
+  Port     Port     @relation(fields: [portId], references: [id])
+
+  ValueWorkShift ValueWorkShift[]
+}
+
+// Si base value work shift tiene fecha de endDate, hay que pensar que esa tambien es la fecha de eliminacion de los valueworkshift asociados
+model ValueWorkShift {
+  id                            Int           @id @default(autoincrement())
+  workShiftId                   String?       @db.Uuid
+  baseValueWorkShiftId          Int
+  type                          WorkShiftType
+  calculatedRemuneratedValue    Decimal
+  calculatedNotRemuneratedValue Decimal
+
+  WorkShift            WorkShift?              @relation(fields: [workShiftId], references: [id])
+  BaseValueWorkShift   BaseValueWorkShift     @relation(fields: [baseValueWorkShiftId], references: [id])
+
+  @@unique([workShiftId,baseValueWorkShiftId,type])
+}
+
+model WorkShiftConfig{
+  id Int @id  // Id de puerto
+  config Json
+}
+
 enum Role {
   ADMIN    @map("1") /* acceso total */
   LOCAL    @map("5") /* El LOCAL es como un ADMIN pero solo tiene poder sobre la localidad que maneja*/
+}
 
+enum WorkShiftType {
+  STANDART
+  JC /* jornal caido */
+}
+
+enum DayOfWeek {
+  M  // Monday
+  T  // Tuesday
+  W  // Wednesday
+  Th // Thursday
+  F  // Friday
+  S  // Saturday
+  Su // Sunday
 }
 
 

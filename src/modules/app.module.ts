@@ -13,6 +13,7 @@ import { IpMiddleware } from '../middlewares/common/network';
 import { AuthModule } from './auth.module';
 import { CommonModule } from './common.module';
 import { LocalityModule } from './locality.module';
+import { WorkShiftModule } from './work-shift.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LocalityModule } from './locality.module';
     CommonModule,
     AuthModule,
     LocalityModule,
+    WorkShiftModule,
   ],
   controllers: [AppController],
 })
