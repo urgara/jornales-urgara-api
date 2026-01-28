@@ -16,6 +16,7 @@ import { LocalityModule } from './locality.module';
 import { WorkShiftModule } from './work-shift.module';
 import { CompanyModule } from './company.module';
 import { LegalEntityModule } from './legal-entity.module';
+import { WorkerModule } from './worker.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { LegalEntityModule } from './legal-entity.module';
     WorkShiftModule,
     CompanyModule,
     LegalEntityModule,
+    WorkerModule,
   ],
   controllers: [AppController],
 })

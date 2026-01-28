@@ -10,9 +10,7 @@ import { PaginationRequestDto } from 'src/dtos/common';
 const workShiftSortBy: WorkShiftSortBy[] = [
   'id',
   'description',
-  'coefficient',
   'createdAt',
-  'deletedAt',
 ];
 
 export class WorkShiftsQueryDto

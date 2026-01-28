@@ -1,13 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import type { DecimalNumber } from 'src/types/common';
-import {
-  WorkShiftTypeEnum,
-  type WorkShiftResponse,
-  DayOfWeek,
-} from 'src/types/work-shift';
+import { type SimpleWorkShiftResponse, DayOfWeek } from 'src/types/work-shift';
 
-export class WorkShiftResponseDto implements WorkShiftResponse {
+export class WorkShiftResponseDto implements SimpleWorkShiftResponse {
   @ApiProperty({
     description: 'ID del turno de trabajo',
     example: '1f0b5b8c-1690-62e0-a9b1-6dec8a3787dd',
@@ -23,7 +19,7 @@ export class WorkShiftResponseDto implements WorkShiftResponse {
   days: DayOfWeek[];
 
   @ApiProperty({
-    description: 'Hora de inicio del turno (formato HH:mm). Null para turnos especiales sin horario',
+    description: 'Hora de inicio del turno (formato HH:mm)',
     example: '08:00',
     nullable: true,
   })
@@ -37,7 +33,7 @@ export class WorkShiftResponseDto implements WorkShiftResponse {
   startTime?: string | null;
 
   @ApiProperty({
-    description: 'Hora de fin del turno (formato HH:mm). Null para turnos especiales sin horario',
+    description: 'Hora de fin del turno (formato HH:mm)',
     example: '14:00',
     nullable: true,
   })
@@ -51,7 +47,7 @@ export class WorkShiftResponseDto implements WorkShiftResponse {
   endTime?: string | null;
 
   @ApiProperty({
-    description: 'Descripción manual del turno (solo cuando no hay días específicos)',
+    description: 'Descripción manual del turno',
     example: 'Encargado de carga',
     nullable: true,
   })
@@ -77,33 +73,4 @@ export class WorkShiftResponseDto implements WorkShiftResponse {
     nullable: true,
   })
   deletedAt: Date | null;
-
-  @ApiProperty({
-    description: 'Tipo de turno de trabajo',
-    enum: WorkShiftTypeEnum,
-    example: WorkShiftTypeEnum.STANDART,
-  })
-  type: (typeof WorkShiftTypeEnum)[keyof typeof WorkShiftTypeEnum];
-
-  @ApiProperty({
-    description: 'Valor remunerado calculado',
-    example: '22500.75',
-    type: 'string',
-  })
-  @Transform(({ value }: { value: DecimalNumber }) => value?.toString())
-  calculatedRemuneratedValue: string;
-
-  @ApiProperty({
-    description: 'Valor no remunerado calculado',
-    example: '7500.38',
-    type: 'string',
-  })
-  @Transform(({ value }: { value: DecimalNumber }) => value?.toString())
-  calculatedNotRemuneratedValue: string;
-
-  @ApiProperty({
-    description: 'ID del valor base del turno asociado',
-    example: 1,
-  })
-  baseValueWorkShiftId: number;
 }
