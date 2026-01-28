@@ -4,7 +4,7 @@ import type {
   WorkShiftId,
   UpdateWorkShift,
 } from 'src/types/work-shift';
-import { NotFoundException } from 'src/exceptions/common';
+import { NotFoundException, BadRequestException } from 'src/exceptions/common';
 
 @Injectable()
 export class UpdateWorkShiftService {
@@ -30,6 +30,7 @@ export class UpdateWorkShiftService {
       days?: UpdateWorkShift['days'];
       startTime?: Date;
       endTime?: Date;
+      durationMinutes?: number;
       description?: UpdateWorkShift['description'];
       coefficient?: UpdateWorkShift['coefficient'];
     } = {};
@@ -44,6 +45,28 @@ export class UpdateWorkShiftService {
 
     if (updateData.endTime) {
       dataToUpdate.endTime = new Date(`1970-01-01T${updateData.endTime}:00Z`);
+    }
+
+    /**
+     * Recalcular durationMinutes si se actualizó startTime o endTime
+     * Usar valores actualizados o existentes para el cálculo
+     */
+    if (updateData.startTime || updateData.endTime) {
+      const finalStartTime = dataToUpdate.startTime || existingWorkShift.startTime;
+      const finalEndTime = dataToUpdate.endTime || existingWorkShift.endTime;
+
+      // Convertir Date a milisegundos y calcular diferencia en minutos
+      const durationMinutes =
+        (finalEndTime.getTime() - finalStartTime.getTime()) / 1000 / 60;
+
+      // Validar que la duración no sea negativa (endTime debe ser mayor a startTime)
+      if (durationMinutes <= 0) {
+        throw new BadRequestException(
+          'End time must be greater than start time. Night shifts crossing midnight are not supported.',
+        );
+      }
+
+      dataToUpdate.durationMinutes = Math.round(durationMinutes);
     }
 
     if (updateData.description !== undefined) {

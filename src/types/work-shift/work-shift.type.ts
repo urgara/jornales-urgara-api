@@ -13,12 +13,19 @@ type WorkShiftId = WorkShift['id'];
 
 type CreateWorkShift = Omit<
   WorkShift,
-  'id' | 'createdAt' | 'deletedAt' | 'startTime' | 'endTime' | 'description'
+  | 'id'
+  | 'createdAt'
+  | 'deletedAt'
+  | 'startTime'
+  | 'endTime'
+  | 'description'
+  | 'durationMinutes'
 > & {
   days: DayOfWeek[];
   startTime?: string; // HH:mm format - opcional para turnos especiales
   endTime?: string; // HH:mm format - opcional para turnos especiales
   description?: string; // Obligatorio cuando days está vacío
+  // durationMinutes se calcula automáticamente, no se incluye en el create
 };
 
 type UpdateWorkShift = Partial<CreateWorkShift>;
@@ -37,6 +44,7 @@ type SimpleWorkShiftResponse = Omit<
   'coefficient' | 'startTime' | 'endTime'
 > & {
   coefficient: string;
+  durationMinutes: number; // Duración en minutos (ej: 510 = 8.5 horas)
   startTime?: string | null; // HH:mm format
   endTime?: string | null; // HH:mm format
 };

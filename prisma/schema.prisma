@@ -73,12 +73,13 @@ model Company {
 
 // Turno
 model WorkShift {
-  id          String       @id @db.Uuid
-  days        DayOfWeek[] // Días aplicables: M, T, W, Th, F, S, Su. Si está vacío, usar description
-  startTime   DateTime     @db.Time
-  endTime     DateTime     @db.Time
-  description String?      @db.VarChar(60)
-  coefficient Decimal      @db.Decimal(5, 2) // Coeficiente del turno (ej: 1.50, 2.00, máximo 999.99)
+  id              String       @id @db.Uuid
+  days            DayOfWeek[] // Días aplicables: M, T, W, Th, F, S, Su. Si está vacío, usar description
+  startTime       DateTime     @db.Time
+  endTime         DateTime     @db.Time
+  durationMinutes Int // Duración en minutos totales, calculada automáticamente desde startTime y endTime. Ej: 510 minutos = 8.5 horas (8h 30m)
+  description     String?      @db.VarChar(60)
+  coefficient     Decimal      @db.Decimal(5, 2) // Coeficiente del turno (ej: 1.50, 2.00, máximo 999.99)
 
   createdAt DateTime  @db.Timestamptz() @default(now())
   deletedAt DateTime? @db.Timestamptz()

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService, UuidService } from '../common';
 import type { CreateWorkShift } from 'src/types/work-shift';
+import { BadRequestException } from 'src/exceptions/common';
 
 @Injectable()
 export class CreateWorkShiftService {
@@ -24,12 +25,28 @@ export class CreateWorkShiftService {
     const startTimeDate = new Date(`1970-01-01T${startTime}:00Z`);
     const endTimeDate = new Date(`1970-01-01T${endTime}:00Z`);
 
+    /**
+     * Calcular duración en minutos desde startTime y endTime
+     * Fórmula: (endTime - startTime) en milisegundos / 1000 (ms a segundos) / 60 (segundos a minutos)
+     * Ejemplo: startTime=08:00, endTime=16:30 → 8.5 horas = 510 minutos
+     */
+    const durationMinutes =
+      (endTimeDate.getTime() - startTimeDate.getTime()) / 1000 / 60;
+
+    // Validar que la duración no sea negativa (endTime debe ser mayor a startTime)
+    if (durationMinutes <= 0) {
+      throw new BadRequestException(
+        'End time must be greater than start time. Night shifts crossing midnight are not supported.',
+      );
+    }
+
     const workShift = await this.databaseService.workShift.create({
       data: {
         id: workShiftId,
         days,
         startTime: startTimeDate,
         endTime: endTimeDate,
+        durationMinutes: Math.round(durationMinutes), // Redondear al minuto más cercano
         description,
         coefficient,
       },
