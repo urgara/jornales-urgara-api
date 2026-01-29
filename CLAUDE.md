@@ -264,6 +264,65 @@ export class SurveyorCreatedResponseDto {
 - All response DTOs must implement their corresponding response type interfaces
 - Use domain entities (`SurveyorEntity`) not Prisma types in response interfaces
 
+### DecimalNumber Validation Pattern
+
+**For optional Decimal fields in DTOs, use @Transform + @IsDecimalNumber**
+
+Prisma's `Decimal` type requires special handling in DTOs. For **required** fields, use `@Type()`, but for **optional** fields, use `@Transform()` with the custom `@IsDecimalNumber()` validator.
+
+#### Required Decimal Fields
+
+```typescript
+// ✅ CORRECT: Required decimal field
+@ApiProperty({
+  description: 'Tarifa base por hora del trabajador',
+  example: '1500.00',
+  type: 'string',
+})
+@IsString()
+@IsDecimal()
+@Type(() => (value: string) => DecimalService.create(value))
+baseHourlyRate: DecimalNumber;
+```
+
+#### Optional Decimal Fields
+
+```typescript
+// ✅ CORRECT: Optional decimal field
+import { Transform } from 'class-transformer';
+import { IsDecimalNumber } from 'src/decorators/common';
+
+@ApiProperty({
+  description: 'Porcentaje adicional opcional (ej: 15.00 = 15%)',
+  example: '15.00',
+  type: 'string',
+  required: false,
+})
+@Transform(({ value }) => (value ? DecimalService.create(value) : undefined))
+@IsOptional()
+@IsDecimalNumber()
+additionalPercent?: DecimalNumber;
+
+// ❌ INCORRECT: @Transform after validation
+@IsOptional()
+@IsDecimal() // This validates string, not DecimalNumber
+@Transform(({ value }) => (value ? DecimalService.create(value) : undefined))
+additionalPercent?: DecimalNumber;
+```
+
+**Execution order (top to bottom):**
+
+1. `@Transform()` - Converts string to `DecimalNumber` (or `undefined` if no value)
+2. `@IsOptional()` - Allows the field to be optional
+3. `@IsDecimalNumber()` - Validates using `Decimal.isDecimal()` from Decimal.js
+
+**Key Rules:**
+
+- **@Transform must be first** - Transformations happen before validations
+- **Use @IsDecimalNumber()** - Custom validator in `src/decorators/common/is-decimal-number.decorator.ts`
+- **Type definition** - Optional decimals use `DecimalNumber?` in the type layer
+- **Don't use @IsString/@IsDecimal** - These validate strings, not transformed DecimalNumber objects
+
 #### Architecture Decision Rules
 
 1. **Multi-domain usage** → Move to `[function-type]/common/[conceptual-domain]/`

@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import type { Worker } from 'src/types/worker';
+import type { SimpleWorkerResponse } from 'src/types/worker';
 import type { DecimalNumber } from 'src/types/common';
 
-export class WorkerResponseDto implements Worker {
+export class WorkerResponseDto implements SimpleWorkerResponse {
   @ApiProperty({
     description: 'ID único del trabajador (UUID)',
     example: '550e8400-e29b-41d4-a716-446655440000',
@@ -46,7 +46,9 @@ export class WorkerResponseDto implements Worker {
     example: '1500.00',
     type: 'string',
   })
-  @Transform(({ value }: { value: DecimalNumber }) => value?.toString())
+  @Transform(({ value }: { value: DecimalNumber | undefined }) =>
+    value ? value.toString() : undefined,
+  )
   baseHourlyRate: string;
 
   @ApiProperty({

@@ -17,6 +17,7 @@ import { WorkShiftModule } from './work-shift.module';
 import { CompanyModule } from './company.module';
 import { LegalEntityModule } from './legal-entity.module';
 import { WorkerModule } from './worker.module';
+import { WorkerAssignmentModule } from './worker-assignment.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { WorkerModule } from './worker.module';
     CompanyModule,
     LegalEntityModule,
     WorkerModule,
+    WorkerAssignmentModule,
   ],
   controllers: [AppController],
 })

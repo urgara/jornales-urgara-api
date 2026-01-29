@@ -48,6 +48,12 @@ export class SimpleWorkShiftResponseDto implements SimpleWorkShiftResponse {
   endTime?: string | null;
 
   @ApiProperty({
+    description: 'Duración del turno en minutos totales (ej: 360 = 6 horas, 510 = 8.5 horas)',
+    example: 360,
+  })
+  durationMinutes: number;
+
+  @ApiProperty({
     description: 'Descripción manual del turno (solo cuando no hay días específicos)',
     example: 'Encargado de carga',
     nullable: true,
@@ -59,7 +65,9 @@ export class SimpleWorkShiftResponseDto implements SimpleWorkShiftResponse {
     example: '1.50',
     type: 'string',
   })
-  @Transform(({ value }: { value: DecimalNumber }) => value?.toString())
+  @Transform(({ value }: { value: DecimalNumber | undefined }) =>
+    value ? value.toString() : undefined,
+  )
   coefficient: string;
 
   @ApiProperty({

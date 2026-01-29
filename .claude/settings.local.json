@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/emanu_3o2ausf/Desktop/dynnamo/sycap-jornales-api/**)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(pnpm prisma migrate dev:*)"
     ],
     "deny": [],
     "ask": []

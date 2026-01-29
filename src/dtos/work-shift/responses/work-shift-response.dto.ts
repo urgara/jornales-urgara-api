@@ -64,7 +64,9 @@ export class WorkShiftResponseDto implements SimpleWorkShiftResponse {
     example: '1.50',
     type: 'string',
   })
-  @Transform(({ value }: { value: DecimalNumber }) => value?.toString())
+  @Transform(({ value }: { value: DecimalNumber | undefined }) =>
+    value ? value.toString() : undefined,
+  )
   coefficient: string;
 
   @ApiProperty({

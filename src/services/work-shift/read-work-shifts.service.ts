@@ -60,10 +60,6 @@ export class ReadWorkShiftsService {
   async selectWorkShifts() {
     return await this.databaseService.workShift.findMany({
       where: { deletedAt: null },
-      select: {
-        id: true,
-        description: true,
-      },
       orderBy: {
         description: 'asc',
       },

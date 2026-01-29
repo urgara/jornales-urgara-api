@@ -3,18 +3,18 @@ import {
   IsNotEmpty,
   IsString,
   MaxLength,
-  IsDecimal,
   IsArray,
   IsEnum,
   IsOptional,
   Matches,
   ValidateIf,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import type { CreateWorkShift } from 'src/types/work-shift';
 import { DayOfWeek } from 'src/types/work-shift';
 import type { DecimalNumber } from 'src/types/common';
 import { DecimalService } from 'src/services/common';
+import { IsDecimalNumber } from 'src/decorators/common';
 
 export class CreateWorkShiftDto implements CreateWorkShift {
   @ApiProperty({
@@ -74,9 +74,8 @@ export class CreateWorkShiftDto implements CreateWorkShift {
     example: '1.50',
     type: 'string',
   })
+  @Transform(({ value }) => value !== undefined ? DecimalService.create(value) : undefined)
   @IsNotEmpty()
-  @IsString()
-  @IsDecimal()
-  @Type(() => (value: string) => DecimalService.create(value))
+  @IsDecimalNumber()
   coefficient: DecimalNumber;
 }

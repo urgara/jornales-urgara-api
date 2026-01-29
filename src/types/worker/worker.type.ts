@@ -35,17 +35,22 @@ type WorkerSortBy =
   | 'baseHourlyRate'
   | 'createdAt';
 
+// Response type for transformed Worker (Decimal → string)
+type SimpleWorkerResponse = Omit<Worker, 'baseHourlyRate'> & {
+  baseHourlyRate: string;
+};
+
 // Response types
 interface WorkerCreatedResponse {
   success: boolean;
   message: string;
-  data: Worker;
+  data: SimpleWorkerResponse;
 }
 
 interface WorkerUpdatedResponse {
   success: boolean;
   message: string;
-  data: Worker;
+  data: SimpleWorkerResponse;
 }
 
 interface WorkerDeletedResponse {
@@ -56,7 +61,7 @@ interface WorkerDeletedResponse {
 interface WorkerSingleResponse {
   success: boolean;
   message: string;
-  data: Worker & {
+  data: SimpleWorkerResponse & {
     Company: PrismaCompany | null;
     Locality: PrismaLocality;
   };
@@ -66,7 +71,7 @@ interface AllWorkersResponse {
   success: boolean;
   message: string;
   data: Array<
-    Worker & {
+    SimpleWorkerResponse & {
       Company: PrismaCompany | null;
       Locality: PrismaLocality;
     }
@@ -97,6 +102,7 @@ export type {
   UpdateWorker,
   FindWorkersQuery,
   WorkerSortBy,
+  SimpleWorkerResponse,
   WorkerCreatedResponse,
   WorkerUpdatedResponse,
   WorkerDeletedResponse,

@@ -159,6 +159,13 @@ export class DecimalService {
   }
 
   /**
+   * Verifica si un valor es un DecimalNumber válido
+   */
+  isValid(value: unknown): boolean {
+    return Decimal.isDecimal(value);
+  }
+
+  /**
    * Convierte desde string validando formato
    */
   fromString(value: string): DecimalNumber {

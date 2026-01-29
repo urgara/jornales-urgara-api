@@ -5,6 +5,7 @@ export type {
   UpdateWorker,
   FindWorkersQuery,
   WorkerSortBy,
+  SimpleWorkerResponse,
   WorkerCreatedResponse,
   WorkerUpdatedResponse,
   WorkerDeletedResponse,

@@ -83,6 +83,8 @@ model WorkShift {
 
   createdAt DateTime  @db.Timestamptz() @default(now())
   deletedAt DateTime? @db.Timestamptz()
+
+  WorkerAssignment WorkerAssignment[]
 }
 
 // Trabajador
@@ -98,8 +100,24 @@ model Worker {
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
 
-  Company  Company?  @relation(fields: [companyId], references: [id])
-  Locality Locality @relation(fields: [localityId], references: [id])
+  Company           Company?           @relation(fields: [companyId], references: [id])
+  Locality          Locality           @relation(fields: [localityId], references: [id])
+  WorkerAssignment  WorkerAssignment[]
+}
+
+// Asignación de trabajador (registro histórico, no se elimina)
+model WorkerAssignment {
+  id                String   @id @db.Uuid
+  workerId          String   @db.Uuid
+  workShiftId       String   @db.Uuid
+  date              DateTime @db.Date // Fecha de la asignación
+  additionalPercent Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%)
+  totalAmount       Decimal  @db.Decimal(10, 2) // Monto total calculado: (baseHourlyRate * durationHours) * (1 + additionalPercent/100)
+
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  Worker    Worker    @relation(fields: [workerId], references: [id])
+  WorkShift WorkShift @relation(fields: [workShiftId], references: [id])
 }
 
 enum Role {
