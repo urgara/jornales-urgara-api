@@ -25,7 +25,7 @@ services:
 
   # NestJS API
   api:
-    image: ghcr.io/dynnamo-crypt-sa/urgara-jornales-api:latest
+    image: ghcr.io/dynnamocrypt/urgara-jornales-api:latest
     container_name: urgara-jornales-api
     restart: unless-stopped
     environment:

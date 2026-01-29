@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/emanu_3o2ausf/Desktop/dynnamo/sycap-jornales-api/**)",
+      "Read(//c/Users/emanu_3o2ausf/Desktop/dynnamo/urgara-jornales-api/**)",
       "Bash(mkdir:*)",
       "Bash(pnpm prisma migrate dev:*)"
     ],
