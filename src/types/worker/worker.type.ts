@@ -32,6 +32,7 @@ type WorkerSortBy =
   | 'dni'
   | 'companyId'
   | 'localityId'
+  | 'baseHourlyRate'
   | 'createdAt';
 
 // Response types

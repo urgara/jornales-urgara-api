@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import type { Worker } from 'src/types/worker';
+import type { DecimalNumber } from 'src/types/common';
 
 export class WorkerResponseDto implements Worker {
   @ApiProperty({
@@ -38,6 +40,14 @@ export class WorkerResponseDto implements Worker {
     example: 1,
   })
   localityId: number;
+
+  @ApiProperty({
+    description: 'Tarifa base por hora del trabajador',
+    example: '1500.00',
+    type: 'string',
+  })
+  @Transform(({ value }: { value: DecimalNumber }) => value?.toString())
+  baseHourlyRate: string;
 
   @ApiProperty({
     description: 'Fecha de creación',

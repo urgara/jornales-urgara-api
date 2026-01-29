@@ -87,12 +87,13 @@ model WorkShift {
 
 // Trabajador
 model Worker {
-  id         String @id @db.Uuid
-  name       String @db.VarChar(100)
-  surname    String @db.VarChar(100)
-  dni        String @unique @db.VarChar(10)
-  companyId  Int?
-  localityId Int
+  id              String  @id @db.Uuid
+  name            String  @db.VarChar(100)
+  surname         String  @db.VarChar(100)
+  dni             String  @unique @db.VarChar(10)
+  companyId       Int?
+  localityId      Int
+  baseHourlyRate  Decimal @db.Decimal(10, 2) // Tarifa base por hora (ej: 1500.00, máximo 99999999.99)
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()

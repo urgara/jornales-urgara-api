@@ -18,6 +18,7 @@ export class WorkerCreateService {
         dni: data.dni,
         companyId: data.companyId ?? null,
         localityId: data.localityId,
+        baseHourlyRate: data.baseHourlyRate,
       },
     });
   }

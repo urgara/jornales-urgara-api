@@ -31,6 +31,9 @@ export class WorkerUpdateService {
         ...(data.localityId !== undefined && {
           localityId: data.localityId,
         }),
+        ...(data.baseHourlyRate !== undefined && {
+          baseHourlyRate: data.baseHourlyRate,
+        }),
       },
     });
   }

@@ -5,10 +5,13 @@ import {
   IsInt,
   IsPositive,
   IsOptional,
+  IsDecimal,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type { CreateWorker } from 'src/types/worker';
+import { DecimalService } from 'src/services/common';
+import type { DecimalNumber } from 'src/types/common';
 
 export class CreateWorkerDto implements CreateWorker {
   @ApiProperty({
@@ -60,4 +63,14 @@ export class CreateWorkerDto implements CreateWorker {
   @IsPositive()
   @Type(() => Number)
   localityId: number;
+
+  @ApiProperty({
+    description: 'Tarifa base por hora del trabajador',
+    example: '1500.00',
+    type: 'string',
+  })
+  @IsString()
+  @IsDecimal()
+  @Type(() => (value: string) => DecimalService.create(value))
+  baseHourlyRate: DecimalNumber;
 }
