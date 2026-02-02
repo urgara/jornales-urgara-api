@@ -11,12 +11,12 @@ datasource db {
 }
 
 model Admin {
-  id         String @id @db.Uuid
-  name       String @db.VarChar(30)
-  surname    String @db.VarChar(30)
-  dni        String @unique @db.VarChar(9)
-  password   String @db.VarChar
-  localityId Int?
+  id         String  @id @db.Uuid
+  name       String  @db.VarChar(30)
+  surname    String  @db.VarChar(30)
+  dni        String  @unique @db.VarChar(9)
+  password   String  @db.VarChar
+  localityId String? @db.Uuid
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
@@ -35,37 +35,45 @@ model Session {
 }
 
 model Locality {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(100) // Nombre de la localidad donde está el puerto
-  province  String    @db.VarChar(100)
-  createdAt DateTime  @default(now()) @db.Timestamptz()
-  deletedAt DateTime? @db.Timestamptz()
+  id        String    @id  @db.Uuid
+  name      String      @db.VarChar(100) // Nombre de la localidad donde está el puerto
+  province  String      @db.VarChar(100)
+  isCalculateJc Boolean @default(false)
+  createdAt DateTime    @default(now()) @db.Timestamptz()
+  deletedAt DateTime?   @db.Timestamptz()
 
   Admin Admin[]
   // TODO: Worker[] relation removed - Worker lives in separate locality DB
   // Manual validation needed in services for localityId integrity
 }
 
-model LegalEntity {
-  id           Int     @id @default(autoincrement())
-  abbreviation String  @db.VarChar(15)
-  description  String  @db.VarChar(150)
-  isActive     Boolean @default(true)
-
-  Company Company[]
-}
 
 model Company {
-  id            Int       @id @default(autoincrement())
+  id            String    @id  @db.Uuid
   name          String    @db.VarChar(150)
   cuit          String?   @db.VarChar(11)
-  legalEntityId Int
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
 
-  LegalEntity LegalEntity @relation(fields: [legalEntityId], references: [id])
 }
+
+model Agency {
+  id            String    @id  @db.Uuid
+  name          String    @db.VarChar(150)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+}
+
+model Product {
+  id       String  @db.Uuid @id
+  name     String  @db.VarChar(40)
+
+  isActive Boolean @default(true)
+}
+
+
 
 enum Role {
   ADMIN @map("1") /* acceso total */

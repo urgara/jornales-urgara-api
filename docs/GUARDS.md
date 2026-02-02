@@ -59,13 +59,13 @@ async login() { ... }
 ### Variables de Entorno
 
 ```bash
-# IMPORTANTE: TODAS las instancias DEBEN tener LOCALITY_ID configurado
+# IMPORTANTE: TODAS las instancias DEBEN tener LOCALITY_ID configurado (UUID)
 
-# Instancia de Mar del Plata (localityId = 1)
-LOCALITY_ID=1
+# Instancia de Mar del Plata
+LOCALITY_ID=550e8400-e29b-41d4-a716-446655440001
 
-# Instancia de Buenos Aires (localityId = 2)
-LOCALITY_ID=2
+# Instancia de Buenos Aires
+LOCALITY_ID=550e8400-e29b-41d4-a716-446655440002
 
 # NOTA: NO existen instancias sin LOCALITY_ID
 # Los admins ADMIN globales (sin localityId) pueden acceder a TODAS las instancias
@@ -86,12 +86,12 @@ providers: [
 
 | Admin Role | Admin localityId | .env LOCALITY_ID | Resultado |
 |------------|------------------|------------------|-----------|
-| ADMIN      | `null`          | `1`              | ✅ Permitido (Admin global, acceso a todas las instancias) |
-| ADMIN      | `null`          | `2`              | ✅ Permitido (Admin global, acceso a todas las instancias) |
-| ADMIN      | `1`             | `1`              | ✅ Permitido (Admin con localidad coincidente) |
-| ADMIN      | `1`             | `2`              | ❌ Denegado (Localidad no coincide) |
-| LOCAL      | `1`             | `1`              | ✅ Permitido (Localidad coincidente) |
-| LOCAL      | `1`             | `2`              | ❌ Denegado (Localidad no coincide) |
+| ADMIN      | `null`          | `550e..001`      | ✅ Permitido (Admin global, acceso a todas las instancias) |
+| ADMIN      | `null`          | `550e..002`      | ✅ Permitido (Admin global, acceso a todas las instancias) |
+| ADMIN      | `550e..001`     | `550e..001`      | ✅ Permitido (Admin con localidad coincidente) |
+| ADMIN      | `550e..001`     | `550e..002`      | ❌ Denegado (Localidad no coincide) |
+| LOCAL      | `550e..001`     | `550e..001`      | ✅ Permitido (Localidad coincidente) |
+| LOCAL      | `550e..001`     | `550e..002`      | ❌ Denegado (Localidad no coincide) |
 | LOCAL      | `null`          | cualquiera       | ❌ Error (LOCAL debe tener localityId asignado) |
 | cualquiera | cualquiera      | `null`           | ❌ Error (Instancia mal configurada, LOCALITY_ID requerido) |
 
@@ -194,7 +194,7 @@ async getProfile(@Req() req: ReqAdmin) {
 # .env
 DATABASE_COMMON_URL=postgresql://...common-reports-urgara
 DATABASE_LOCALITY_URL=postgresql://...mardelplata-reports-urgara
-LOCALITY_ID=1
+LOCALITY_ID=550e8400-e29b-41d4-a716-446655440001
 PORT=3000
 ```
 
@@ -203,15 +203,15 @@ PORT=3000
 # .env
 DATABASE_COMMON_URL=postgresql://...common-reports-urgara
 DATABASE_LOCALITY_URL=postgresql://...buenosaires-reports-urgara
-LOCALITY_ID=2
+LOCALITY_ID=550e8400-e29b-41d4-a716-446655440002
 PORT=3001
 ```
 
 ### Acceso de Admins
 
 - **Admin GLOBAL** (role=ADMIN, localityId=null) → Puede acceder a AMBAS instancias
-- **Admin LOCAL de Mar del Plata** (role=LOCAL, localityId=1) → Solo puede acceder a instancia 1
-- **Admin LOCAL de Buenos Aires** (role=LOCAL, localityId=2) → Solo puede acceder a instancia 2
+- **Admin LOCAL de Mar del Plata** (role=LOCAL, localityId=550e8400-e29b-41d4-a716-446655440001) → Solo puede acceder a instancia 1
+- **Admin LOCAL de Buenos Aires** (role=LOCAL, localityId=550e8400-e29b-41d4-a716-446655440002) → Solo puede acceder a instancia 2
 
 ---
 

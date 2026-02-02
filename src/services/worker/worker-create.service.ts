@@ -12,13 +12,14 @@ export class WorkerCreateService {
   async create(data: CreateWorker): Promise<Worker> {
     return await this.databaseService.worker.create({
       data: {
-        id: this.uuidService.V4(),
+        id: this.uuidService.V6(),
         name: data.name,
         surname: data.surname,
         dni: data.dni,
-        companyId: data.companyId ?? null,
         localityId: data.localityId,
+        companyId: data.companyId,
         baseHourlyRate: data.baseHourlyRate,
+        category: data.category,
       },
     });
   }

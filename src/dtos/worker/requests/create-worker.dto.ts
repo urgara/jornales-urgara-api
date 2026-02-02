@@ -2,16 +2,16 @@ import {
   IsString,
   IsNotEmpty,
   Length,
-  IsInt,
-  IsPositive,
-  IsOptional,
+  IsUUID,
+  IsEnum,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type, Transform } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import type { CreateWorker } from 'src/types/worker';
 import { DecimalService } from 'src/services/common';
 import type { DecimalNumber } from 'src/types/common';
 import { IsDecimalNumber } from 'src/decorators/common';
+import { Category } from '../../../generated/prisma-locality';
 
 export class CreateWorkerDto implements CreateWorker {
   @ApiProperty({
@@ -45,24 +45,28 @@ export class CreateWorkerDto implements CreateWorker {
   dni: string;
 
   @ApiProperty({
-    description: 'ID de la empresa (opcional)',
-    example: 1,
-    required: false,
+    description: 'ID de la empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  @Type(() => Number)
-  companyId?: number;
+  @IsString()
+  @IsUUID()
+  companyId: string;
 
   @ApiProperty({
-    description: 'ID de la localidad',
-    example: 1,
+    description: 'ID de la localidad (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
-  @IsInt()
-  @IsPositive()
-  @Type(() => Number)
-  localityId: number;
+  @IsString()
+  @IsUUID()
+  localityId: string;
+
+  @ApiProperty({
+    description: 'Categoría del trabajador',
+    example: 'IDONEO',
+    enum: Category,
+  })
+  @IsEnum(Category)
+  category: Category;
 
   @ApiProperty({
     description: 'Tarifa base por hora del trabajador',

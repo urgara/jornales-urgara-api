@@ -21,8 +21,8 @@ interface FindWorkersQuery {
   name?: string;
   surname?: string;
   dni?: string;
-  companyId?: number;
-  localityId?: number;
+  companyId?: string; // UUID
+  localityId?: string; // UUID
 }
 
 type WorkerSortBy =

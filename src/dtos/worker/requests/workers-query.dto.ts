@@ -1,6 +1,5 @@
-import { IsOptional, IsInt, IsString, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsIn, IsUUID } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import type { FindWorkersQuery, WorkerSortBy } from 'src/types/worker';
 import { PaginationRequestDto } from 'src/dtos/common';
 
@@ -64,20 +63,20 @@ export class WorkersQueryDto
   dni?: string;
 
   @ApiPropertyOptional({
-    description: 'Filtrar por ID de empresa',
-    example: 1,
+    description: 'Filtrar por ID de empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  companyId?: number;
+  @IsString()
+  @IsUUID()
+  companyId?: string;
 
   @ApiPropertyOptional({
-    description: 'Filtrar por ID de localidad',
-    example: 1,
+    description: 'Filtrar por ID de localidad (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  localityId?: number;
+  @IsString()
+  @IsUUID()
+  localityId?: string;
 }

@@ -28,22 +28,17 @@ model WorkShift {
 
 // Trabajador
 model Worker {
-  id             String  @id @db.Uuid
-  name           String  @db.VarChar(100)
-  surname        String  @db.VarChar(100)
-  dni            String  @unique @db.VarChar(10)
-  companyId      Int?
-  localityId     Int
-  baseHourlyRate Decimal @db.Decimal(10, 2) // Tarifa base por hora (ej: 1500.00, máximo 99999999.99)
+  id             String   @id @db.Uuid
+  name           String   @db.VarChar(100)
+  surname        String   @db.VarChar(100)
+  dni            String   @unique @db.VarChar(10)
+  localityId     String   @db.Uuid // Referencia a Locality en prisma-common (sin FK)
+  companyId      String   @db.Uuid // Referencia a Company en prisma-common (sin FK)
+  baseHourlyRate Decimal  @db.Decimal(10, 2) // Tarifa base por hora (ej: 1500.00, máximo 99999999.99)
+  category       Category
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
-
-  // TODO: FK relations removed - Company and Locality live in separate common DB
-  // Original relations:
-  //   Company   Company?  @relation(fields: [companyId], references: [id])
-  //   Locality  Locality  @relation(fields: [localityId], references: [id])
-  // Manual validation needed in services for companyId and localityId integrity
 
   WorkerAssignment WorkerAssignment[]
 }
@@ -57,12 +52,24 @@ model WorkerAssignment {
   additionalPercent Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%)
   totalAmount       Decimal  @db.Decimal(10, 2) // Monto total calculado: (baseHourlyRate * durationHours) * (1 + additionalPercent/100)
 
-  createdAt DateTime @default(now()) @db.Timestamptz()
+  createdAt         DateTime @default(now()) @db.Timestamptz()
+  companyId         String @db.Uuid
+  localityId        String @db.Uuid
+  agencyId          String @db.Uuid
+  terminalId        String @db.Uuid
+  productId         String @db.Uuid
 
   Worker    Worker    @relation(fields: [workerId], references: [id])
   WorkShift WorkShift @relation(fields: [workShiftId], references: [id])
+  Terminal  Terminal @relation(fields: [terminalId], references: [id])
 }
 
+model Terminal{
+  id   String   @id @db.Uuid
+  name String @db.VarChar(50)
+
+  workerAssignments WorkerAssignment[]
+}
 enum DayOfWeek {
   M  // Monday
   T  // Tuesday
@@ -71,4 +78,9 @@ enum DayOfWeek {
   F  // Friday
   S  // Saturday
   Su // Sunday
+}
+
+enum Category {
+  IDONEO
+  PERITO
 }

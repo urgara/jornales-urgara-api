@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import type { SimpleWorkerResponse } from 'src/types/worker';
 import type { DecimalNumber } from 'src/types/common';
+import { Category } from '../../../generated/prisma-locality';
 
 export class WorkerResponseDto implements SimpleWorkerResponse {
   @ApiProperty({
@@ -29,17 +30,23 @@ export class WorkerResponseDto implements SimpleWorkerResponse {
   dni: string;
 
   @ApiProperty({
-    description: 'ID de la empresa',
-    example: 1,
-    nullable: true,
+    description: 'ID de la empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  companyId: number | null;
+  companyId: string;
 
   @ApiProperty({
-    description: 'ID de la localidad',
-    example: 1,
+    description: 'ID de la localidad (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
-  localityId: number;
+  localityId: string;
+
+  @ApiProperty({
+    description: 'Categoría del trabajador',
+    example: 'IDONEO',
+    enum: Category,
+  })
+  category: Category;
 
   @ApiProperty({
     description: 'Tarifa base por hora del trabajador',
