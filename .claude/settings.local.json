@@ -3,7 +3,8 @@
     "allow": [
       "Read(//c/Users/emanu_3o2ausf/Desktop/dynnamo/urgara-jornales-api/**)",
       "Bash(mkdir:*)",
-      "Bash(pnpm prisma migrate dev:*)"
+      "Bash(pnpm prisma migrate dev:*)",
+      "Read(//c/Users/emanu_3o2ausf/Desktop/dynnamo/urgara-jornales-web-app/**)"
     ],
     "deny": [],
     "ask": []

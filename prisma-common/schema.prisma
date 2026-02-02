@@ -1,0 +1,75 @@
+// Schema para common-reports-urgara
+// Base de datos común con datos compartidos entre localidades
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-common"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id         String @id @db.Uuid
+  name       String @db.VarChar(30)
+  surname    String @db.VarChar(30)
+  dni        String @unique @db.VarChar(9)
+  password   String @db.VarChar
+  localityId Int?
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+  role      Role
+  Session   Session[]
+  Locality  Locality? @relation(fields: [localityId], references: [id])
+}
+
+model Session {
+  id      String @id
+  token   String @unique
+  adminId String @db.Uuid
+  ip      String
+  agent   String
+  Admin   Admin  @relation(fields: [adminId], references: [id])
+}
+
+model Locality {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100) // Nombre de la localidad donde está el puerto
+  province  String    @db.VarChar(100)
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+
+  Admin Admin[]
+  // TODO: Worker[] relation removed - Worker lives in separate locality DB
+  // Manual validation needed in services for localityId integrity
+}
+
+model LegalEntity {
+  id           Int     @id @default(autoincrement())
+  abbreviation String  @db.VarChar(15)
+  description  String  @db.VarChar(150)
+  isActive     Boolean @default(true)
+
+  Company Company[]
+}
+
+model Company {
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(150)
+  cuit          String?   @db.VarChar(11)
+  legalEntityId Int
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+
+  LegalEntity LegalEntity @relation(fields: [legalEntityId], references: [id])
+  // TODO: Worker[] relation removed - Worker lives in separate locality DB
+  // Manual validation needed in services for companyId integrity
+}
+
+enum Role {
+  ADMIN @map("1") /* acceso total */
+  LOCAL @map("5") /* El LOCAL es como un ADMIN pero solo tiene poder sobre la localidad que maneja*/
+}

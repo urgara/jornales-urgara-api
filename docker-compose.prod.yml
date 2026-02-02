@@ -1,29 +1,5 @@
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:16-alpine
-    container_name: urgara-jornales-api-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DATABASE_USER:-postgres}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
-      POSTGRES_DB: postgres
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d
-    ports:
-      - '${DATABASE_PORT:-5432}:5432'
-    networks:
-      - urgara-jornales-network
-    healthcheck:
-      test:
-        ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER:-postgres} -d postgres']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # NestJS API
+  # NestJS API - Connects to Amazon RDS PostgreSQL
   api:
     image: ghcr.io/dynnamocrypt/urgara-jornales-api:latest
     container_name: urgara-jornales-api
@@ -31,24 +7,18 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-3000}
-      DATABASE_URL: postgresql://${DATABASE_USER:-postgres}:${DATABASE_PASSWORD:-postgres}@postgres:5432/${DATABASE_NAME:-urgara_jornales_api_prod}?schema=public
+      DATABASE_COMMON_URL: ${DATABASE_COMMON_URL}
+      DATABASE_LOCALITY_URL: ${DATABASE_LOCALITY_URL}
       CORS_ORIGIN: ${CORS_ORIGIN}
       COOKIE_SECRET: ${COOKIE_SECRET}
       JWT_SECRET_CLIENT: ${JWT_SECRET_CLIENT}
       JWT_SECRET_REFRESH: ${JWT_SECRET_REFRESH}
     ports:
       - '${PORT:-3000}:${PORT:-3000}'
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - urgara-jornales-network
     volumes:
       - ./logs:/app/logs
-
-volumes:
-  postgres_data:
-    driver: local
 
 networks:
   urgara-jornales-network:
