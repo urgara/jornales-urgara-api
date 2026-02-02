@@ -5,12 +5,16 @@ import {
   PdfService,
   HashService,
   DatabaseService,
+  DatabaseCommonService,
+  DatabaseLocalityService,
   DateService,
 } from '../services/common';
 import { JwtService } from '@nestjs/jwt';
 
 const global = [
   DatabaseService,
+  DatabaseCommonService,
+  DatabaseLocalityService,
   UuidService,
   DecimalService,
   PdfService,

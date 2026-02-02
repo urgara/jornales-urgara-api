@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseCommonService } from '../common';
 import type { Locality } from 'src/types/locality';
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '../../../generated/prisma-common';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class LocalityReadService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseCommonService) {}
 
   async findAll(
     page: number = 1,

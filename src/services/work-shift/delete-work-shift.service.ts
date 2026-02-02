@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseLocalityService } from '../common';
 import type { WorkShiftId } from 'src/types/work-shift';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class DeleteWorkShiftService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseLocalityService) {}
 
   async delete(id: WorkShiftId) {
     // Verificar si el work shift existe

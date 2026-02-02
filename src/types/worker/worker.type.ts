@@ -1,8 +1,8 @@
+import type { Worker as PrismaWorker } from '../../../generated/prisma-locality';
 import type {
-  Worker as PrismaWorker,
   Company as PrismaCompany,
   Locality as PrismaLocality,
-} from '../../../generated/prisma/client';
+} from '../../../generated/prisma-common';
 import type { NullToUndefined } from '../common';
 
 type Worker = PrismaWorker;

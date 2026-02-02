@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DatabaseException } from '../../exceptions/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
-import { PrismaClient } from '../../../generated/prisma-common/client';
+import { PrismaClient } from '../../../generated/prisma-common';
 
 @Injectable()
 export class DatabaseCommonService

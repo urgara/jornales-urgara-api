@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService, UuidService } from '../common';
+import { DatabaseLocalityService, UuidService } from '../common';
 import type { CreateWorker, Worker } from 'src/types/worker';
 
 @Injectable()
 export class WorkerCreateService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseService: DatabaseLocalityService,
     private readonly uuidService: UuidService,
   ) {}
 

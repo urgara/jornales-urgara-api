@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseLocalityService } from '../common';
 import type {
   WorkShiftId,
   UpdateWorkShift,
@@ -8,7 +8,7 @@ import { NotFoundException, BadRequestException } from 'src/exceptions/common';
 
 @Injectable()
 export class UpdateWorkShiftService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseLocalityService) {}
 
   async update(id: WorkShiftId, updateData: UpdateWorkShift) {
     // Verificar si el work shift existe

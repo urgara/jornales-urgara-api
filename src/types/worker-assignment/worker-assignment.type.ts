@@ -2,7 +2,7 @@ import type {
   WorkerAssignment as PrismaWorkerAssignment,
   Worker as PrismaWorker,
   WorkShift as PrismaWorkShift,
-} from '../../../generated/prisma/client';
+} from '../../../generated/prisma-locality';
 import type {
   GenericResponse,
   GenericDataResponse,

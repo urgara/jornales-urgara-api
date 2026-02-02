@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseLocalityService } from '../common';
 import type { FindWorkShiftQuery, WorkShiftId } from 'src/types/work-shift';
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '../../../generated/prisma-locality';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class ReadWorkShiftsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseLocalityService) {}
 
   async findAllWorkShifts(query?: FindWorkShiftQuery) {
     const {

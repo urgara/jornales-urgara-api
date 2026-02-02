@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService, UuidService } from '../common';
+import { DatabaseLocalityService, UuidService } from '../common';
 import type { CreateWorkShift } from 'src/types/work-shift';
 import { BadRequestException } from 'src/exceptions/common';
 
 @Injectable()
 export class CreateWorkShiftService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseService: DatabaseLocalityService,
     private readonly uuidService: UuidService,
   ) {}
 

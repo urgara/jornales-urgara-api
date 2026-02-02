@@ -1,4 +1,4 @@
-import type { Locality as PrismaLocality } from '../../../generated/prisma/client';
+import type { Locality as PrismaLocality } from '../../../generated/prisma-common';
 import type { PaginationRequest, Sorting } from '../common';
 
 type Locality = PrismaLocality;

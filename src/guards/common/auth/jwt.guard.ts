@@ -1,12 +1,14 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
 import type { Response } from 'express';
 import { COOKIE_CONFIG } from '../../../config/cookie.config';
 import { ApiConfig } from '../../../config';
 import { JwtAuthService } from '../../../services/auth/jwt-auth.service';
 import type { ReqAdmin } from '../../../types/auth/request.type';
 import { SecurityAlertException } from '../../../exceptions/common/auth';
-import { DatabaseService } from 'src/services/common';
+import { DatabaseCommonService } from 'src/services/common';
+import { IS_PUBLIC_KEY } from '../../../decorators/common/auth';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -14,13 +16,23 @@ export class JwtGuard implements CanActivate {
 
   constructor(
     private readonly jwt: JwtAuthService,
-    private readonly database: DatabaseService,
+    private readonly database: DatabaseCommonService,
     private readonly configService: ConfigService,
+    private readonly reflector: Reflector,
   ) {
     this.apiConfig = this.configService.get<ApiConfig>('api')!;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Verificar si la ruta está marcada como pública
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic) {
+      return true;
+    }
     const request: ReqAdmin = context.switchToHttp().getRequest();
     const response: Response = context.switchToHttp().getResponse();
     const token: string = (request.cookies as Record<string, string>)?.[

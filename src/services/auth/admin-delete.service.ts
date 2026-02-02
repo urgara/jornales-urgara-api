@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseCommonService } from '../common';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class AdminDeleteService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseCommonService) {}
 
   async delete(id: string) {
     const existingAdmin = await this.databaseService.admin.findUnique({

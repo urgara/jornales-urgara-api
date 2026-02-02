@@ -6,10 +6,12 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from '../controllers/app.controller';
 import secrestsConfig from '../config/secrests.config';
 import apiConfig from '../config/api.config';
 import { IpMiddleware } from '../middlewares/common/network';
+import { JwtGuard, LocalityGuard, RoleGuard } from '../guards/common/auth';
 import { AuthModule } from './auth.module';
 import { CommonModule } from './common.module';
 import { LocalityModule } from './locality.module';
@@ -36,6 +38,21 @@ import { WorkerAssignmentModule } from './worker-assignment.module';
     WorkerAssignmentModule,
   ],
   controllers: [AppController],
+  providers: [
+    // Guards globales - se ejecutan en este orden
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard, // 1. Validar JWT y autenticación
+    },
+    {
+      provide: APP_GUARD,
+      useClass: LocalityGuard, // 2. Validar acceso por localidad
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard, // 3. Validar permisos de rol
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

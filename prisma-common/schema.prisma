@@ -65,11 +65,10 @@ model Company {
   deletedAt DateTime? @db.Timestamptz()
 
   LegalEntity LegalEntity @relation(fields: [legalEntityId], references: [id])
-  // TODO: Worker[] relation removed - Worker lives in separate locality DB
-  // Manual validation needed in services for companyId integrity
 }
 
 enum Role {
   ADMIN @map("1") /* acceso total */
   LOCAL @map("5") /* El LOCAL es como un ADMIN pero solo tiene poder sobre la localidad que maneja*/
+  ONLY_READ @map("10")
 }

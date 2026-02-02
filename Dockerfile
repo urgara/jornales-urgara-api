@@ -14,9 +14,11 @@ RUN pnpm install --frozen-lockfile
 # Copy source code first
 COPY . .
 
-# Generate Prisma client after copying source
+# Generate Prisma clients for both databases after copying source
 # Use placeholder DATABASE_URL for prisma generate (actual DB not needed)
-RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" pnpm prisma generate
+RUN DATABASE_COMMON_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
+    DATABASE_LOCALITY_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
+    pnpm run prisma:generate:all
 
 # Build application
 RUN pnpm run build
@@ -43,14 +45,16 @@ RUN pnpm install --frozen-lockfile --prod --shamefully-hoist
 
 # Copy built application from builder stage
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nestjs:nodejs /app/prisma-common ./prisma-common
+COPY --from=builder --chown=nestjs:nodejs /app/prisma-locality ./prisma-locality
 COPY --from=builder --chown=nestjs:nodejs /app/generated ./generated
-COPY --from=builder --chown=nestjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 # Pre-download Prisma engines to avoid runtime downloads
 # This must be done as root before switching to nestjs user
-# Use placeholder DATABASE_URL as actual DB is not needed for generate
-RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" pnpm prisma generate --schema=./prisma/schema.prisma
+# Use placeholder DATABASE_URLs as actual DBs are not needed for generate
+RUN DATABASE_COMMON_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
+    DATABASE_LOCALITY_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
+    pnpm run prisma:generate:all
 
 # Copy entrypoint script
 COPY --chown=nestjs:nodejs scripts/docker-entrypoint.sh ./docker-entrypoint.sh

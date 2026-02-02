@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseLocalityService } from '../common';
 import { NotFoundException } from 'src/exceptions/common';
 import type { WorkerId, UpdateWorker, Worker } from 'src/types/worker';
 
 @Injectable()
 export class WorkerUpdateService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseLocalityService) {}
 
   async update(id: WorkerId, data: UpdateWorker): Promise<Worker> {
     const worker = await this.databaseService.worker.findFirst({

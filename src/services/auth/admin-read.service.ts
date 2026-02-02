@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseCommonService } from '../common';
 import type {
   AdminClientToken,
   FindAdminsQuery,
   PrismaAdmin,
 } from 'src/types/auth';
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '../../../generated/prisma-common';
 import { NotFoundException } from 'src/exceptions/common';
 import { SecurityAlertException } from 'src/exceptions/common/auth';
 
 @Injectable()
 export class AdminReadService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseCommonService) {}
 
   async findAll(query?: FindAdminsQuery) {
     const {

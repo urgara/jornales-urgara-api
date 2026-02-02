@@ -7,7 +7,6 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
-  UseGuards,
   Req,
   Res,
   Query,
@@ -28,7 +27,7 @@ import {
   AdminUpdateService,
   AdminDeleteService,
 } from '../services/auth';
-import { AccessLevel } from '../decorators/common/auth';
+import { AccessLevel, Public } from '../decorators/common/auth';
 import type { ReqAdmin, ReqWithClientInfo } from '../types/auth';
 import apiConfig from 'src/config/api.config';
 import { COOKIE_CONFIG } from 'src/config/cookie.config';
@@ -48,7 +47,6 @@ import {
   LoginResponseDto,
   LogoutResponseDto,
 } from 'src/dtos/auth/responses';
-import { JwtGuard } from 'src/guards/common/auth';
 import type { Response } from 'express';
 
 @ApiTags('Authentication')
@@ -63,6 +61,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @Public() // Excluir de guards globales (JwtGuard, LocalityGuard, RoleGuard)
   @ApiOperation({ summary: 'Login admin' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
@@ -93,7 +92,6 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Logout admin' })
   @ApiResponse({
     status: HttpStatus.OK,

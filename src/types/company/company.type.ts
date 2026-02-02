@@ -1,7 +1,7 @@
 import type {
   Company as PrismaCompany,
   LegalEntity as PrismaLegalEntity,
-} from '../../../generated/prisma/client';
+} from '../../../generated/prisma-common';
 import type { NullToUndefined } from '../common';
 
 type Company = PrismaCompany;

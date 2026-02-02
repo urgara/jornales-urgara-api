@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { type AdminTypeRole } from 'src/types/auth';
 import type { ReqAdmin } from '../../../types/auth/request.type';
 import { ROLE_KEY } from '../../../decorators/common/auth/access-level.decorator';
+import { IS_PUBLIC_KEY } from '../../../decorators/common/auth';
 import {
   ForbiddenException,
   UnauthorizedException,
@@ -18,6 +19,15 @@ export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    // Verificar si la ruta está marcada como pública
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic) {
+      return true;
+    }
     // Obtener el rol requerido del decorador @Roles
     const classRole: AdminTypeRole = this.reflector.get<AdminTypeRole>(
       ROLE_KEY,

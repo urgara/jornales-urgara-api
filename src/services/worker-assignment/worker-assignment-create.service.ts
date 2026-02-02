@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService, UuidService, DecimalService } from '../common';
+import { DatabaseLocalityService, UuidService, DecimalService } from '../common';
 import type { CreateWorkerAssignment } from 'src/types/worker-assignment';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class WorkerAssignmentCreateService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseService: DatabaseLocalityService,
     private readonly uuidService: UuidService,
     private readonly decimalService: DecimalService,
   ) {}

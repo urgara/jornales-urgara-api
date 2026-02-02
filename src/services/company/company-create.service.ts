@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseCommonService } from '../common';
 import type { CreateCompany, Company } from 'src/types/company';
 
 @Injectable()
 export class CompanyCreateService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseCommonService) {}
 
   async create(data: CreateCompany): Promise<Company> {
     return await this.databaseService.company.create({

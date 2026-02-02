@@ -1,4 +1,4 @@
-import type { Admin as PrismaAdmin } from '../../../generated/prisma/client';
+import type { Admin as PrismaAdmin } from '../../../generated/prisma-common';
 import type { PaginationRequest, Sorting } from '../common';
 import type { Locality } from '../locality';
 

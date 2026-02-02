@@ -1,5 +1,5 @@
-import type { WorkShift as PrismaWorkShift } from '../../../generated/prisma/client';
-import { DayOfWeek } from '../../../generated/prisma/client';
+import type { WorkShift as PrismaWorkShift } from '../../../generated/prisma-locality';
+import { DayOfWeek } from '../../../generated/prisma-locality';
 import type {
   PaginationRequest,
   Sorting,

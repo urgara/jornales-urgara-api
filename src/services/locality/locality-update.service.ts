@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseCommonService } from '../common';
 import type { UpdateLocality, Locality } from 'src/types/locality';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class LocalityUpdateService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseCommonService) {}
 
   async update(id: number, data: UpdateLocality): Promise<Locality> {
     const existingLocality = await this.databaseService.locality.findFirst({

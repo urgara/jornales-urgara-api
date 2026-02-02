@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService, HashService } from '../common';
+import { DatabaseCommonService, HashService } from '../common';
 import type { UpdateAdmin, PrismaAdmin } from 'src/types/auth';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class AdminUpdateService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseService: DatabaseCommonService,
     private readonly hashService: HashService,
   ) {}
 

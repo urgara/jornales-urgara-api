@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common/database.service';
+import { DatabaseCommonService } from '../common/database-common.service';
 import { HashService } from '../common/hash.service';
 import { JwtAuthService } from './jwt-auth.service';
 import { UuidService } from '../common/uuid.service';
@@ -16,7 +16,7 @@ interface LoginDto {
 @Injectable()
 export class LoginService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseService: DatabaseCommonService,
     private readonly hashService: HashService,
     private readonly jwtAuthService: JwtAuthService,
     private readonly uuidService: UuidService,
@@ -56,6 +56,7 @@ export class LoginService {
 
     const clientToken = await this.jwtAuthService.createClientToken({
       role: admin.role as AdminTypeRole, // Cast necesario por bug de Prisma 7 con @map
+      localityId: admin.localityId,
       sessionId: session.id,
     });
 

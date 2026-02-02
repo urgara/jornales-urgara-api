@@ -1,5 +1,11 @@
 {
   "material-icon-theme.activeIconPack": "nest",
+  "material-icon-theme.folders.associations": {
+    "generated": "prisma",
+    "prisma-common": "prisma",
+    "prisma-locality": "prisma",
+    "database": "prisma"
+  },
 
   // Editor general
   "editor.formatOnSave": true,

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService, HashService, UuidService } from '../common';
+import { DatabaseCommonService, HashService, UuidService } from '../common';
 import type { CreateAdmin, PrismaAdmin } from 'src/types/auth';
 import { DuplicateException } from 'src/exceptions/common';
 
 @Injectable()
 export class AdminCreateService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseService: DatabaseCommonService,
     private readonly hashService: HashService,
     private readonly uuidService: UuidService,
   ) {}

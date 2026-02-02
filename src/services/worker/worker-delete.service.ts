@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseLocalityService } from '../common';
 import { NotFoundException } from 'src/exceptions/common';
 import type { WorkerId } from 'src/types/worker';
 
 @Injectable()
 export class WorkerDeleteService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseLocalityService) {}
 
   async delete(id: WorkerId): Promise<void> {
     const worker = await this.databaseService.worker.findFirst({

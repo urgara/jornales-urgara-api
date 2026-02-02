@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseLocalityService } from '../common';
 import type {
   WorkerAssignmentId,
   FindWorkerAssignmentQuery,
@@ -8,7 +8,7 @@ import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class WorkerAssignmentReadService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseLocalityService) {}
 
   async findById(id: WorkerAssignmentId) {
     const assignment = await this.databaseService.workerAssignment.findUnique({

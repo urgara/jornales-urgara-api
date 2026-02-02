@@ -1,4 +1,4 @@
-import type { LegalEntity as PrismaLegalEntity } from '../../../generated/prisma/client';
+import type { LegalEntity as PrismaLegalEntity } from '../../../generated/prisma-common';
 
 type LegalEntity = PrismaLegalEntity;
 type LegalEntityId = LegalEntity['id'];

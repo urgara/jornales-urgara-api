@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../common';
+import { DatabaseCommonService } from '../common';
 import { NotFoundException } from 'src/exceptions/common';
-import type { Prisma } from '../../../generated/prisma/client';
+import type { Prisma } from '../../../generated/prisma-common';
 import type { CompanyId, FindCompaniesQuery } from 'src/types/company';
 
 @Injectable()
 export class CompanyReadService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseCommonService) {}
 
   async findById(id: CompanyId) {
     const company = await this.databaseService.company.findFirst({
