@@ -5,3 +5,5 @@ export * from './work-shift.controller';
 export * from './company.controller';
 export * from './legal-entity.controller';
 export * from './worker.controller';
+export * from './agency.controller';
+export * from './product.controller';

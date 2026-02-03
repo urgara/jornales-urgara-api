@@ -20,6 +20,8 @@ import { CompanyModule } from './company.module';
 import { LegalEntityModule } from './legal-entity.module';
 import { WorkerModule } from './worker.module';
 import { WorkerAssignmentModule } from './worker-assignment.module';
+import { AgencyModule } from './agency.module';
+import { ProductModule } from './product.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { WorkerAssignmentModule } from './worker-assignment.module';
     LegalEntityModule,
     WorkerModule,
     WorkerAssignmentModule,
+    AgencyModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [
