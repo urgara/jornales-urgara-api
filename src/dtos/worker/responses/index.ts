@@ -1,5 +1,4 @@
 export { WorkerResponseDto } from './worker-response.dto';
-export { WorkerWithRelationsResponseDto } from './worker-with-relations-response.dto';
 export { WorkerCreatedResponseDto } from './worker-created-response.dto';
 export { WorkerUpdatedResponseDto } from './worker-updated-response.dto';
 export { WorkerDeletedResponseDto } from './worker-deleted-response.dto';

@@ -5,6 +5,7 @@ import {
   CompanyDeleteService,
   CompanyReadService,
   CompanyUpdateService,
+  CompanyValidationService,
 } from 'src/services/company';
 import { DatabaseService } from 'src/services/common';
 
@@ -16,7 +17,8 @@ import { DatabaseService } from 'src/services/common';
     CompanyDeleteService,
     CompanyReadService,
     CompanyUpdateService,
+    CompanyValidationService,
   ],
-  exports: [CompanyReadService],
+  exports: [CompanyReadService, CompanyValidationService],
 })
 export class CompanyModule {}

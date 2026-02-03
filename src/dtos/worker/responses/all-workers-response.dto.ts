@@ -2,18 +2,18 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { GenericDataResponseDto } from 'src/dtos/common';
 import type { AllWorkersResponse } from 'src/types/worker';
-import { WorkerWithRelationsResponseDto } from './worker-with-relations-response.dto';
+import { WorkerResponseDto } from './worker-response.dto';
 
 export class AllWorkersResponseDto
-  extends GenericDataResponseDto<WorkerWithRelationsResponseDto[]>
+  extends GenericDataResponseDto<WorkerResponseDto[]>
   implements AllWorkersResponse
 {
   @ApiProperty({
-    description: 'Lista de trabajadores con sus relaciones',
-    type: [WorkerWithRelationsResponseDto],
+    description: 'Lista de trabajadores',
+    type: [WorkerResponseDto],
   })
-  @Type(() => WorkerWithRelationsResponseDto)
-  declare data: WorkerWithRelationsResponseDto[];
+  @Type(() => WorkerResponseDto)
+  declare data: WorkerResponseDto[];
 
   @ApiProperty({
     description: 'Información de paginación',

@@ -6,8 +6,11 @@ import {
   WorkerUpdateService,
   WorkerDeleteService,
 } from '../services/worker';
+import { LocalityModule } from './locality.module';
+import { CompanyModule } from './company.module';
 
 @Module({
+  imports: [LocalityModule, CompanyModule],
   controllers: [WorkerController],
   providers: [
     WorkerCreateService,

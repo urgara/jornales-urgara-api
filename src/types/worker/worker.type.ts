@@ -1,8 +1,4 @@
 import type { Worker as PrismaWorker } from '../../../generated/prisma-locality';
-import type {
-  Company as PrismaCompany,
-  Locality as PrismaLocality,
-} from '../../../generated/prisma-common';
 import type { NullToUndefined } from '../common';
 
 type Worker = PrismaWorker;
@@ -61,21 +57,13 @@ interface WorkerDeletedResponse {
 interface WorkerSingleResponse {
   success: boolean;
   message: string;
-  data: SimpleWorkerResponse & {
-    Company: PrismaCompany | null;
-    Locality: PrismaLocality;
-  };
+  data: SimpleWorkerResponse;
 }
 
 interface AllWorkersResponse {
   success: boolean;
   message: string;
-  data: Array<
-    SimpleWorkerResponse & {
-      Company: PrismaCompany | null;
-      Locality: PrismaLocality;
-    }
-  >;
+  data: SimpleWorkerResponse[];
   pagination: {
     page: number;
     limit: number;

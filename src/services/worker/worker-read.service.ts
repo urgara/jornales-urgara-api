@@ -14,10 +14,6 @@ export class WorkerReadService {
         id,
         deletedAt: null,
       },
-      include: {
-        Company: true,
-        Locality: true,
-      },
     });
 
     if (!worker) {
@@ -76,10 +72,6 @@ export class WorkerReadService {
     const [data, total] = await Promise.all([
       this.databaseService.worker.findMany({
         where,
-        include: {
-          Company: true,
-          Locality: true,
-        },
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {

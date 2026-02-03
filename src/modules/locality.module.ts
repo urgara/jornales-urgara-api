@@ -5,6 +5,7 @@ import {
   LocalityReadService,
   LocalityUpdateService,
   LocalityDeleteService,
+  LocalityValidationService,
 } from '../services/locality';
 
 @Module({
@@ -14,6 +15,8 @@ import {
     LocalityReadService,
     LocalityUpdateService,
     LocalityDeleteService,
+    LocalityValidationService,
   ],
+  exports: [LocalityValidationService],
 })
 export class LocalityModule {}
