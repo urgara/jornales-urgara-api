@@ -7,6 +7,7 @@
       "Read(//c/Users/emanu_3o2ausf/Desktop/dynnamo/urgara-jornales-web-app/**)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "includeCoAuthoredBy": false
   }
 }
