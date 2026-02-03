@@ -33,7 +33,6 @@ model Worker {
   surname        String   @db.VarChar(100)
   dni            String   @unique @db.VarChar(10)
   localityId     String   @db.Uuid // Referencia a Locality en prisma-common (sin FK)
-  companyId      String   @db.Uuid // Referencia a Company en prisma-common (sin FK)
   baseHourlyRate Decimal  @db.Decimal(10, 2) // Tarifa base por hora (ej: 1500.00, máximo 99999999.99)
   category       Category
 
