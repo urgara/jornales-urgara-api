@@ -69,12 +69,16 @@ export class LocalityController {
       query.province,
     );
 
-    return plainToInstance(LocalityListResponseDto, {
-      success: true,
-      message: 'Localities retrieved successfully',
-      data: result.data,
-      pagination: result.pagination,
-    });
+    return plainToInstance(
+      LocalityListResponseDto,
+      {
+        success: true,
+        message: 'Localities retrieved successfully',
+        data: result.data,
+        pagination: result.pagination,
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
   @Get('select')
@@ -91,11 +95,15 @@ export class LocalityController {
   async findSelect() {
     const result = await this.localityReadService.select();
 
-    return plainToInstance(LocalitySelectResponseDto, {
-      success: true,
-      message: 'Localities retrieved successfully',
-      data: result,
-    });
+    return plainToInstance(
+      LocalitySelectResponseDto,
+      {
+        success: true,
+        message: 'Localities retrieved successfully',
+        data: result,
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
   @Get(':id')
@@ -112,9 +120,11 @@ export class LocalityController {
     description: 'Locality not found',
   })
   async getLocalityById(@Param('id') id: string) {
-    const locality = await this.localityReadService.findById(parseInt(id));
+    const locality = await this.localityReadService.findById(id);
 
-    return plainToInstance(LocalityResponseDto, locality);
+    return plainToInstance(LocalityResponseDto, locality, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Post()
@@ -129,11 +139,15 @@ export class LocalityController {
   async createLocality(@Body() createLocalityDto: CreateLocalityDto) {
     const locality = await this.localityCreateService.create(createLocalityDto);
 
-    return plainToInstance(LocalityCreatedResponseDto, {
-      success: true,
-      message: 'Locality created successfully',
-      data: locality,
-    });
+    return plainToInstance(
+      LocalityCreatedResponseDto,
+      {
+        success: true,
+        message: 'Locality created successfully',
+        data: locality,
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
   @Patch(':id')
@@ -155,15 +169,19 @@ export class LocalityController {
     @Body() updateLocalityDto: UpdateLocalityDto,
   ) {
     const locality = await this.localityUpdateService.update(
-      parseInt(id),
+      id,
       updateLocalityDto,
     );
 
-    return plainToInstance(LocalityUpdatedResponseDto, {
-      success: true,
-      message: 'Locality updated successfully',
-      data: locality,
-    });
+    return plainToInstance(
+      LocalityUpdatedResponseDto,
+      {
+        success: true,
+        message: 'Locality updated successfully',
+        data: locality,
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
   @Delete(':id')
@@ -180,11 +198,15 @@ export class LocalityController {
     description: 'Locality not found',
   })
   async deleteLocality(@Param('id') id: string) {
-    await this.localityDeleteService.delete(parseInt(id));
+    await this.localityDeleteService.delete(id);
 
-    return plainToInstance(LocalityDeletedResponseDto, {
-      success: true,
-      message: 'Locality deleted successfully',
-    });
+    return plainToInstance(
+      LocalityDeletedResponseDto,
+      {
+        success: true,
+        message: 'Locality deleted successfully',
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 }

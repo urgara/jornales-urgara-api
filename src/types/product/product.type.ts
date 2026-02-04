@@ -3,7 +3,9 @@ import type { Product as PrismaProduct } from '../../../generated/prisma-common'
 type Product = PrismaProduct;
 type ProductId = Product['id'];
 
-type CreateProduct = Omit<Product, 'id'>;
+type CreateProduct = Omit<Product, 'id' | 'isActive'> & {
+  isActive?: boolean;
+};
 type UpdateProduct = Partial<CreateProduct>;
 
 interface FindProductsQuery {

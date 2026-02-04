@@ -186,8 +186,13 @@ export class AuthController {
   async updateAdmin(
     @Param('id') id: string,
     @Body() updateAdminDto: UpdateAdminDto,
+    @Req() request: ReqAdmin,
   ) {
-    const admin = await this.adminUpdateService.update(id, updateAdminDto);
+    const admin = await this.adminUpdateService.update(
+      id,
+      updateAdminDto,
+      request.admin,
+    );
 
     return plainToInstance(AdminUpdatedResponseDto, {
       success: true,

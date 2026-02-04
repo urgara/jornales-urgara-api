@@ -17,11 +17,12 @@ import { CommonModule } from './common.module';
 import { LocalityModule } from './locality.module';
 import { WorkShiftModule } from './work-shift.module';
 import { CompanyModule } from './company.module';
-import { LegalEntityModule } from './legal-entity.module';
+// import { LegalEntityModule } from './legal-entity.module'; // COMENTADO: LegalEntity eliminado del schema
 import { WorkerModule } from './worker.module';
 import { WorkerAssignmentModule } from './worker-assignment.module';
 import { AgencyModule } from './agency.module';
 import { ProductModule } from './product.module';
+import { TerminalModule } from './terminal.module';
 
 @Module({
   imports: [
@@ -35,11 +36,12 @@ import { ProductModule } from './product.module';
     LocalityModule,
     WorkShiftModule,
     CompanyModule,
-    LegalEntityModule,
+    // LegalEntityModule, // COMENTADO: LegalEntity eliminado del schema
     WorkerModule,
     WorkerAssignmentModule,
     AgencyModule,
     ProductModule,
+    TerminalModule,
   ],
   controllers: [AppController],
   providers: [

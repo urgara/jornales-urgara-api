@@ -11,5 +11,5 @@ export default registerAs('api', () => ({
   // ID de localidad de esta instancia de la API (UUID)
   // IMPORTANTE: TODAS las instancias DEBEN tener LOCALITY_ID configurado
   // Los admins ADMIN globales (sin localityId) pueden acceder a cualquier instancia
-  LOCALITY_ID: process.env.LOCALITY_ID || null,
+  LOCALITY_ID: process.env.LOCALITY_ID,
 }));

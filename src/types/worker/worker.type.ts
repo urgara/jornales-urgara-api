@@ -1,12 +1,15 @@
 import type { Worker as PrismaWorker } from '../../../generated/prisma-locality';
+import { Category } from '../../../generated/prisma-locality';
 import type { NullToUndefined } from '../common';
 
 type Worker = PrismaWorker;
 type WorkerId = Worker['id'];
 
 type CreateWorker = NullToUndefined<
-  Omit<Worker, 'id' | 'createdAt' | 'deletedAt'>
->;
+  Omit<Worker, 'id' | 'createdAt' | 'deletedAt' | 'localityId'>
+> & {
+  localityId?: string;
+};
 type UpdateWorker = Partial<CreateWorker>;
 
 interface FindWorkersQuery {
@@ -17,7 +20,6 @@ interface FindWorkersQuery {
   name?: string;
   surname?: string;
   dni?: string;
-  companyId?: string; // UUID
   localityId?: string; // UUID
 }
 
@@ -26,9 +28,9 @@ type WorkerSortBy =
   | 'name'
   | 'surname'
   | 'dni'
-  | 'companyId'
   | 'localityId'
   | 'baseHourlyRate'
+  | 'category'
   | 'createdAt';
 
 // Response type for transformed Worker (Decimal → string)
@@ -98,3 +100,6 @@ export type {
   AllWorkersResponse,
   ListWorkersResponse,
 };
+
+// Re-export enum from Prisma (only place where Prisma is imported directly)
+export { Category };

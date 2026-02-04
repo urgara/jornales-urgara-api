@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { GenericDataResponseDto } from 'src/dtos/common';
 import type { ListAgenciesResponse } from 'src/types/agency';
 
-class AgencySelectDto {
+export class AgencySelectDto {
   @ApiProperty({
     description: 'ID de la agencia (UUID)',
     example: '550e8400-e29b-41d4-a716-446655440000',

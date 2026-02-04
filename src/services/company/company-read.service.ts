@@ -14,9 +14,6 @@ export class CompanyReadService {
         id,
         deletedAt: null,
       },
-      include: {
-        LegalEntity: true,
-      },
     });
 
     if (!company) {
@@ -34,7 +31,6 @@ export class CompanyReadService {
       sortOrder = 'asc',
       name,
       cuit,
-      legalEntityId,
     } = query || {};
 
     const where: Prisma.CompanyWhereInput = {
@@ -55,16 +51,9 @@ export class CompanyReadService {
       };
     }
 
-    if (legalEntityId !== undefined) {
-      where.legalEntityId = legalEntityId;
-    }
-
     const [data, total] = await Promise.all([
       this.databaseService.company.findMany({
         where,
-        include: {
-          LegalEntity: true,
-        },
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {

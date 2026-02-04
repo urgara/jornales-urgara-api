@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { GenericDataResponseDto } from 'src/dtos/common';
 import type { AllCompaniesResponse } from 'src/types/company';
-import { CompanyWithLegalEntityResponseDto } from './company-with-legal-entity-response.dto';
+import { CompanyResponseDto } from './company-response.dto';
 
 export class AllCompaniesResponseDto
-  extends GenericDataResponseDto<CompanyWithLegalEntityResponseDto[]>
+  extends GenericDataResponseDto<CompanyResponseDto[]>
   implements AllCompaniesResponse
 {
   @ApiProperty({
-    description: 'Lista de empresas con sus entidades legales',
-    type: [CompanyWithLegalEntityResponseDto],
+    description: 'Lista de empresas',
+    type: [CompanyResponseDto],
   })
-  declare data: CompanyWithLegalEntityResponseDto[];
+  declare data: CompanyResponseDto[];
 
   @ApiProperty({
     description: 'Información de paginación',

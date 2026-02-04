@@ -35,12 +35,13 @@ model Session {
 }
 
 model Locality {
-  id        String    @id  @db.Uuid
-  name      String      @db.VarChar(100) // Nombre de la localidad donde está el puerto
-  province  String      @db.VarChar(100)
-  isCalculateJc Boolean @default(false)
-  createdAt DateTime    @default(now()) @db.Timestamptz()
-  deletedAt DateTime?   @db.Timestamptz()
+  id            String      @id  @db.Uuid
+  name          String      @db.VarChar(100) // Nombre de la localidad donde está el puerto
+  province      String      @db.VarChar(100)
+  databaseName  String      @unique @default("pending") @db.VarChar(100) // Nombre de la base de datos de esta localidad (ej: mardelplata-reports-urgara)
+  isCalculateJc Boolean     @default(false)
+  createdAt     DateTime    @default(now()) @db.Timestamptz()
+  deletedAt     DateTime?   @db.Timestamptz()
 
   Admin Admin[]
   // TODO: Worker[] relation removed - Worker lives in separate locality DB

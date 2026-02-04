@@ -23,7 +23,7 @@ export class AdminCreateService {
     }
 
     const hashedPassword = await this.hashService.hash(password);
-    const adminId = this.uuidService.V4();
+    const adminId = this.uuidService.V6();
 
     const admin = await this.databaseService.admin.create({
       data: {

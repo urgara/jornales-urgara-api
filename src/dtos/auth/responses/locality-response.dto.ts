@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import type { Locality } from 'src/types/locality';
 
+@Exclude()
 export class LocalityResponseDto implements Locality {
   @ApiProperty({
     description: 'Locality ID',
-    example: 1,
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @Expose()
-  id: number;
+  id: string;
 
   @ApiProperty({
     description: 'Locality name',
@@ -23,6 +24,13 @@ export class LocalityResponseDto implements Locality {
   })
   @Expose()
   province: string;
+
+  @ApiProperty({
+    description: 'Calculate JC flag',
+    example: false,
+  })
+  @Expose()
+  isCalculateJc: boolean;
 
   @ApiProperty({
     description: 'Creation date',

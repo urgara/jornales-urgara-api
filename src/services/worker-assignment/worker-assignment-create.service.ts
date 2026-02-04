@@ -12,7 +12,17 @@ export class WorkerAssignmentCreateService {
   ) {}
 
   async create(data: CreateWorkerAssignment) {
-    const { workerId, workShiftId, date, additionalPercent } = data;
+    const {
+      workerId,
+      workShiftId,
+      date,
+      additionalPercent,
+      companyId,
+      localityId,
+      agencyId,
+      terminalId,
+      productId,
+    } = data;
 
     // Verificar que el trabajador existe
     const worker = await this.databaseService.worker.findUnique({
@@ -76,6 +86,11 @@ export class WorkerAssignmentCreateService {
         date: assignmentDate,
         additionalPercent: additionalPercent ?? null,
         totalAmount,
+        companyId,
+        localityId,
+        agencyId,
+        terminalId,
+        productId,
       },
     });
 

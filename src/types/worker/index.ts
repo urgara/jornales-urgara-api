@@ -13,3 +13,6 @@ export type {
   AllWorkersResponse,
   ListWorkersResponse,
 } from './worker.type';
+
+// Re-export enum from worker.type
+export { Category } from './worker.type';

@@ -1,7 +1,4 @@
-import type {
-  Company as PrismaCompany,
-  LegalEntity as PrismaLegalEntity,
-} from '../../../generated/prisma-common';
+import type { Company as PrismaCompany } from '../../../generated/prisma-common';
 import type { NullToUndefined } from '../common';
 
 type Company = PrismaCompany;
@@ -19,7 +16,6 @@ interface FindCompaniesQuery {
   sortOrder?: 'asc' | 'desc';
   name?: string;
   cuit?: string;
-  legalEntityId?: number;
 }
 
 type CompanySortBy = 'id' | 'name' | 'createdAt';
@@ -45,19 +41,13 @@ interface CompanyDeletedResponse {
 interface CompanySingleResponse {
   success: boolean;
   message: string;
-  data: Company & {
-    LegalEntity: PrismaLegalEntity;
-  };
+  data: Company;
 }
 
 interface AllCompaniesResponse {
   success: boolean;
   message: string;
-  data: Array<
-    Company & {
-      LegalEntity: PrismaLegalEntity;
-    }
-  >;
+  data: Company[];
   pagination: {
     page: number;
     limit: number;

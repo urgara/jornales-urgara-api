@@ -8,8 +8,9 @@ const workerSortBy: WorkerSortBy[] = [
   'name',
   'surname',
   'dni',
-  'companyId',
   'localityId',
+  'baseHourlyRate',
+  'category',
   'createdAt',
 ];
 
@@ -61,15 +62,6 @@ export class WorkersQueryDto
   @IsOptional()
   @IsString()
   dni?: string;
-
-  @ApiPropertyOptional({
-    description: 'Filtrar por ID de empresa (UUID)',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  companyId?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por ID de localidad (UUID)',

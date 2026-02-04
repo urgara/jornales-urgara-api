@@ -25,15 +25,13 @@ export class WorkerUpdateService {
         ...(data.name !== undefined && { name: data.name }),
         ...(data.surname !== undefined && { surname: data.surname }),
         ...(data.dni !== undefined && { dni: data.dni }),
-        ...(data.companyId !== undefined && {
-          companyId: data.companyId ?? null,
-        }),
         ...(data.localityId !== undefined && {
           localityId: data.localityId,
         }),
         ...(data.baseHourlyRate !== undefined && {
           baseHourlyRate: data.baseHourlyRate,
         }),
+        ...(data.category !== undefined && { category: data.category }),
       },
     });
   }

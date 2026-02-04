@@ -51,4 +51,44 @@ export class CreateWorkerAssignmentDto implements CreateWorkerAssignment {
   @IsOptional()
   @IsDecimalNumber()
   additionalPercent?: DecimalNumber;
+
+  @ApiProperty({
+    description: 'ID de la empresa',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsNotEmpty()
+  @IsUUID()
+  companyId: string;
+
+  @ApiProperty({
+    description: 'ID de la localidad',
+    example: '550e8400-e29b-41d4-a716-446655440002',
+  })
+  @IsNotEmpty()
+  @IsUUID()
+  localityId: string;
+
+  @ApiProperty({
+    description: 'ID de la agencia',
+    example: '550e8400-e29b-41d4-a716-446655440003',
+  })
+  @IsNotEmpty()
+  @IsUUID()
+  agencyId: string;
+
+  @ApiProperty({
+    description: 'ID de la terminal',
+    example: '550e8400-e29b-41d4-a716-446655440004',
+  })
+  @IsNotEmpty()
+  @IsUUID()
+  terminalId: string;
+
+  @ApiProperty({
+    description: 'ID del producto',
+    example: '550e8400-e29b-41d4-a716-446655440005',
+  })
+  @IsNotEmpty()
+  @IsUUID()
+  productId: string;
 }

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { GenericDataResponseDto } from 'src/dtos/common';
 import type { ListProductsResponse } from 'src/types/product';
 
-class ProductSelectDto {
+export class ProductSelectDto {
   @ApiProperty({
     description: 'ID del producto (UUID)',
     example: '550e8400-e29b-41d4-a716-446655440000',

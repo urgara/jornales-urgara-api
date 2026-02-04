@@ -1,7 +1,8 @@
 import type { Locality as PrismaLocality } from '../../../generated/prisma-common';
 import type { PaginationRequest, Sorting } from '../common';
 
-type Locality = PrismaLocality;
+// Exclude databaseName from public API - it's internal only
+type Locality = Omit<PrismaLocality, 'databaseName'>;
 type LocalityId = Locality['id'];
 
 type CreateLocality = Omit<Locality, 'id' | 'createdAt' | 'deletedAt'>;

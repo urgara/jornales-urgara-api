@@ -68,18 +68,12 @@ export class CompanyController {
   })
   async findAllCompanies(@Query() query: CompaniesQueryDto) {
     const result = await this.companyReadService.findAllCompanies(query);
-    return plainToInstance(
-      AllCompaniesResponseDto,
-      {
-        success: true,
-        message: 'Companies retrieved successfully',
-        data: result.data,
-        pagination: result.pagination,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(AllCompaniesResponseDto, {
+      success: true,
+      message: 'Companies retrieved successfully',
+      data: result.data,
+      pagination: result.pagination,
+    });
   }
 
   @Get('select')
@@ -95,17 +89,11 @@ export class CompanyController {
   async findSelect() {
     const result = await this.companyReadService.selectCompanies();
 
-    return plainToInstance(
-      ListCompaniesResponseDto,
-      {
-        success: true,
-        message: 'Companies retrieved successfully',
-        data: result,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ListCompaniesResponseDto, {
+      success: true,
+      message: 'Companies retrieved successfully',
+      data: result,
+    });
   }
 
   @Post()
@@ -119,17 +107,11 @@ export class CompanyController {
   async createCompany(@Body() createCompanyDto: CreateCompanyDto) {
     const company = await this.companyCreateService.create(createCompanyDto);
 
-    return plainToInstance(
-      CompanyCreatedResponseDto,
-      {
-        success: true,
-        message: 'Company created successfully',
-        data: company,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(CompanyCreatedResponseDto, {
+      success: true,
+      message: 'Company created successfully',
+      data: company,
+    });
   }
 
   @Get(':id')
@@ -143,17 +125,11 @@ export class CompanyController {
   async getCompanyById(@Param('id', ParseIntPipe) id: CompanyId) {
     const company = await this.companyReadService.findById(id);
 
-    return plainToInstance(
-      CompanySingleResponseDto,
-      {
-        success: true,
-        message: 'Company retrieved successfully',
-        data: company,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(CompanySingleResponseDto, {
+      success: true,
+      message: 'Company retrieved successfully',
+      data: company,
+    });
   }
 
   @Patch(':id')
@@ -174,17 +150,11 @@ export class CompanyController {
       updateCompanyDto,
     );
 
-    return plainToInstance(
-      CompanyUpdatedResponseDto,
-      {
-        success: true,
-        message: 'Company updated successfully',
-        data: company,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(CompanyUpdatedResponseDto, {
+      success: true,
+      message: 'Company updated successfully',
+      data: company,
+    });
   }
 
   @Delete(':id')
@@ -198,15 +168,9 @@ export class CompanyController {
   async deleteCompany(@Param('id', ParseIntPipe) id: CompanyId) {
     await this.companyDeleteService.delete(id);
 
-    return plainToInstance(
-      CompanyDeletedResponseDto,
-      {
-        success: true,
-        message: 'Company deleted successfully',
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(CompanyDeletedResponseDto, {
+      success: true,
+      message: 'Company deleted successfully',
+    });
   }
 }

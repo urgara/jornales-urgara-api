@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseCommonService } from '../common';
-import type { Locality } from 'src/types/locality';
+import type { Locality, LocalityId } from 'src/types/locality';
 import { Prisma } from '../../../generated/prisma-common';
 import { NotFoundException } from 'src/exceptions/common';
 
@@ -59,7 +59,7 @@ export class LocalityReadService {
     };
   }
 
-  async findById(id: number): Promise<Locality> {
+  async findById(id: LocalityId): Promise<Locality> {
     const locality = await this.databaseService.locality.findFirst({
       where: {
         id,

@@ -24,9 +24,6 @@ export class CompanyUpdateService {
       data: {
         ...(data.name !== undefined && { name: data.name }),
         ...(data.cuit !== undefined && { cuit: data.cuit ?? null }),
-        ...(data.legalEntityId !== undefined && {
-          legalEntityId: data.legalEntityId,
-        }),
       },
     });
   }

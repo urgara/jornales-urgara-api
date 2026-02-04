@@ -32,7 +32,6 @@ export class WorkerReadService {
       name,
       surname,
       dni,
-      companyId,
       localityId,
     } = query || {};
 
@@ -59,10 +58,6 @@ export class WorkerReadService {
         contains: dni,
         mode: 'insensitive',
       };
-    }
-
-    if (companyId !== undefined) {
-      where.companyId = companyId;
     }
 
     if (localityId !== undefined) {

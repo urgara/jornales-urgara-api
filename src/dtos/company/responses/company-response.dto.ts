@@ -1,17 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import type { Company } from 'src/types/company';
 
 export class CompanyResponseDto implements Company {
   @ApiProperty({
     description: 'ID único de la empresa',
-    example: 1,
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  id: number;
+  @Expose()
+  id: string;
 
   @ApiProperty({
     description: 'Nombre de la empresa',
     example: 'Acme Corporation',
   })
+  @Expose()
   name: string;
 
   @ApiProperty({
@@ -19,18 +22,14 @@ export class CompanyResponseDto implements Company {
     example: '20123456789',
     nullable: true,
   })
-  cuit: string | null;
-
-  @ApiProperty({
-    description: 'ID de la entidad legal',
-    example: 1,
-  })
-  legalEntityId: number;
+  @Expose()
+  cuit: string;
 
   @ApiProperty({
     description: 'Fecha de creación',
     example: '2024-01-15T10:30:00Z',
   })
+  @Expose()
   createdAt: Date;
 
   @ApiProperty({
@@ -38,5 +37,6 @@ export class CompanyResponseDto implements Company {
     example: null,
     nullable: true,
   })
-  deletedAt: Date | null;
+  @Expose()
+  deletedAt: Date;
 }

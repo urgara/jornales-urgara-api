@@ -28,7 +28,7 @@ type CreateAdmin = Partial<
   dni: string;
   password: string;
   role: AdminTypeRole;
-  localityId?: number | null;
+  localityId?: string | null;
 };
 
 type UpdateAdmin = Partial<CreateAdmin>;

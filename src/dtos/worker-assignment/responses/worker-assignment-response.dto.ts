@@ -56,6 +56,36 @@ export class WorkerAssignmentResponseDto
   totalAmount: string;
 
   @ApiProperty({
+    description: 'ID de la empresa',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  companyId: string;
+
+  @ApiProperty({
+    description: 'ID de la localidad',
+    example: '550e8400-e29b-41d4-a716-446655440002',
+  })
+  localityId: string;
+
+  @ApiProperty({
+    description: 'ID de la agencia',
+    example: '550e8400-e29b-41d4-a716-446655440003',
+  })
+  agencyId: string;
+
+  @ApiProperty({
+    description: 'ID de la terminal',
+    example: '550e8400-e29b-41d4-a716-446655440004',
+  })
+  terminalId: string;
+
+  @ApiProperty({
+    description: 'ID del producto',
+    example: '550e8400-e29b-41d4-a716-446655440005',
+  })
+  productId: string;
+
+  @ApiProperty({
     description: 'Fecha de creación',
     example: '2024-01-15T10:30:00Z',
   })

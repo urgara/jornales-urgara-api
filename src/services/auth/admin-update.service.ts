@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseCommonService, HashService } from '../common';
-import type { UpdateAdmin, PrismaAdmin } from 'src/types/auth';
+import type { UpdateAdmin, PrismaAdmin, Admin, AdminId } from 'src/types/auth';
+import { AdminRole } from 'src/types/auth';
 import { NotFoundException } from 'src/exceptions/common';
+import { ForbiddenException } from 'src/exceptions/common/auth';
 
 @Injectable()
 export class AdminUpdateService {
@@ -10,13 +12,27 @@ export class AdminUpdateService {
     private readonly hashService: HashService,
   ) {}
 
-  async update(id: string, updateData: UpdateAdmin) {
+  async update(
+    id: string,
+    updateData: UpdateAdmin,
+    requestingAdmin: Pick<Admin, 'role'> & { sessionId: string },
+  ) {
     const existingAdmin = await this.databaseService.admin.findUnique({
       where: { id },
     });
 
     if (!existingAdmin) {
       throw new NotFoundException('Admin not found');
+    }
+
+    // Solo ADMIN puede cambiar localityId
+    if (
+      'localityId' in updateData &&
+      requestingAdmin.role !== AdminRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'Only ADMIN role can change locality assignment',
+      );
     }
 
     const updatePayload: UpdateAdmin = { ...updateData };

@@ -1,5 +1,2 @@
-export type {
-  LegalEntity,
-  LegalEntityId,
-  ListLegalEntitiesResponse,
-} from './legal-entity.type';
+// LegalEntity eliminado del schema - este módulo ya no se usa
+export type {};

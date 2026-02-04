@@ -3,8 +3,8 @@ import {
   IsString,
   IsIn,
   IsBoolean,
-  Transform,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import type { FindProductsQuery, ProductSortBy } from 'src/types/product';
 import { PaginationRequestDto } from 'src/dtos/common';

@@ -9,6 +9,7 @@ import {
   Patch,
   Query,
   Delete,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -33,7 +34,7 @@ import {
 } from 'src/dtos/worker/responses';
 import { AccessLevel } from 'src/decorators/common/auth';
 import { JwtGuard } from 'src/guards/common/auth';
-import { AdminRole } from 'src/types/auth';
+import { AdminRole, type ReqAdmin } from 'src/types/auth';
 import {
   WorkerCreateService,
   WorkerDeleteService,
@@ -115,8 +116,14 @@ export class WorkerController {
     description: 'Worker created successfully',
     type: WorkerCreatedResponseDto,
   })
-  async createWorker(@Body() createWorkerDto: CreateWorkerDto) {
-    const worker = await this.workerCreateService.create(createWorkerDto);
+  async createWorker(
+    @Body() createWorkerDto: CreateWorkerDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const worker = await this.workerCreateService.create(
+      createWorkerDto,
+      request.admin,
+    );
 
     return plainToInstance(
       WorkerCreatedResponseDto,

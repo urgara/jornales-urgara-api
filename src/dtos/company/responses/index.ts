@@ -1,5 +1,4 @@
 export { CompanyResponseDto } from './company-response.dto';
-export { CompanyWithLegalEntityResponseDto } from './company-with-legal-entity-response.dto';
 export { CompanyCreatedResponseDto } from './company-created-response.dto';
 export { CompanyUpdatedResponseDto } from './company-updated-response.dto';
 export { CompanyDeletedResponseDto } from './company-deleted-response.dto';

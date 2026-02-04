@@ -42,7 +42,7 @@ export class LoginService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const sessionId = this.uuidService.V4();
+    const sessionId = this.uuidService.V6();
 
     const session = await this.databaseService.session.create({
       data: {

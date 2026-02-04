@@ -2,12 +2,9 @@ import {
   IsString,
   IsNotEmpty,
   Length,
-  IsInt,
-  IsPositive,
   IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import type { CreateCompany } from 'src/types/company';
 
 export class CreateCompanyDto implements CreateCompany {
@@ -31,13 +28,4 @@ export class CreateCompanyDto implements CreateCompany {
   @IsString()
   @Length(11, 11)
   cuit?: string;
-
-  @ApiProperty({
-    description: 'ID de la entidad legal (razón social)',
-    example: 1,
-  })
-  @IsInt()
-  @IsPositive()
-  @Type(() => Number)
-  legalEntityId: number;
 }

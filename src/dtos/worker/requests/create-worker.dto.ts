@@ -4,14 +4,15 @@ import {
   Length,
   IsUUID,
   IsEnum,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import type { CreateWorker } from 'src/types/worker';
+import { Category } from 'src/types/worker';
 import { DecimalService } from 'src/services/common';
 import type { DecimalNumber } from 'src/types/common';
 import { IsDecimalNumber } from 'src/decorators/common';
-import { Category } from '../../../generated/prisma-locality';
 
 export class CreateWorkerDto implements CreateWorker {
   @ApiProperty({
@@ -45,20 +46,14 @@ export class CreateWorkerDto implements CreateWorker {
   dni: string;
 
   @ApiProperty({
-    description: 'ID de la empresa (UUID)',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  @IsString()
-  @IsUUID()
-  companyId: string;
-
-  @ApiProperty({
-    description: 'ID de la localidad (UUID)',
+    description: 'ID de la localidad (UUID) - Requerido para ADMIN, opcional para LOCAL (usa su propia localidad)',
     example: '550e8400-e29b-41d4-a716-446655440001',
+    required: false,
   })
+  @IsOptional()
   @IsString()
   @IsUUID()
-  localityId: string;
+  localityId?: string;
 
   @ApiProperty({
     description: 'Categoría del trabajador',

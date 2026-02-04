@@ -39,7 +39,7 @@ export class AdminResponseDto implements Admin {
     nullable: true,
   })
   @Expose()
-  localityId: number | null;
+  localityId: string | null;
 
   @ApiProperty({
     description: 'Locality information - included when available',
