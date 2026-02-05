@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BadRequestException } from 'src/exceptions/common';
+import { LocalityIdRequiredException } from 'src/exceptions/common/auth';
 import { AdminRole } from 'src/types/auth';
 import type { Admin } from 'src/types/auth';
 
@@ -17,9 +18,7 @@ export class LocalityResolverService {
     if (admin.role === AdminRole.ADMIN) {
       // ADMIN debe especificar localityId en query params
       if (!queryLocalityId) {
-        throw new BadRequestException(
-          'ADMIN must specify localityId parameter',
-        );
+        throw new LocalityIdRequiredException();
       }
       return queryLocalityId;
     } else {
