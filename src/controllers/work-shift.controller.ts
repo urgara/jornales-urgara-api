@@ -9,6 +9,7 @@ import {
   Patch,
   Delete,
   Param,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,6 +22,7 @@ import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkShiftDto,
   UpdateWorkShiftDto,
+  DeleteWorkShiftDto,
   WorkShiftsQueryDto,
 } from 'src/dtos/work-shift/requests';
 import {
@@ -33,7 +35,7 @@ import {
 } from 'src/dtos/work-shift/responses';
 import { AccessLevel } from 'src/decorators/common/auth';
 import { JwtGuard } from 'src/guards/common/auth';
-import { AdminRole } from 'src/types/auth';
+import { AdminRole, type ReqAdmin } from 'src/types/auth';
 import {
   CreateWorkShiftService,
   DeleteWorkShiftService,
@@ -65,8 +67,11 @@ export class WorkShiftController {
     description: 'Work shifts retrieved successfully',
     type: AllWorkShiftsResponseDto,
   })
-  async findAllWorkShifts(@Query() query: WorkShiftsQueryDto) {
-    const result = await this.readWorkShiftsService.findAllWorkShifts(query);
+  async findAllWorkShifts(@Query() query: WorkShiftsQueryDto, @Req() request: ReqAdmin) {
+    const result = await this.readWorkShiftsService.findAllWorkShifts(
+      request.admin,
+      query,
+    );
     return plainToInstance(
       AllWorkShiftsResponseDto,
       {
@@ -91,8 +96,11 @@ export class WorkShiftController {
     description: 'Work shifts retrieved successfully',
     type: ListWorkShiftsResponseDto,
   })
-  async findSelect() {
-    const result = await this.readWorkShiftsService.selectWorkShifts();
+  async findSelect(@Query() query: WorkShiftsQueryDto, @Req() request: ReqAdmin) {
+    const result = await this.readWorkShiftsService.selectWorkShifts(
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(
       ListWorkShiftsResponseDto,
@@ -115,9 +123,14 @@ export class WorkShiftController {
     description: 'Work shift created successfully',
     type: WorkShiftCreatedResponseDto,
   })
-  async createWorkShift(@Body() createWorkShiftDto: CreateWorkShiftDto) {
-    const workShift =
-      await this.createWorkShiftService.create(createWorkShiftDto);
+  async createWorkShift(
+    @Body() createWorkShiftDto: CreateWorkShiftDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const workShift = await this.createWorkShiftService.create(
+      request.admin,
+      createWorkShiftDto,
+    );
 
     return plainToInstance(
       WorkShiftCreatedResponseDto,
@@ -140,8 +153,12 @@ export class WorkShiftController {
     description: 'Work shift retrieved successfully',
     type: WorkShiftSingleResponseDto,
   })
-  async getWorkShiftById(@Param('id') id: WorkShiftId) {
-    const workShift = await this.readWorkShiftsService.findById(id);
+  async getWorkShiftById(@Param('id') id: WorkShiftId, @Query() query: WorkShiftsQueryDto, @Req() request: ReqAdmin) {
+    const workShift = await this.readWorkShiftsService.findById(
+      id,
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(
       WorkShiftSingleResponseDto,
@@ -168,9 +185,11 @@ export class WorkShiftController {
   async updateWorkShift(
     @Param('id') id: WorkShiftId,
     @Body() updateWorkShiftDto: UpdateWorkShiftDto,
+    @Req() request: ReqAdmin,
   ) {
     const workShift = await this.updateWorkShiftService.update(
       id,
+      request.admin,
       updateWorkShiftDto,
     );
 
@@ -190,13 +209,22 @@ export class WorkShiftController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete work shift by ID' })
   @ApiParam({ name: 'id', description: 'Work shift ID (UUID)' })
+  @ApiBody({ type: DeleteWorkShiftDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Work shift deleted successfully',
     type: WorkShiftDeletedResponseDto,
   })
-  async deleteWorkShift(@Param('id') id: WorkShiftId) {
-    await this.deleteWorkShiftService.delete(id);
+  async deleteWorkShift(
+    @Param('id') id: WorkShiftId,
+    @Body() deleteWorkShiftDto: DeleteWorkShiftDto,
+    @Req() request: ReqAdmin,
+  ) {
+    await this.deleteWorkShiftService.delete(
+      id,
+      request.admin,
+      deleteWorkShiftDto.localityId,
+    );
 
     return plainToInstance(
       WorkShiftDeletedResponseDto,

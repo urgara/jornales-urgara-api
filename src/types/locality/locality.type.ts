@@ -33,6 +33,15 @@ interface LocalityDeletedResponse {
   message: string;
 }
 
+/**
+ * Context interface for multi-tenant operations
+ * Used to specify which tenant database to use for the operation
+ * This is metadata for routing, not part of the actual data model
+ */
+interface LocalityOperationContext {
+  localityId: string;
+}
+
 export type {
   Locality,
   LocalityId,
@@ -43,4 +52,5 @@ export type {
   LocalityCreatedResponse,
   LocalityUpdatedResponse,
   LocalityDeletedResponse,
+  LocalityOperationContext,
 };

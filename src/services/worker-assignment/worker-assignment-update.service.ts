@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService, DecimalService } from '../common';
+import {
+  DatabaseLocalityService,
+  DecimalService,
+  LocalityResolverService,
+} from '../common';
 import type {
   WorkerAssignmentId,
   UpdateWorkerAssignment,
 } from 'src/types/worker-assignment';
+import type { LocalityOperationContext } from 'src/types/locality';
+import type { Admin } from 'src/types/auth';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
@@ -11,12 +17,20 @@ export class WorkerAssignmentUpdateService {
   constructor(
     private readonly databaseService: DatabaseLocalityService,
     private readonly decimalService: DecimalService,
+    private readonly localityResolver: LocalityResolverService,
   ) {}
 
-  async update(id: WorkerAssignmentId, data: UpdateWorkerAssignment) {
+  async update(
+    id: WorkerAssignmentId,
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    data: UpdateWorkerAssignment & Partial<LocalityOperationContext>,
+  ) {
+    // localityId viene del body (data.localityId) - opcional para PATCH
+    const localityId = this.localityResolver.resolve(admin, data.localityId);
+    const db = this.databaseService.getTenantClient(localityId);
     // Verificar que la asignación existe
     const existingAssignment =
-      await this.databaseService.workerAssignment.findUnique({
+      await db.workerAssignment.findUnique({
         where: { id },
       });
 
@@ -28,7 +42,7 @@ export class WorkerAssignmentUpdateService {
 
     // Si se actualiza workerId, verificar que existe
     if (data.workerId !== undefined) {
-      const worker = await this.databaseService.worker.findUnique({
+      const worker = await db.worker.findUnique({
         where: { id: data.workerId, deletedAt: null },
       });
 
@@ -41,7 +55,7 @@ export class WorkerAssignmentUpdateService {
 
     // Si se actualiza workShiftId, verificar que existe
     if (data.workShiftId !== undefined) {
-      const workShift = await this.databaseService.workShift.findUnique({
+      const workShift = await db.workShift.findUnique({
         where: { id: data.workShiftId, deletedAt: null },
       });
 
@@ -78,10 +92,10 @@ export class WorkerAssignmentUpdateService {
           : existingAssignment.additionalPercent;
 
       const [worker, workShift] = await Promise.all([
-        this.databaseService.worker.findUnique({
+        db.worker.findUnique({
           where: { id: finalWorkerId },
         }),
-        this.databaseService.workShift.findUnique({
+        db.workShift.findUnique({
           where: { id: finalWorkShiftId },
         }),
       ]);
@@ -122,7 +136,7 @@ export class WorkerAssignmentUpdateService {
     }
 
     const updatedAssignment =
-      await this.databaseService.workerAssignment.update({
+      await db.workerAssignment.update({
         where: { id },
         data: dataToUpdate,
       });

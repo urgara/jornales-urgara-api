@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkerAssignmentDto,
   UpdateWorkerAssignmentDto,
+  DeleteWorkerAssignmentDto,
   WorkerAssignmentsQueryDto,
 } from 'src/dtos/worker-assignment/requests';
 import {
@@ -30,7 +32,7 @@ import {
 } from 'src/dtos/worker-assignment/responses';
 import { AccessLevel } from 'src/decorators/common/auth';
 import { JwtGuard } from 'src/guards/common/auth';
-import { AdminRole } from 'src/types/auth';
+import { AdminRole, type ReqAdmin } from 'src/types/auth';
 import {
   WorkerAssignmentCreateService,
   WorkerAssignmentReadService,
@@ -60,9 +62,11 @@ export class WorkerAssignmentController {
     description: 'Worker assignments retrieved successfully',
     type: AllWorkerAssignmentsResponseDto,
   })
-  async findAllAssignments(@Query() query: WorkerAssignmentsQueryDto) {
-    const result =
-      await this.workerAssignmentReadService.findAll(query);
+  async findAllAssignments(@Query() query: WorkerAssignmentsQueryDto, @Req() request: ReqAdmin) {
+    const result = await this.workerAssignmentReadService.findAll(
+      request.admin,
+      query,
+    );
 
     return plainToInstance(
       AllWorkerAssignmentsResponseDto,
@@ -78,6 +82,27 @@ export class WorkerAssignmentController {
     );
   }
 
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get total count of worker assignments',
+    description: 'Returns the total number of worker assignments in the specified locality',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Count retrieved successfully',
+  })
+  async getCount(@Query() query: WorkerAssignmentsQueryDto, @Req() request: ReqAdmin) {
+    const total = await this.workerAssignmentReadService.count(
+      request.admin,
+      query.localityId,
+    );
+    return {
+      success: true,
+      message: 'Count retrieved successfully',
+      data: { total },
+    };
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create new worker assignment' })
   @ApiBody({ type: CreateWorkerAssignmentDto })
@@ -88,11 +113,12 @@ export class WorkerAssignmentController {
   })
   async createAssignment(
     @Body() createWorkerAssignmentDto: CreateWorkerAssignmentDto,
+    @Req() request: ReqAdmin,
   ) {
-    const assignment =
-      await this.workerAssignmentCreateService.create(
-        createWorkerAssignmentDto,
-      );
+    const assignment = await this.workerAssignmentCreateService.create(
+      request.admin,
+      createWorkerAssignmentDto,
+    );
 
     return plainToInstance(
       WorkerAssignmentCreatedResponseDto,
@@ -115,8 +141,12 @@ export class WorkerAssignmentController {
     description: 'Worker assignment retrieved successfully',
     type: WorkerAssignmentSingleResponseDto,
   })
-  async getAssignmentById(@Param('id') id: WorkerAssignmentId) {
-    const assignment = await this.workerAssignmentReadService.findById(id);
+  async getAssignmentById(@Param('id') id: WorkerAssignmentId, @Query() query: WorkerAssignmentsQueryDto, @Req() request: ReqAdmin) {
+    const assignment = await this.workerAssignmentReadService.findById(
+      id,
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(
       WorkerAssignmentSingleResponseDto,
@@ -143,12 +173,13 @@ export class WorkerAssignmentController {
   async updateAssignment(
     @Param('id') id: WorkerAssignmentId,
     @Body() updateWorkerAssignmentDto: UpdateWorkerAssignmentDto,
+    @Req() request: ReqAdmin,
   ) {
-    const assignment =
-      await this.workerAssignmentUpdateService.update(
-        id,
-        updateWorkerAssignmentDto,
-      );
+    const assignment = await this.workerAssignmentUpdateService.update(
+      id,
+      request.admin,
+      updateWorkerAssignmentDto,
+    );
 
     return plainToInstance(
       WorkerAssignmentUpdatedResponseDto,

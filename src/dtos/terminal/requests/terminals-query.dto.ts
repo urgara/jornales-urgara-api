@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsEnum, IsInt, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsEnum, IsInt, Min, IsUUID } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type { FindTerminalsQuery, TerminalSortBy } from 'src/types/terminal';
 
@@ -52,4 +52,13 @@ export class TerminalsQueryDto implements FindTerminalsQuery {
   @IsOptional()
   @IsString()
   name?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID de localidad (requerido para ADMIN, ignorado para LOCAL)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  localityId?: string;
 }

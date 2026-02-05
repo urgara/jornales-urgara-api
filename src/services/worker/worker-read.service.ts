@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService } from '../common';
+import { DatabaseLocalityService, LocalityResolverService } from '../common';
 import { NotFoundException } from 'src/exceptions/common';
 import type { Prisma } from '../../../generated/prisma-locality';
 import type { WorkerId, FindWorkersQuery } from 'src/types/worker';
+import type { Admin } from 'src/types/auth';
 
 @Injectable()
 export class WorkerReadService {
-  constructor(private readonly databaseService: DatabaseLocalityService) {}
+  constructor(
+    private readonly databaseService: DatabaseLocalityService,
+    private readonly localityResolver: LocalityResolverService,
+  ) {}
 
-  async findById(id: WorkerId) {
-    const worker = await this.databaseService.worker.findFirst({
+  async findById(
+    id: WorkerId,
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    const worker = await db.worker.findFirst({
       where: {
         id,
         deletedAt: null,
@@ -23,7 +33,11 @@ export class WorkerReadService {
     return worker;
   }
 
-  async findAllWorkers(query?: FindWorkersQuery) {
+  async findAllWorkers(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    query?: FindWorkersQuery,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, query?.localityId);
     const {
       page = 1,
       limit = 10,
@@ -32,7 +46,6 @@ export class WorkerReadService {
       name,
       surname,
       dni,
-      localityId,
     } = query || {};
 
     const where: Prisma.WorkerWhereInput = {
@@ -60,12 +73,12 @@ export class WorkerReadService {
       };
     }
 
-    if (localityId !== undefined) {
-      where.localityId = localityId;
-    }
+    // localityId filter is applied at DB routing level via getTenantClient
+    // No need to filter by localityId in the WHERE clause
 
+    const db = this.databaseService.getTenantClient(localityId);
     const [data, total] = await Promise.all([
-      this.databaseService.worker.findMany({
+      db.worker.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
@@ -73,7 +86,7 @@ export class WorkerReadService {
           [sortBy]: sortOrder,
         },
       }),
-      this.databaseService.worker.count({ where }),
+      db.worker.count({ where }),
     ]);
 
     return {
@@ -87,8 +100,13 @@ export class WorkerReadService {
     };
   }
 
-  async selectWorkers() {
-    return await this.databaseService.worker.findMany({
+  async selectWorkers(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    return await db.worker.findMany({
       where: {
         deletedAt: null,
       },
@@ -100,6 +118,19 @@ export class WorkerReadService {
       },
       orderBy: {
         surname: 'asc',
+      },
+    });
+  }
+
+  async count(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ): Promise<number> {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    return await db.worker.count({
+      where: {
+        deletedAt: null,
       },
     });
   }

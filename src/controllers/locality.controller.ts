@@ -69,16 +69,12 @@ export class LocalityController {
       query.province,
     );
 
-    return plainToInstance(
-      LocalityListResponseDto,
-      {
-        success: true,
-        message: 'Localities retrieved successfully',
-        data: result.data,
-        pagination: result.pagination,
-      },
-      { excludeExtraneousValues: true },
-    );
+    return plainToInstance(LocalityListResponseDto, {
+      success: true,
+      message: 'Localities retrieved successfully',
+      data: result.data,
+      pagination: result.pagination,
+    });
   }
 
   @Get('select')
@@ -95,15 +91,11 @@ export class LocalityController {
   async findSelect() {
     const result = await this.localityReadService.select();
 
-    return plainToInstance(
-      LocalitySelectResponseDto,
-      {
-        success: true,
-        message: 'Localities retrieved successfully',
-        data: result,
-      },
-      { excludeExtraneousValues: true },
-    );
+    return plainToInstance(LocalitySelectResponseDto, {
+      success: true,
+      message: 'Localities retrieved successfully',
+      data: result,
+    });
   }
 
   @Get(':id')
@@ -139,15 +131,11 @@ export class LocalityController {
   async createLocality(@Body() createLocalityDto: CreateLocalityDto) {
     const locality = await this.localityCreateService.create(createLocalityDto);
 
-    return plainToInstance(
-      LocalityCreatedResponseDto,
-      {
-        success: true,
-        message: 'Locality created successfully',
-        data: locality,
-      },
-      { excludeExtraneousValues: true },
-    );
+    return plainToInstance(LocalityCreatedResponseDto, {
+      success: true,
+      message: 'Locality created successfully',
+      data: locality,
+    });
   }
 
   @Patch(':id')
@@ -200,13 +188,9 @@ export class LocalityController {
   async deleteLocality(@Param('id') id: string) {
     await this.localityDeleteService.delete(id);
 
-    return plainToInstance(
-      LocalityDeletedResponseDto,
-      {
-        success: true,
-        message: 'Locality deleted successfully',
-      },
-      { excludeExtraneousValues: true },
-    );
+    return plainToInstance(LocalityDeletedResponseDto, {
+      success: true,
+      message: 'Locality deleted successfully',
+    });
   }
 }

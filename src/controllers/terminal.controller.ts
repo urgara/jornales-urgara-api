@@ -9,6 +9,7 @@ import {
   Patch,
   Query,
   Delete,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,6 +23,7 @@ import {
   CreateTerminalDto,
   UpdateTerminalDto,
   TerminalsQueryDto,
+  DeleteTerminalDto,
 } from 'src/dtos/terminal/requests';
 import {
   AllTerminalsResponseDto,
@@ -32,7 +34,7 @@ import {
   TerminalUpdatedResponseDto,
 } from 'src/dtos/terminal/responses';
 import { AccessLevel } from 'src/decorators/common/auth';
-import { AdminRole } from 'src/types/auth';
+import { AdminRole, type ReqAdmin } from 'src/types/auth';
 import {
   TerminalCreateService,
   TerminalDeleteService,
@@ -63,8 +65,14 @@ export class TerminalController {
     description: 'Terminals retrieved successfully',
     type: AllTerminalsResponseDto,
   })
-  async findAllTerminals(@Query() query: TerminalsQueryDto) {
-    const result = await this.terminalReadService.findAllTerminals(query);
+  async findAllTerminals(
+    @Query() query: TerminalsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const result = await this.terminalReadService.findAllTerminals(
+      request.admin,
+      query,
+    );
     return plainToInstance(AllTerminalsResponseDto, {
       success: true,
       message: 'Terminals retrieved successfully',
@@ -83,8 +91,14 @@ export class TerminalController {
     description: 'Terminals retrieved successfully',
     type: ListTerminalsResponseDto,
   })
-  async findSelect() {
-    const result = await this.terminalReadService.selectTerminals();
+  async findSelect(
+    @Query() query: TerminalsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const result = await this.terminalReadService.selectTerminals(
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(ListTerminalsResponseDto, {
       success: true,
@@ -101,8 +115,14 @@ export class TerminalController {
     description: 'Terminal created successfully',
     type: TerminalCreatedResponseDto,
   })
-  async createTerminal(@Body() createTerminalDto: CreateTerminalDto) {
-    const terminal = await this.terminalCreateService.create(createTerminalDto);
+  async createTerminal(
+    @Body() createTerminalDto: CreateTerminalDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const terminal = await this.terminalCreateService.create(
+      request.admin,
+      createTerminalDto,
+    );
 
     return plainToInstance(TerminalCreatedResponseDto, {
       success: true,
@@ -119,8 +139,16 @@ export class TerminalController {
     description: 'Terminal retrieved successfully',
     type: TerminalSingleResponseDto,
   })
-  async getTerminalById(@Param('id', ParseUUIDPipe) id: TerminalId) {
-    const terminal = await this.terminalReadService.findById(id);
+  async getTerminalById(
+    @Param('id', ParseUUIDPipe) id: TerminalId,
+    @Query() query: TerminalsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const terminal = await this.terminalReadService.findById(
+      id,
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(TerminalSingleResponseDto, {
       success: true,
@@ -141,9 +169,11 @@ export class TerminalController {
   async updateTerminal(
     @Param('id', ParseUUIDPipe) id: TerminalId,
     @Body() updateTerminalDto: UpdateTerminalDto,
+    @Req() request: ReqAdmin,
   ) {
     const terminal = await this.terminalUpdateService.update(
       id,
+      request.admin,
       updateTerminalDto,
     );
 
@@ -157,13 +187,22 @@ export class TerminalController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete terminal by ID' })
   @ApiParam({ name: 'id', description: 'Terminal ID (UUID)' })
+  @ApiBody({ type: DeleteTerminalDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Terminal deleted successfully',
     type: TerminalDeletedResponseDto,
   })
-  async deleteTerminal(@Param('id', ParseUUIDPipe) id: TerminalId) {
-    await this.terminalDeleteService.delete(id);
+  async deleteTerminal(
+    @Param('id', ParseUUIDPipe) id: TerminalId,
+    @Body() deleteTerminalDto: DeleteTerminalDto,
+    @Req() request: ReqAdmin,
+  ) {
+    await this.terminalDeleteService.delete(
+      id,
+      request.admin,
+      deleteTerminalDto.localityId,
+    );
 
     return plainToInstance(TerminalDeletedResponseDto, {
       success: true,

@@ -5,18 +5,18 @@ import {
   MaxLength,
   IsArray,
   IsEnum,
-  IsOptional,
   Matches,
   ValidateIf,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import type { CreateWorkShift } from 'src/types/work-shift';
+import type { LocalityOperationContext } from 'src/types/locality';
 import { DayOfWeek } from 'src/types/work-shift';
 import type { DecimalNumber } from 'src/types/common';
 import { DecimalService } from 'src/services/common';
 import { IsDecimalNumber } from 'src/decorators/common';
 
-export class CreateWorkShiftDto implements CreateWorkShift {
+export class CreateWorkShiftDto implements CreateWorkShift, LocalityOperationContext {
   @ApiProperty({
     description:
       'Días aplicables al turno. Si está vacío, debe proporcionar description',
@@ -78,4 +78,12 @@ export class CreateWorkShiftDto implements CreateWorkShift {
   @IsNotEmpty()
   @IsDecimalNumber()
   coefficient: DecimalNumber;
+
+  @ApiProperty({
+    description: 'ID de la localidad (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsString()
+  @IsNotEmpty()
+  localityId: string;
 }

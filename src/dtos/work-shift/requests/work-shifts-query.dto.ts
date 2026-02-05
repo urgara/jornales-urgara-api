@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsDate, IsIn, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsDate, IsIn, MaxLength, IsUUID } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type {
@@ -61,4 +61,13 @@ export class WorkShiftsQueryDto
   @Type(() => Date)
   @IsDate()
   deletedAt?: Date;
+
+  @ApiPropertyOptional({
+    description: 'ID de localidad (requerido para ADMIN, ignorado para LOCAL)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  localityId?: string;
 }

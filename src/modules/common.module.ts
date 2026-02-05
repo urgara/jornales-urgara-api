@@ -4,15 +4,14 @@ import {
   UuidService,
   PdfService,
   HashService,
-  DatabaseService,
   DatabaseCommonService,
   DatabaseLocalityService,
   DateService,
+  LocalityResolverService,
 } from '../services/common';
 import { JwtService } from '@nestjs/jwt';
 
 const global = [
-  DatabaseService,
   DatabaseCommonService,
   DatabaseLocalityService,
   UuidService,
@@ -21,6 +20,7 @@ const global = [
   HashService,
   JwtService,
   DateService,
+  LocalityResolverService,
 ];
 @Global()
 @Module({

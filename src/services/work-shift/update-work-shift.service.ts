@@ -1,18 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService } from '../common';
-import type {
-  WorkShiftId,
-  UpdateWorkShift,
-} from 'src/types/work-shift';
+import { DatabaseLocalityService, LocalityResolverService } from '../common';
+import type { WorkShiftId, UpdateWorkShift } from 'src/types/work-shift';
+import type { LocalityOperationContext } from 'src/types/locality';
+import type { Admin } from 'src/types/auth';
 import { NotFoundException, BadRequestException } from 'src/exceptions/common';
 
 @Injectable()
 export class UpdateWorkShiftService {
-  constructor(private readonly databaseService: DatabaseLocalityService) {}
+  constructor(
+    private readonly databaseService: DatabaseLocalityService,
+    private readonly localityResolver: LocalityResolverService,
+  ) {}
 
-  async update(id: WorkShiftId, updateData: UpdateWorkShift) {
+  async update(
+    id: WorkShiftId,
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    data: UpdateWorkShift & Partial<LocalityOperationContext>,
+  ) {
+    // localityId viene del body (data.localityId) - opcional para PATCH
+    const localityId = this.localityResolver.resolve(admin, data.localityId);
+    const db = this.databaseService.getTenantClient(localityId);
     // Verificar si el work shift existe
-    const existingWorkShift = await this.databaseService.workShift.findUnique({
+    const existingWorkShift = await db.workShift.findUnique({
       where: { id, deletedAt: null },
     });
 
@@ -35,23 +44,23 @@ export class UpdateWorkShiftService {
       coefficient?: UpdateWorkShift['coefficient'];
     } = {};
 
-    if (updateData.days !== undefined) {
-      dataToUpdate.days = updateData.days;
+    if (data.days !== undefined) {
+      dataToUpdate.days = data.days;
     }
 
-    if (updateData.startTime) {
-      dataToUpdate.startTime = new Date(`1970-01-01T${updateData.startTime}:00Z`);
+    if (data.startTime) {
+      dataToUpdate.startTime = new Date(`1970-01-01T${data.startTime}:00Z`);
     }
 
-    if (updateData.endTime) {
-      dataToUpdate.endTime = new Date(`1970-01-01T${updateData.endTime}:00Z`);
+    if (data.endTime) {
+      dataToUpdate.endTime = new Date(`1970-01-01T${data.endTime}:00Z`);
     }
 
     /**
      * Recalcular durationMinutes si se actualizó startTime o endTime
      * Usar valores actualizados o existentes para el cálculo
      */
-    if (updateData.startTime || updateData.endTime) {
+    if (data.startTime || data.endTime) {
       const finalStartTime = dataToUpdate.startTime || existingWorkShift.startTime;
       const finalEndTime = dataToUpdate.endTime || existingWorkShift.endTime;
 
@@ -69,16 +78,16 @@ export class UpdateWorkShiftService {
       dataToUpdate.durationMinutes = Math.round(durationMinutes);
     }
 
-    if (updateData.description !== undefined) {
-      dataToUpdate.description = updateData.description;
+    if (data.description !== undefined) {
+      dataToUpdate.description = data.description;
     }
 
-    if (updateData.coefficient !== undefined) {
-      dataToUpdate.coefficient = updateData.coefficient;
+    if (data.coefficient !== undefined) {
+      dataToUpdate.coefficient = data.coefficient;
     }
 
     // Actualizar el work shift
-    const updatedWorkShift = await this.databaseService.workShift.update({
+    const updatedWorkShift = await db.workShift.update({
       where: { id },
       data: dataToUpdate,
     });

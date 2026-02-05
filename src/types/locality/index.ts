@@ -8,4 +8,5 @@ export type {
   LocalityCreatedResponse,
   LocalityUpdatedResponse,
   LocalityDeletedResponse,
+  LocalityOperationContext,
 } from './locality.type';

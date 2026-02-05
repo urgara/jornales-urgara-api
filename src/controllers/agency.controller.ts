@@ -105,6 +105,24 @@ export class AgencyController {
     );
   }
 
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get total count of active agencies',
+    description: 'Returns the total number of active agencies',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Count retrieved successfully',
+  })
+  async getCount() {
+    const total = await this.agencyReadService.count();
+    return {
+      success: true,
+      message: 'Count retrieved successfully',
+      data: { total },
+    };
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create new agency' })
   @ApiBody({ type: CreateAgencyDto })

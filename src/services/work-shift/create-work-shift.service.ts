@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService, UuidService } from '../common';
+import {
+  DatabaseLocalityService,
+  UuidService,
+  LocalityResolverService,
+} from '../common';
 import type { CreateWorkShift } from 'src/types/work-shift';
+import type { LocalityOperationContext } from 'src/types/locality';
+import type { Admin } from 'src/types/auth';
 import { BadRequestException } from 'src/exceptions/common';
 
 @Injectable()
@@ -8,11 +14,16 @@ export class CreateWorkShiftService {
   constructor(
     private readonly databaseService: DatabaseLocalityService,
     private readonly uuidService: UuidService,
+    private readonly localityResolver: LocalityResolverService,
   ) {}
 
-  async create(workShiftData: CreateWorkShift) {
-    const { days, startTime, endTime, description, coefficient } =
-      workShiftData;
+  async create(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    data: CreateWorkShift & LocalityOperationContext,
+  ) {
+    // localityId viene del body (data.localityId)
+    const localityId = this.localityResolver.resolve(admin, data.localityId);
+    const { days, startTime, endTime, description, coefficient } = data;
 
     const workShiftId = this.uuidService.V6();
 
@@ -40,7 +51,8 @@ export class CreateWorkShiftService {
       );
     }
 
-    const workShift = await this.databaseService.workShift.create({
+    const db = this.databaseService.getTenantClient(localityId);
+    const workShift = await db.workShift.create({
       data: {
         id: workShiftId,
         days,

@@ -19,7 +19,7 @@ type WorkerAssignmentId = WorkerAssignment['id'];
 
 type CreateWorkerAssignment = Omit<
   WorkerAssignment,
-  'id' | 'createdAt' | 'totalAmount' | 'date' | 'additionalPercent'
+  'id' | 'createdAt' | 'localityId' | 'totalAmount' | 'date' | 'additionalPercent'
 > & {
   date: string; // YYYY-MM-DD format
   additionalPercent?: DecimalNumber;
@@ -41,6 +41,7 @@ interface FindWorkerAssignmentQuery
   workShiftId?: string;
   dateFrom?: string; // YYYY-MM-DD
   dateTo?: string; // YYYY-MM-DD
+  localityId?: string;
 }
 
 // Response type for transformed WorkerAssignment (Decimal → string, Date → string)

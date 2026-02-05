@@ -22,6 +22,7 @@ import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkerDto,
   UpdateWorkerDto,
+  DeleteWorkerDto,
   WorkersQueryDto,
 } from 'src/dtos/worker/requests';
 import {
@@ -66,8 +67,14 @@ export class WorkerController {
     description: 'Workers retrieved successfully',
     type: AllWorkersResponseDto,
   })
-  async findAllWorkers(@Query() query: WorkersQueryDto) {
-    const result = await this.workerReadService.findAllWorkers(query);
+  async findAllWorkers(
+    @Query() query: WorkersQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const result = await this.workerReadService.findAllWorkers(
+      request.admin,
+      query,
+    );
     return plainToInstance(
       AllWorkersResponseDto,
       {
@@ -92,8 +99,11 @@ export class WorkerController {
     description: 'Workers retrieved successfully',
     type: ListWorkersResponseDto,
   })
-  async findSelect() {
-    const result = await this.workerReadService.selectWorkers();
+  async findSelect(@Query() query: WorkersQueryDto, @Req() request: ReqAdmin) {
+    const result = await this.workerReadService.selectWorkers(
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(
       ListWorkersResponseDto,
@@ -106,6 +116,28 @@ export class WorkerController {
         enableImplicitConversion: true,
       },
     );
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get total count of active workers',
+    description:
+      'Returns the total number of active workers in the specified locality',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Count retrieved successfully',
+  })
+  async getCount(@Query() query: WorkersQueryDto, @Req() request: ReqAdmin) {
+    const total = await this.workerReadService.count(
+      request.admin,
+      query.localityId,
+    );
+    return {
+      success: true,
+      message: 'Count retrieved successfully',
+      data: { total },
+    };
   }
 
   @Post()
@@ -121,8 +153,8 @@ export class WorkerController {
     @Req() request: ReqAdmin,
   ) {
     const worker = await this.workerCreateService.create(
-      createWorkerDto,
       request.admin,
+      createWorkerDto,
     );
 
     return plainToInstance(
@@ -146,8 +178,16 @@ export class WorkerController {
     description: 'Worker retrieved successfully',
     type: WorkerSingleResponseDto,
   })
-  async getWorkerById(@Param('id') id: WorkerId) {
-    const worker = await this.workerReadService.findById(id);
+  async getWorkerById(
+    @Param('id') id: WorkerId,
+    @Query() query: WorkersQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const worker = await this.workerReadService.findById(
+      id,
+      request.admin,
+      query.localityId,
+    );
 
     return plainToInstance(
       WorkerSingleResponseDto,
@@ -174,8 +214,13 @@ export class WorkerController {
   async updateWorker(
     @Param('id') id: WorkerId,
     @Body() updateWorkerDto: UpdateWorkerDto,
+    @Req() request: ReqAdmin,
   ) {
-    const worker = await this.workerUpdateService.update(id, updateWorkerDto);
+    const worker = await this.workerUpdateService.update(
+      id,
+      request.admin,
+      updateWorkerDto,
+    );
 
     return plainToInstance(
       WorkerUpdatedResponseDto,
@@ -193,13 +238,18 @@ export class WorkerController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete worker by ID' })
   @ApiParam({ name: 'id', description: 'Worker ID (UUID)' })
+  @ApiBody({ type: DeleteWorkerDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Worker deleted successfully',
     type: WorkerDeletedResponseDto,
   })
-  async deleteWorker(@Param('id') id: WorkerId) {
-    await this.workerDeleteService.delete(id);
+  async deleteWorker(
+    @Param('id') id: WorkerId,
+    @Body() deleteWorkerDto: DeleteWorkerDto,
+    @Req() request: ReqAdmin,
+  ) {
+    await this.workerDeleteService.delete(id, request.admin, deleteWorkerDto.localityId);
 
     return plainToInstance(
       WorkerDeletedResponseDto,

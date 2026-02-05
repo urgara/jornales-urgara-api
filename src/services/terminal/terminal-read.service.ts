@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService } from '../common';
+import { DatabaseLocalityService, LocalityResolverService } from '../common';
 import { NotFoundException } from 'src/exceptions/common';
 import type { Prisma } from '../../../generated/prisma-locality';
 import type { TerminalId, FindTerminalsQuery } from 'src/types/terminal';
+import type { Admin } from 'src/types/auth';
 
 @Injectable()
 export class TerminalReadService {
-  constructor(private readonly databaseService: DatabaseLocalityService) {}
+  constructor(
+    private readonly databaseService: DatabaseLocalityService,
+    private readonly localityResolver: LocalityResolverService,
+  ) {}
 
-  async findById(id: TerminalId) {
-    const terminal = await this.databaseService.terminal.findFirst({
+  async findById(
+    id: TerminalId,
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    const terminal = await db.terminal.findFirst({
       where: {
         id,
       },
@@ -22,7 +32,11 @@ export class TerminalReadService {
     return terminal;
   }
 
-  async findAllTerminals(query?: FindTerminalsQuery) {
+  async findAllTerminals(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    query?: FindTerminalsQuery,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, query?.localityId);
     const {
       page = 1,
       limit = 10,
@@ -40,8 +54,9 @@ export class TerminalReadService {
       };
     }
 
+    const db = this.databaseService.getTenantClient(localityId);
     const [data, total] = await Promise.all([
-      this.databaseService.terminal.findMany({
+      db.terminal.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
@@ -49,7 +64,7 @@ export class TerminalReadService {
           [sortBy]: sortOrder,
         },
       }),
-      this.databaseService.terminal.count({ where }),
+      db.terminal.count({ where }),
     ]);
 
     return {
@@ -63,8 +78,13 @@ export class TerminalReadService {
     };
   }
 
-  async selectTerminals() {
-    return await this.databaseService.terminal.findMany({
+  async selectTerminals(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    return await db.terminal.findMany({
       select: {
         id: true,
         name: true,

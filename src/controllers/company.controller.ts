@@ -96,6 +96,24 @@ export class CompanyController {
     });
   }
 
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get total count of active companies',
+    description: 'Returns the total number of active companies',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Count retrieved successfully',
+  })
+  async getCount() {
+    const total = await this.companyReadService.count();
+    return {
+      success: true,
+      message: 'Count retrieved successfully',
+      data: { total },
+    };
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create new company' })
   @ApiBody({ type: CreateCompanyDto })

@@ -88,4 +88,12 @@ export class CompanyReadService {
       },
     });
   }
+
+  async count(): Promise<number> {
+    return await this.databaseService.company.count({
+      where: {
+        deletedAt: null,
+      },
+    });
+  }
 }

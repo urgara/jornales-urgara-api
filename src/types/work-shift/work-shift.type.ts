@@ -16,6 +16,7 @@ type CreateWorkShift = Omit<
   | 'id'
   | 'createdAt'
   | 'deletedAt'
+  | 'localityId'
   | 'startTime'
   | 'endTime'
   | 'description'
@@ -36,6 +37,7 @@ interface FindWorkShiftQuery
   extends Sorting<WorkShiftSortBy>,
     PaginationRequest {
   description?: string;
+  localityId?: string;
 }
 
 // Response type for transformed WorkShift (Decimal → string, Date → string)

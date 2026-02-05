@@ -7,12 +7,10 @@ import {
   CompanyUpdateService,
   CompanyValidationService,
 } from 'src/services/company';
-import { DatabaseService } from 'src/services/common';
 
 @Module({
   controllers: [CompanyController],
   providers: [
-    DatabaseService,
     CompanyCreateService,
     CompanyDeleteService,
     CompanyReadService,

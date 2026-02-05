@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService, UuidService, DecimalService } from '../common';
+import {
+  DatabaseLocalityService,
+  UuidService,
+  DecimalService,
+  LocalityResolverService,
+} from '../common';
 import type { CreateWorkerAssignment } from 'src/types/worker-assignment';
+import type { LocalityOperationContext } from 'src/types/locality';
+import type { Admin } from 'src/types/auth';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
@@ -9,23 +16,30 @@ export class WorkerAssignmentCreateService {
     private readonly databaseService: DatabaseLocalityService,
     private readonly uuidService: UuidService,
     private readonly decimalService: DecimalService,
+    private readonly localityResolver: LocalityResolverService,
   ) {}
 
-  async create(data: CreateWorkerAssignment) {
+  async create(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    data: CreateWorkerAssignment & LocalityOperationContext,
+  ) {
+    // localityId viene del body (data.localityId)
+    const localityId = this.localityResolver.resolve(admin, data.localityId);
     const {
       workerId,
       workShiftId,
       date,
       additionalPercent,
       companyId,
-      localityId,
       agencyId,
       terminalId,
       productId,
     } = data;
 
+    const db = this.databaseService.getTenantClient(localityId);
+
     // Verificar que el trabajador existe
-    const worker = await this.databaseService.worker.findUnique({
+    const worker = await db.worker.findUnique({
       where: { id: workerId, deletedAt: null },
     });
 
@@ -34,7 +48,7 @@ export class WorkerAssignmentCreateService {
     }
 
     // Verificar que el turno existe
-    const workShift = await this.databaseService.workShift.findUnique({
+    const workShift = await db.workShift.findUnique({
       where: { id: workShiftId, deletedAt: null },
     });
 
@@ -78,7 +92,7 @@ export class WorkerAssignmentCreateService {
     // Convertir fecha string a Date
     const assignmentDate = new Date(date);
 
-    const assignment = await this.databaseService.workerAssignment.create({
+    const assignment = await db.workerAssignment.create({
       data: {
         id: this.uuidService.V6(),
         workerId,

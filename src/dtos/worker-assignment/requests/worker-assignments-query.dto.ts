@@ -1,5 +1,5 @@
 import { IsOptional, IsString, IsUUID, Matches, IsEnum, IsInt, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type {
   FindWorkerAssignmentQuery,
@@ -94,4 +94,13 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
     message: 'dateTo must be in format YYYY-MM-DD',
   })
   dateTo?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID de localidad (requerido para ADMIN, ignorado para LOCAL)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  localityId?: string;
 }

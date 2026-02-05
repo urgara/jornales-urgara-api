@@ -7,9 +7,7 @@ type WorkerId = Worker['id'];
 
 type CreateWorker = NullToUndefined<
   Omit<Worker, 'id' | 'createdAt' | 'deletedAt' | 'localityId'>
-> & {
-  localityId?: string;
-};
+>;
 type UpdateWorker = Partial<CreateWorker>;
 
 interface FindWorkersQuery {

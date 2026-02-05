@@ -80,4 +80,12 @@ export class AgencyReadService {
       },
     });
   }
+
+  async count(): Promise<number> {
+    return await this.databaseService.agency.count({
+      where: {
+        deletedAt: null,
+      },
+    });
+  }
 }

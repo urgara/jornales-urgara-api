@@ -1,17 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService } from '../common';
+import { DatabaseLocalityService, LocalityResolverService } from '../common';
 import type {
   WorkerAssignmentId,
   FindWorkerAssignmentQuery,
 } from 'src/types/worker-assignment';
+import type { Admin } from 'src/types/auth';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class WorkerAssignmentReadService {
-  constructor(private readonly databaseService: DatabaseLocalityService) {}
+  constructor(
+    private readonly databaseService: DatabaseLocalityService,
+    private readonly localityResolver: LocalityResolverService,
+  ) {}
 
-  async findById(id: WorkerAssignmentId) {
-    const assignment = await this.databaseService.workerAssignment.findUnique({
+  async findById(
+    id: WorkerAssignmentId,
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    const assignment = await db.workerAssignment.findUnique({
       where: { id },
       include: {
         Worker: true,
@@ -26,7 +36,11 @@ export class WorkerAssignmentReadService {
     return assignment;
   }
 
-  async findAll(query: FindWorkerAssignmentQuery) {
+  async findAll(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    query: FindWorkerAssignmentQuery,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, query?.localityId);
     const {
       page = 1,
       limit = 10,
@@ -60,14 +74,15 @@ export class WorkerAssignmentReadService {
       }
     }
 
+    const db = this.databaseService.getTenantClient(localityId);
     const [assignments, total] = await Promise.all([
-      this.databaseService.workerAssignment.findMany({
+      db.workerAssignment.findMany({
         where,
         skip,
         take: limit,
         orderBy: { [sortBy]: sortOrder },
       }),
-      this.databaseService.workerAssignment.count({ where }),
+      db.workerAssignment.count({ where }),
     ]);
 
     return {
@@ -79,5 +94,14 @@ export class WorkerAssignmentReadService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async count(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ): Promise<number> {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    return await db.workerAssignment.count();
   }
 }

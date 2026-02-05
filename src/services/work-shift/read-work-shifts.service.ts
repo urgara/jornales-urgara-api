@@ -1,14 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService } from '../common';
+import { DatabaseLocalityService, LocalityResolverService } from '../common';
 import type { FindWorkShiftQuery, WorkShiftId } from 'src/types/work-shift';
+import type { Admin } from 'src/types/auth';
 import { Prisma } from '../../../generated/prisma-locality';
 import { NotFoundException } from 'src/exceptions/common';
 
 @Injectable()
 export class ReadWorkShiftsService {
-  constructor(private readonly databaseService: DatabaseLocalityService) {}
+  constructor(
+    private readonly databaseService: DatabaseLocalityService,
+    private readonly localityResolver: LocalityResolverService,
+  ) {}
 
-  async findAllWorkShifts(query?: FindWorkShiftQuery) {
+  async findAllWorkShifts(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    query?: FindWorkShiftQuery,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, query?.localityId);
     const {
       page = 1,
       limit = 10,
@@ -34,14 +42,15 @@ export class ReadWorkShiftsService {
       [sortBy]: sortOrder,
     };
 
+    const db = this.databaseService.getTenantClient(localityId);
     const [workShifts, total] = await Promise.all([
-      this.databaseService.workShift.findMany({
+      db.workShift.findMany({
         where,
         skip,
         take: limit,
         orderBy,
       }),
-      this.databaseService.workShift.count({ where }),
+      db.workShift.count({ where }),
     ]);
 
     const totalPages = Math.ceil(total / limit);
@@ -57,8 +66,13 @@ export class ReadWorkShiftsService {
     };
   }
 
-  async selectWorkShifts() {
-    return await this.databaseService.workShift.findMany({
+  async selectWorkShifts(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    return await db.workShift.findMany({
       where: { deletedAt: null },
       orderBy: {
         description: 'asc',
@@ -66,8 +80,14 @@ export class ReadWorkShiftsService {
     });
   }
 
-  async findById(id: WorkShiftId) {
-    const workShift = await this.databaseService.workShift.findUnique({
+  async findById(
+    id: WorkShiftId,
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    queryLocalityId?: string,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, queryLocalityId);
+    const db = this.databaseService.getTenantClient(localityId);
+    const workShift = await db.workShift.findUnique({
       where: { id, deletedAt: null },
     });
 

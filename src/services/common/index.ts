@@ -1,5 +1,4 @@
 export * from './csv.service';
-export * from './database.service';
 export * from './database-common.service';
 export * from './database-locality.service';
 export * from './date.service';
@@ -8,3 +7,4 @@ export * from './hash.service';
 export * from '../auth/jwt-auth.service';
 export * from './pdf.service';
 export * from './uuid.service';
+export * from './locality-resolver.service';

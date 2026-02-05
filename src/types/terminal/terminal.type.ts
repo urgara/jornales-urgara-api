@@ -4,7 +4,7 @@ import type { NullToUndefined } from '../common';
 type Terminal = PrismaTerminal;
 type TerminalId = Terminal['id'];
 
-type CreateTerminal = NullToUndefined<Omit<Terminal, 'id'>>;
+type CreateTerminal = NullToUndefined<Omit<Terminal, 'id' | 'localityId'>>;
 type UpdateTerminal = Partial<CreateTerminal>;
 
 interface FindTerminalsQuery {
@@ -13,6 +13,7 @@ interface FindTerminalsQuery {
   sortBy?: TerminalSortBy;
   sortOrder?: 'asc' | 'desc';
   name?: string;
+  localityId?: string;
 }
 
 type TerminalSortBy = 'id' | 'name';
