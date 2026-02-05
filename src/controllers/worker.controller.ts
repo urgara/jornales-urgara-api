@@ -249,7 +249,11 @@ export class WorkerController {
     @Body() deleteWorkerDto: DeleteWorkerDto,
     @Req() request: ReqAdmin,
   ) {
-    await this.workerDeleteService.delete(id, request.admin, deleteWorkerDto.localityId);
+    await this.workerDeleteService.delete(
+      id,
+      request.admin,
+      deleteWorkerDto.localityId,
+    );
 
     return plainToInstance(
       WorkerDeletedResponseDto,

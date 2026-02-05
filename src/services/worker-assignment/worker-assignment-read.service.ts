@@ -48,6 +48,10 @@ export class WorkerAssignmentReadService {
       sortOrder = 'desc',
       workerId,
       workShiftId,
+      companyId,
+      agencyId,
+      terminalId,
+      productId,
       dateFrom,
       dateTo,
     } = query;
@@ -62,6 +66,22 @@ export class WorkerAssignmentReadService {
 
     if (workShiftId) {
       where.workShiftId = workShiftId;
+    }
+
+    if (companyId) {
+      where.companyId = companyId;
+    }
+
+    if (agencyId) {
+      where.agencyId = agencyId;
+    }
+
+    if (terminalId) {
+      where.terminalId = terminalId;
+    }
+
+    if (productId) {
+      where.productId = productId;
     }
 
     if (dateFrom || dateTo) {

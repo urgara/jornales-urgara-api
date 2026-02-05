@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  Length,
-  IsEnum,
-} from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import type { CreateWorker } from 'src/types/worker';
@@ -57,7 +52,9 @@ export class CreateWorkerDto implements CreateWorker, LocalityOperationContext {
     example: '1500.00',
     type: 'string',
   })
-  @Transform(({ value }) => value !== undefined ? DecimalService.create(value) : undefined)
+  @Transform(({ value }) =>
+    value !== undefined ? DecimalService.create(value) : undefined,
+  )
   @IsDecimalNumber()
   baseHourlyRate: DecimalNumber;
 

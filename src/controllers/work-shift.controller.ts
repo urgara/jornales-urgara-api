@@ -67,7 +67,10 @@ export class WorkShiftController {
     description: 'Work shifts retrieved successfully',
     type: AllWorkShiftsResponseDto,
   })
-  async findAllWorkShifts(@Query() query: WorkShiftsQueryDto, @Req() request: ReqAdmin) {
+  async findAllWorkShifts(
+    @Query() query: WorkShiftsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
     const result = await this.readWorkShiftsService.findAllWorkShifts(
       request.admin,
       query,
@@ -96,7 +99,10 @@ export class WorkShiftController {
     description: 'Work shifts retrieved successfully',
     type: ListWorkShiftsResponseDto,
   })
-  async findSelect(@Query() query: WorkShiftsQueryDto, @Req() request: ReqAdmin) {
+  async findSelect(
+    @Query() query: WorkShiftsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
     const result = await this.readWorkShiftsService.selectWorkShifts(
       request.admin,
       query.localityId,
@@ -153,7 +159,11 @@ export class WorkShiftController {
     description: 'Work shift retrieved successfully',
     type: WorkShiftSingleResponseDto,
   })
-  async getWorkShiftById(@Param('id') id: WorkShiftId, @Query() query: WorkShiftsQueryDto, @Req() request: ReqAdmin) {
+  async getWorkShiftById(
+    @Param('id') id: WorkShiftId,
+    @Query() query: WorkShiftsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
     const workShift = await this.readWorkShiftsService.findById(
       id,
       request.admin,

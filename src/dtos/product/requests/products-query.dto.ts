@@ -1,9 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  IsIn,
-  IsBoolean,
-} from 'class-validator';
+import { IsOptional, IsString, IsIn, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import type { FindProductsQuery, ProductSortBy } from 'src/types/product';

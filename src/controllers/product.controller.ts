@@ -65,18 +65,12 @@ export class ProductController {
   })
   async findAllProducts(@Query() query: ProductsQueryDto) {
     const result = await this.productReadService.findAllProducts(query);
-    return plainToInstance(
-      AllProductsResponseDto,
-      {
-        success: true,
-        message: 'Products retrieved successfully',
-        data: result.data,
-        pagination: result.pagination,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(AllProductsResponseDto, {
+      success: true,
+      message: 'Products retrieved successfully',
+      data: result.data,
+      pagination: result.pagination,
+    });
   }
 
   @Get('select')
@@ -92,17 +86,11 @@ export class ProductController {
   async findSelect() {
     const result = await this.productReadService.selectProducts();
 
-    return plainToInstance(
-      ListProductsResponseDto,
-      {
-        success: true,
-        message: 'Products retrieved successfully',
-        data: result,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ListProductsResponseDto, {
+      success: true,
+      message: 'Products retrieved successfully',
+      data: result,
+    });
   }
 
   @Post()
@@ -116,17 +104,11 @@ export class ProductController {
   async createProduct(@Body() createProductDto: CreateProductDto) {
     const product = await this.productCreateService.create(createProductDto);
 
-    return plainToInstance(
-      ProductCreatedResponseDto,
-      {
-        success: true,
-        message: 'Product created successfully',
-        data: product,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ProductCreatedResponseDto, {
+      success: true,
+      message: 'Product created successfully',
+      data: product,
+    });
   }
 
   @Get(':id')
@@ -140,17 +122,11 @@ export class ProductController {
   async getProductById(@Param('id', ParseUUIDPipe) id: ProductId) {
     const product = await this.productReadService.findById(id);
 
-    return plainToInstance(
-      ProductSingleResponseDto,
-      {
-        success: true,
-        message: 'Product retrieved successfully',
-        data: product,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ProductSingleResponseDto, {
+      success: true,
+      message: 'Product retrieved successfully',
+      data: product,
+    });
   }
 
   @Patch(':id')
@@ -171,17 +147,11 @@ export class ProductController {
       updateProductDto,
     );
 
-    return plainToInstance(
-      ProductUpdatedResponseDto,
-      {
-        success: true,
-        message: 'Product updated successfully',
-        data: product,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ProductUpdatedResponseDto, {
+      success: true,
+      message: 'Product updated successfully',
+      data: product,
+    });
   }
 
   @Delete(':id')
@@ -195,15 +165,9 @@ export class ProductController {
   async deleteProduct(@Param('id', ParseUUIDPipe) id: ProductId) {
     await this.productDeleteService.delete(id);
 
-    return plainToInstance(
-      ProductDeletedResponseDto,
-      {
-        success: true,
-        message: 'Product deleted successfully',
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ProductDeletedResponseDto, {
+      success: true,
+      message: 'Product deleted successfully',
+    });
   }
 }

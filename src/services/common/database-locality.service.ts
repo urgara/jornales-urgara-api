@@ -58,9 +58,7 @@ export class DatabaseLocalityService implements OnModuleInit, OnModuleDestroy {
         `✓ Loaded ${this.tenantConnections.size} tenant database connections`,
       );
     } catch (error) {
-      throw new DatabaseException(
-        `Initialization Tenant DB Error: ${error.message}`,
-      );
+      throw new DatabaseException(`Initialization Tenant DB Error: ${error}`);
     }
   }
 
@@ -76,12 +74,7 @@ export class DatabaseLocalityService implements OnModuleInit, OnModuleDestroy {
     return client;
   }
 
-  async onModuleDestroy() {
-    // Cerrar todas las conexiones al destruir el módulo
-    for (const [localityId, client] of this.tenantConnections.entries()) {
-      await client.$disconnect();
-      console.log(`✓ Disconnected tenant DB: ${localityId}`);
-    }
+  onModuleDestroy() {
     this.tenantConnections.clear();
   }
 }

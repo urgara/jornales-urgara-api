@@ -35,11 +35,11 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
     description: 'Campo por el cual ordenar',
     example: 'date',
     required: false,
-    enum: ['id', 'date', 'totalAmount', 'createdAt'],
+    enum: ['id', 'workerId', 'workShiftId', 'date', 'additionalPercent', 'totalAmount', 'companyId', 'agencyId', 'terminalId', 'productId', 'createdAt'],
   })
   @IsOptional()
   @IsString()
-  @IsEnum(['id', 'date', 'totalAmount', 'createdAt'])
+  @IsEnum(['id', 'workerId', 'workShiftId', 'date', 'additionalPercent', 'totalAmount', 'companyId', 'agencyId', 'terminalId', 'productId', 'createdAt'])
   sortBy?: WorkerAssignmentSortBy;
 
   @ApiProperty({
@@ -94,6 +94,42 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
     message: 'dateTo must be in format YYYY-MM-DD',
   })
   dateTo?: string;
+
+  @ApiProperty({
+    description: 'Filtrar por ID de la empresa',
+    example: '1',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  companyId?: string;
+
+  @ApiProperty({
+    description: 'Filtrar por ID de la agencia',
+    example: '550e8400-e29b-41d4-a716-446655440003',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  agencyId?: string;
+
+  @ApiProperty({
+    description: 'Filtrar por ID de la terminal',
+    example: '550e8400-e29b-41d4-a716-446655440004',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  terminalId?: string;
+
+  @ApiProperty({
+    description: 'Filtrar por ID del producto',
+    example: '550e8400-e29b-41d4-a716-446655440005',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  productId?: string;
 
   @ApiPropertyOptional({
     description: 'ID de localidad (requerido para ADMIN, ignorado para LOCAL)',

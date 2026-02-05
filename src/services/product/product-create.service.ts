@@ -14,7 +14,7 @@ export class ProductCreateService {
       data: {
         id: this.uuidService.V6(),
         name: data.name,
-        isActive: data.isActive ?? true,
+        isActive: true, // Siempre activo al crear
       },
     });
   }

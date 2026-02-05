@@ -30,8 +30,15 @@ type UpdateWorkerAssignment = Partial<CreateWorkerAssignment>;
 
 type WorkerAssignmentSortBy =
   | 'id'
+  | 'workerId'
+  | 'workShiftId'
   | 'date'
+  | 'additionalPercent'
   | 'totalAmount'
+  | 'companyId'
+  | 'agencyId'
+  | 'terminalId'
+  | 'productId'
   | 'createdAt';
 
 interface FindWorkerAssignmentQuery
@@ -39,6 +46,10 @@ interface FindWorkerAssignmentQuery
     PaginationRequest {
   workerId?: string;
   workShiftId?: string;
+  companyId?: string;
+  agencyId?: string;
+  terminalId?: string;
+  productId?: string;
   dateFrom?: string; // YYYY-MM-DD
   dateTo?: string; // YYYY-MM-DD
   localityId?: string;

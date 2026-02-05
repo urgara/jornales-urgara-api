@@ -21,7 +21,6 @@ import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkerAssignmentDto,
   UpdateWorkerAssignmentDto,
-  DeleteWorkerAssignmentDto,
   WorkerAssignmentsQueryDto,
 } from 'src/dtos/worker-assignment/requests';
 import {
@@ -62,7 +61,10 @@ export class WorkerAssignmentController {
     description: 'Worker assignments retrieved successfully',
     type: AllWorkerAssignmentsResponseDto,
   })
-  async findAllAssignments(@Query() query: WorkerAssignmentsQueryDto, @Req() request: ReqAdmin) {
+  async findAllAssignments(
+    @Query() query: WorkerAssignmentsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
     const result = await this.workerAssignmentReadService.findAll(
       request.admin,
       query,
@@ -85,13 +87,17 @@ export class WorkerAssignmentController {
   @Get('count')
   @ApiOperation({
     summary: 'Get total count of worker assignments',
-    description: 'Returns the total number of worker assignments in the specified locality',
+    description:
+      'Returns the total number of worker assignments in the specified locality',
   })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Count retrieved successfully',
   })
-  async getCount(@Query() query: WorkerAssignmentsQueryDto, @Req() request: ReqAdmin) {
+  async getCount(
+    @Query() query: WorkerAssignmentsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
     const total = await this.workerAssignmentReadService.count(
       request.admin,
       query.localityId,
@@ -141,7 +147,11 @@ export class WorkerAssignmentController {
     description: 'Worker assignment retrieved successfully',
     type: WorkerAssignmentSingleResponseDto,
   })
-  async getAssignmentById(@Param('id') id: WorkerAssignmentId, @Query() query: WorkerAssignmentsQueryDto, @Req() request: ReqAdmin) {
+  async getAssignmentById(
+    @Param('id') id: WorkerAssignmentId,
+    @Query() query: WorkerAssignmentsQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
     const assignment = await this.workerAssignmentReadService.findById(
       id,
       request.admin,
@@ -193,5 +203,4 @@ export class WorkerAssignmentController {
       },
     );
   }
-
 }

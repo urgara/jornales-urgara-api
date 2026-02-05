@@ -65,18 +65,12 @@ export class AgencyController {
   })
   async findAllAgencies(@Query() query: AgenciesQueryDto) {
     const result = await this.agencyReadService.findAllAgencies(query);
-    return plainToInstance(
-      AllAgenciesResponseDto,
-      {
-        success: true,
-        message: 'Agencies retrieved successfully',
-        data: result.data,
-        pagination: result.pagination,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(AllAgenciesResponseDto, {
+      success: true,
+      message: 'Agencies retrieved successfully',
+      data: result.data,
+      pagination: result.pagination,
+    });
   }
 
   @Get('select')
@@ -92,17 +86,11 @@ export class AgencyController {
   async findSelect() {
     const result = await this.agencyReadService.selectAgencies();
 
-    return plainToInstance(
-      ListAgenciesResponseDto,
-      {
-        success: true,
-        message: 'Agencies retrieved successfully',
-        data: result,
-      },
-      {
-        enableImplicitConversion: true,
-      },
-    );
+    return plainToInstance(ListAgenciesResponseDto, {
+      success: true,
+      message: 'Agencies retrieved successfully',
+      data: result,
+    });
   }
 
   @Get('count')

@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  Length,
-  IsBoolean,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsNotEmpty, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import type { CreateProduct } from 'src/types/product';
 
@@ -18,14 +12,4 @@ export class CreateProductDto implements CreateProduct {
   @IsNotEmpty()
   @Length(1, 40)
   name: string;
-
-  @ApiProperty({
-    description: 'Indica si el producto está activo',
-    example: true,
-    default: true,
-    required: false,
-  })
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
 }
