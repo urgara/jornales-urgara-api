@@ -26,6 +26,28 @@ model WorkShift {
   WorkerAssignment WorkerAssignment[]
 }
 
+model WorkShiftBaseValue {
+  id String @id @db.Uuid
+  remunerated Decimal @db.Decimal(8, 2)
+  notRemunerated Decimal @db.Decimal(8, 2)
+
+  startDate DateTime @db.Timestamptz()
+  endDate DateTime @db.Timestamptz()
+
+  workShiftCalculatedValues WorkShiftCalculatedValue[]
+}
+
+model WorkShiftCalculatedValue {
+  workShiftBaseValueId String       @db.Uuid
+  coefficient          Decimal      @db.Decimal(5, 2)
+  remunerated          Decimal @db.Decimal(8, 2)
+  notRemunerated       Decimal @db.Decimal(8, 2)
+
+  WorkShiftBaseValue WorkShiftBaseValue @relation(fields: [workShiftBaseValueId], references: [id])
+
+  @@id([coefficient,workShiftBaseValueId])
+}
+
 // Trabajador
 model Worker {
   id             String   @id @db.Uuid

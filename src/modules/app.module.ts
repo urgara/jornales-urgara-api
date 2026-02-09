@@ -23,6 +23,7 @@ import { WorkerAssignmentModule } from './worker-assignment.module';
 import { AgencyModule } from './agency.module';
 import { ProductModule } from './product.module';
 import { TerminalModule } from './terminal.module';
+import { WorkShiftBaseValueModule } from './work-shift-base-value.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { TerminalModule } from './terminal.module';
     AuthModule,
     LocalityModule,
     WorkShiftModule,
+    WorkShiftBaseValueModule,
     CompanyModule,
     // LegalEntityModule, // COMENTADO: LegalEntity eliminado del schema
     WorkerModule,
