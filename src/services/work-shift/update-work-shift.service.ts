@@ -61,7 +61,8 @@ export class UpdateWorkShiftService {
      * Usar valores actualizados o existentes para el cálculo
      */
     if (data.startTime || data.endTime) {
-      const finalStartTime = dataToUpdate.startTime || existingWorkShift.startTime;
+      const finalStartTime =
+        dataToUpdate.startTime || existingWorkShift.startTime;
       const finalEndTime = dataToUpdate.endTime || existingWorkShift.endTime;
 
       // Convertir Date a milisegundos y calcular diferencia en minutos

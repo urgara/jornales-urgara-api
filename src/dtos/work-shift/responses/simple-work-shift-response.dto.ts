@@ -20,7 +20,8 @@ export class SimpleWorkShiftResponseDto implements SimpleWorkShiftResponse {
   days: DayOfWeek[];
 
   @ApiProperty({
-    description: 'Hora de inicio del turno (formato HH:mm). Null para turnos especiales sin horario',
+    description:
+      'Hora de inicio del turno (formato HH:mm). Null para turnos especiales sin horario',
     example: '08:00',
     nullable: true,
   })
@@ -34,7 +35,8 @@ export class SimpleWorkShiftResponseDto implements SimpleWorkShiftResponse {
   startTime?: string | null;
 
   @ApiProperty({
-    description: 'Hora de fin del turno (formato HH:mm). Null para turnos especiales sin horario',
+    description:
+      'Hora de fin del turno (formato HH:mm). Null para turnos especiales sin horario',
     example: '14:00',
     nullable: true,
   })
@@ -48,13 +50,15 @@ export class SimpleWorkShiftResponseDto implements SimpleWorkShiftResponse {
   endTime?: string | null;
 
   @ApiProperty({
-    description: 'Duración del turno en minutos totales (ej: 360 = 6 horas, 510 = 8.5 horas)',
+    description:
+      'Duración del turno en minutos totales (ej: 360 = 6 horas, 510 = 8.5 horas)',
     example: 360,
   })
   durationMinutes: number;
 
   @ApiProperty({
-    description: 'Descripción manual del turno (solo cuando no hay días específicos)',
+    description:
+      'Descripción manual del turno (solo cuando no hay días específicos)',
     example: 'Encargado de carga',
     nullable: true,
   })

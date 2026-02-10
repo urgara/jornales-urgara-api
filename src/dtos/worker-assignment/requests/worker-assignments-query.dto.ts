@@ -1,4 +1,12 @@
-import { IsOptional, IsString, IsUUID, Matches, IsEnum, IsInt, Min } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
+  IsEnum,
+  IsInt,
+  Min,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type {
@@ -35,11 +43,35 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
     description: 'Campo por el cual ordenar',
     example: 'date',
     required: false,
-    enum: ['id', 'workerId', 'workShiftId', 'date', 'additionalPercent', 'totalAmount', 'companyId', 'agencyId', 'terminalId', 'productId', 'createdAt'],
+    enum: [
+      'id',
+      'workerId',
+      'workShiftId',
+      'date',
+      'additionalPercent',
+      'totalAmount',
+      'companyId',
+      'agencyId',
+      'terminalId',
+      'productId',
+      'createdAt',
+    ],
   })
   @IsOptional()
   @IsString()
-  @IsEnum(['id', 'workerId', 'workShiftId', 'date', 'additionalPercent', 'totalAmount', 'companyId', 'agencyId', 'terminalId', 'productId', 'createdAt'])
+  @IsEnum([
+    'id',
+    'workerId',
+    'workShiftId',
+    'date',
+    'additionalPercent',
+    'totalAmount',
+    'companyId',
+    'agencyId',
+    'terminalId',
+    'productId',
+    'createdAt',
+  ])
   sortBy?: WorkerAssignmentSortBy;
 
   @ApiProperty({

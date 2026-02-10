@@ -29,10 +29,9 @@ export class WorkerAssignmentUpdateService {
     const localityId = this.localityResolver.resolve(admin, data.localityId);
     const db = this.databaseService.getTenantClient(localityId);
     // Verificar que la asignación existe
-    const existingAssignment =
-      await db.workerAssignment.findUnique({
-        where: { id },
-      });
+    const existingAssignment = await db.workerAssignment.findUnique({
+      where: { id },
+    });
 
     if (!existingAssignment) {
       throw new NotFoundException('Worker assignment not found');
@@ -135,11 +134,10 @@ export class WorkerAssignmentUpdateService {
       dataToUpdate.totalAmount = totalAmount;
     }
 
-    const updatedAssignment =
-      await db.workerAssignment.update({
-        where: { id },
-        data: dataToUpdate,
-      });
+    const updatedAssignment = await db.workerAssignment.update({
+      where: { id },
+      data: dataToUpdate,
+    });
 
     return updatedAssignment;
   }

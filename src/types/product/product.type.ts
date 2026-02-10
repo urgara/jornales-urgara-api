@@ -3,7 +3,10 @@ import type { Product as PrismaProduct } from '../../../generated/prisma-common'
 type Product = PrismaProduct;
 type ProductId = Product['id'];
 
-type CreateProduct = Omit<Product, 'id' | 'createdAt' | 'deletedAt' | 'isActive'>;
+type CreateProduct = Omit<
+  Product,
+  'id' | 'createdAt' | 'deletedAt' | 'isActive'
+>;
 type UpdateProduct = Partial<CreateProduct> & {
   isActive?: boolean; // Solo se puede cambiar en update
 };

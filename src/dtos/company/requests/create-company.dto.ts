@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  Length,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import type { CreateCompany } from 'src/types/company';
 

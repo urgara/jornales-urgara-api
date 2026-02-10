@@ -19,7 +19,12 @@ type WorkerAssignmentId = WorkerAssignment['id'];
 
 type CreateWorkerAssignment = Omit<
   WorkerAssignment,
-  'id' | 'createdAt' | 'localityId' | 'totalAmount' | 'date' | 'additionalPercent'
+  | 'id'
+  | 'createdAt'
+  | 'localityId'
+  | 'totalAmount'
+  | 'date'
+  | 'additionalPercent'
 > & {
   date: string; // YYYY-MM-DD format
   additionalPercent?: DecimalNumber;

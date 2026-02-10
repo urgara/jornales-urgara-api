@@ -16,7 +16,9 @@ import type { DecimalNumber } from 'src/types/common';
 import { DecimalService } from 'src/services/common';
 import { IsDecimalNumber } from 'src/decorators/common';
 
-export class CreateWorkShiftDto implements CreateWorkShift, LocalityOperationContext {
+export class CreateWorkShiftDto
+  implements CreateWorkShift, LocalityOperationContext
+{
   @ApiProperty({
     description:
       'Días aplicables al turno. Si está vacío, debe proporcionar description',
@@ -74,7 +76,9 @@ export class CreateWorkShiftDto implements CreateWorkShift, LocalityOperationCon
     example: '1.50',
     type: 'string',
   })
-  @Transform(({ value }) => value !== undefined ? DecimalService.create(value) : undefined)
+  @Transform(({ value }) =>
+    value !== undefined ? DecimalService.create(value) : undefined,
+  )
   @IsNotEmpty()
   @IsDecimalNumber()
   coefficient: DecimalNumber;

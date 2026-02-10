@@ -8,7 +8,10 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import type { CreateWorkShiftBaseValue, Category } from 'src/types/work-shift-base-value';
+import type {
+  CreateWorkShiftBaseValue,
+  Category,
+} from 'src/types/work-shift-base-value';
 import type { LocalityOperationContext } from 'src/types/locality';
 import type { DecimalNumber } from 'src/types/common';
 import { DecimalService } from 'src/services/common';

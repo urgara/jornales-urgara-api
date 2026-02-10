@@ -13,7 +13,9 @@ import { DecimalService } from 'src/services/common';
 import type { DecimalNumber } from 'src/types/common';
 import { IsDecimalNumber } from 'src/decorators/common';
 
-export class CreateWorkerAssignmentDto implements CreateWorkerAssignment, LocalityOperationContext {
+export class CreateWorkerAssignmentDto
+  implements CreateWorkerAssignment, LocalityOperationContext
+{
   @ApiProperty({
     description: 'ID del trabajador',
     example: '550e8400-e29b-41d4-a716-446655440000',

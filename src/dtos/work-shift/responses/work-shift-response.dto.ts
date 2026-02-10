@@ -47,7 +47,8 @@ export class WorkShiftResponseDto implements SimpleWorkShiftResponse {
   endTime?: string | null;
 
   @ApiProperty({
-    description: 'Duración del turno en minutos totales (ej: 360 = 6 horas, 510 = 8.5 horas)',
+    description:
+      'Duración del turno en minutos totales (ej: 360 = 6 horas, 510 = 8.5 horas)',
     example: 360,
   })
   durationMinutes: number;

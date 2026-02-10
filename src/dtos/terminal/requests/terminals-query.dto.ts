@@ -1,4 +1,11 @@
-import { IsOptional, IsString, IsEnum, IsInt, Min, IsUUID } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsInt,
+  Min,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type { FindTerminalsQuery, TerminalSortBy } from 'src/types/terminal';

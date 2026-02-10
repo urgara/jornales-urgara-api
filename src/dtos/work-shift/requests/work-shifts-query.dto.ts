@@ -1,17 +1,17 @@
-import { IsOptional, IsString, IsDate, IsIn, MaxLength, IsUUID } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsDate,
+  IsIn,
+  MaxLength,
+  IsUUID,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import type {
-  FindWorkShiftQuery,
-  WorkShiftSortBy,
-} from 'src/types/work-shift';
+import type { FindWorkShiftQuery, WorkShiftSortBy } from 'src/types/work-shift';
 import { PaginationRequestDto } from 'src/dtos/common';
 
-const workShiftSortBy: WorkShiftSortBy[] = [
-  'id',
-  'description',
-  'createdAt',
-];
+const workShiftSortBy: WorkShiftSortBy[] = ['id', 'description', 'createdAt'];
 
 export class WorkShiftsQueryDto
   extends PaginationRequestDto

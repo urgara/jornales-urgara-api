@@ -56,7 +56,8 @@ export class CreateAdminDto implements CreateAdmin {
   password: string;
 
   @ApiProperty({
-    description: 'ID de la localidad (UUID) - null para administradores globales',
+    description:
+      'ID de la localidad (UUID) - null para administradores globales',
     example: '123e4567-e89b-12d3-a456-426614174000',
     nullable: true,
   })
