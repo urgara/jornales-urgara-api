@@ -45,7 +45,7 @@ RUN pnpm install --frozen-lockfile --prod --shamefully-hoist
 
 # Copy built application from builder stage
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/prisma-common ./prisma-common
+COPY --from=builder --chown=nestjs:nodejs /app/prisma-global ./prisma-global
 COPY --from=builder --chown=nestjs:nodejs /app/prisma-locality ./prisma-locality
 COPY --from=builder --chown=nestjs:nodejs /app/generated ./generated
 
