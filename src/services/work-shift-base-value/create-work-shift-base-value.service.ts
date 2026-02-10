@@ -23,8 +23,14 @@ export class CreateWorkShiftBaseValueService {
     data: CreateWorkShiftBaseValue & LocalityOperationContext,
   ) {
     const localityId = this.localityResolver.resolve(admin, data.localityId);
-    const { remunerated, notRemunerated, startDate, endDate, category, coefficients } =
-      data;
+    const {
+      remunerated,
+      notRemunerated,
+      startDate,
+      endDate,
+      category,
+      coefficients,
+    } = data;
 
     const id = this.uuidService.V6();
     const db = this.databaseService.getTenantClient(localityId);
@@ -34,8 +40,8 @@ export class CreateWorkShiftBaseValueService {
         id,
         remunerated,
         notRemunerated,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        startDate: new Date(new Date(startDate).setUTCHours(3, 0, 0, 0)),
+        endDate: new Date(new Date(endDate).setUTCHours(2, 59, 59, 999)),
         category,
         workShiftCalculatedValues: {
           create: coefficients.map((coefficient) => ({
