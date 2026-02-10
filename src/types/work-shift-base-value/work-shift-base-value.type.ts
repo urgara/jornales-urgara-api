@@ -78,6 +78,18 @@ interface AllWorkShiftBaseValuesResponse {
   };
 }
 
+interface FindWorkShiftBaseValueSelectQuery {
+  date: string;
+  category: Category;
+  localityId?: string;
+}
+
+interface WorkShiftBaseValueSelectResponse {
+  success: boolean;
+  message: string;
+  data: SimpleWorkShiftBaseValueResponse[];
+}
+
 export type {
   WorkShiftBaseValue,
   WorkShiftBaseValueId,
@@ -92,4 +104,6 @@ export type {
   WorkShiftBaseValueCreatedResponse,
   WorkShiftBaseValueSingleResponse,
   AllWorkShiftBaseValuesResponse,
+  FindWorkShiftBaseValueSelectQuery,
+  WorkShiftBaseValueSelectResponse,
 };

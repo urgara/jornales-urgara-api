@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseLocalityService, LocalityResolverService } from '../common';
 import type {
   FindWorkShiftBaseValueQuery,
+  FindWorkShiftBaseValueSelectQuery,
   WorkShiftBaseValueId,
 } from 'src/types/work-shift-base-value';
 import type { Admin } from 'src/types/auth';
@@ -62,6 +63,26 @@ export class ReadWorkShiftBaseValueService {
         totalPages,
       },
     };
+  }
+
+  async findForSelect(
+    admin: Pick<Admin, 'role' | 'localityId'>,
+    query: FindWorkShiftBaseValueSelectQuery,
+  ) {
+    const localityId = this.localityResolver.resolve(admin, query.localityId);
+    const date = new Date(query.date);
+
+    const db = this.databaseService.getTenantClient(localityId);
+    const baseValues = await db.workShiftBaseValue.findMany({
+      where: {
+        category: query.category,
+        startDate: { lte: date },
+        endDate: { gte: date },
+      },
+      include: { workShiftCalculatedValues: true },
+    });
+
+    return baseValues;
   }
 
   async findById(

@@ -20,10 +20,12 @@ import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkShiftBaseValueDto,
   WorkShiftBaseValuesQueryDto,
+  WorkShiftBaseValueSelectQueryDto,
 } from 'src/dtos/work-shift-base-value/requests';
 import {
   AllWorkShiftBaseValuesResponseDto,
   WorkShiftBaseValueCreatedResponseDto,
+  WorkShiftBaseValueSelectResponseDto,
   WorkShiftBaseValueSingleResponseDto,
 } from 'src/dtos/work-shift-base-value/responses';
 import { AccessLevel } from 'src/decorators/common/auth';
@@ -73,6 +75,37 @@ export class WorkShiftBaseValueController {
     );
   }
 
+  @Get('select')
+  @ApiOperation({
+    summary: 'Get work shift base values for select',
+    description:
+      'Retrieves work shift base values where the given date falls within startDate-endDate range, filtered by category',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Work shift base values for select retrieved successfully',
+    type: WorkShiftBaseValueSelectResponseDto,
+  })
+  async findForSelect(
+    @Query() query: WorkShiftBaseValueSelectQueryDto,
+    @Req() request: ReqAdmin,
+  ) {
+    const baseValues = await this.readService.findForSelect(
+      request.admin,
+      query,
+    );
+
+    return plainToInstance(
+      WorkShiftBaseValueSelectResponseDto,
+      {
+        success: true,
+        message: 'Work shift base values for select retrieved successfully',
+        data: baseValues,
+      },
+      { enableImplicitConversion: true },
+    );
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get work shift base value by ID' })
   @ApiParam({ name: 'id', description: 'Work shift base value ID (UUID)' })
@@ -104,7 +137,9 @@ export class WorkShiftBaseValueController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create new work shift base value with calculated values' })
+  @ApiOperation({
+    summary: 'Create new work shift base value with calculated values',
+  })
   @ApiBody({ type: CreateWorkShiftBaseValueDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
