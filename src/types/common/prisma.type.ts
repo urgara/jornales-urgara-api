@@ -1,5 +1,5 @@
 import { Decimal } from '@prisma/client/runtime/index-browser';
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '../../../generated/prisma-common';
 
 type InputJsonValue = Prisma.InputJsonValue;
 type JsonValue = Prisma.JsonValue;
