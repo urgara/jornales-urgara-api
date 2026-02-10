@@ -5,6 +5,7 @@ import type { DecimalNumber } from 'src/types/common';
 import type {
   SimpleWorkShiftBaseValueResponse,
   SimpleWorkShiftCalculatedValueResponse,
+  Category,
 } from 'src/types/work-shift-base-value';
 
 export class WorkShiftCalculatedValueResponseDto
@@ -87,6 +88,13 @@ export class WorkShiftBaseValueResponseDto
     example: '2026-12-31T23:59:59.000Z',
   })
   endDate: Date;
+
+  @ApiProperty({
+    description: 'Categoría del trabajador',
+    example: 'IDONEO',
+    enum: ['IDONEO', 'PERITO'],
+  })
+  category: Category;
 
   @ApiProperty({
     description: 'Valores calculados asociados',

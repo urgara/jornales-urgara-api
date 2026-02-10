@@ -1,8 +1,9 @@
-import { IsOptional, IsString, IsIn, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsIn, IsUUID, IsEnum } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import type {
   FindWorkShiftBaseValueQuery,
   WorkShiftBaseValueSortBy,
+  Category,
 } from 'src/types/work-shift-base-value';
 import { PaginationRequestDto } from 'src/dtos/common';
 
@@ -42,4 +43,13 @@ export class WorkShiftBaseValuesQueryDto
   @IsString()
   @IsUUID()
   localityId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filtrar por categoría',
+    example: 'IDONEO',
+    enum: ['IDONEO', 'PERITO'],
+  })
+  @IsOptional()
+  @IsEnum(['IDONEO', 'PERITO'])
+  category?: Category;
 }

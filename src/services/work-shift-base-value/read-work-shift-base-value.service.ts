@@ -25,9 +25,15 @@ export class ReadWorkShiftBaseValueService {
       limit = 10,
       sortBy = 'startDate',
       sortOrder = 'desc',
+      category,
     } = query || {};
 
     const skip = (page - 1) * limit;
+
+    const where: Prisma.WorkShiftBaseValueWhereInput = {};
+    if (category) {
+      where.category = category;
+    }
 
     const orderBy: Prisma.WorkShiftBaseValueOrderByWithRelationInput = {
       [sortBy]: sortOrder,
@@ -36,12 +42,13 @@ export class ReadWorkShiftBaseValueService {
     const db = this.databaseService.getTenantClient(localityId);
     const [baseValues, total] = await Promise.all([
       db.workShiftBaseValue.findMany({
+        where,
         skip,
         take: limit,
         orderBy,
         include: { workShiftCalculatedValues: true },
       }),
-      db.workShiftBaseValue.count(),
+      db.workShiftBaseValue.count({ where }),
     ]);
 
     const totalPages = Math.ceil(total / limit);

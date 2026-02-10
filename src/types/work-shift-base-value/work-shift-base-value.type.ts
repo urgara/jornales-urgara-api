@@ -1,6 +1,7 @@
 import type {
   WorkShiftBaseValue as PrismaWorkShiftBaseValue,
   WorkShiftCalculatedValue as PrismaWorkShiftCalculatedValue,
+  Category as PrismaCategory,
 } from '../../../generated/prisma-locality';
 import type {
   PaginationRequest,
@@ -11,6 +12,7 @@ import type {
 type WorkShiftBaseValue = PrismaWorkShiftBaseValue;
 type WorkShiftBaseValueId = WorkShiftBaseValue['id'];
 type WorkShiftCalculatedValue = PrismaWorkShiftCalculatedValue;
+type Category = PrismaCategory;
 
 type CreateWorkShiftBaseValue = Omit<
   WorkShiftBaseValue,
@@ -31,6 +33,7 @@ interface FindWorkShiftBaseValueQuery
   extends Sorting<WorkShiftBaseValueSortBy>,
     PaginationRequest {
   localityId?: string;
+  category?: Category;
 }
 
 // Response types (Decimal → string)
@@ -47,6 +50,7 @@ interface SimpleWorkShiftBaseValueResponse {
   notRemunerated: string;
   startDate: Date;
   endDate: Date;
+  category: Category;
   workShiftCalculatedValues: SimpleWorkShiftCalculatedValueResponse[];
 }
 
@@ -78,6 +82,7 @@ export type {
   WorkShiftBaseValue,
   WorkShiftBaseValueId,
   WorkShiftCalculatedValue,
+  Category,
   CreateWorkShiftBaseValue,
   WorkShiftBaseValueWithCalculated,
   WorkShiftBaseValueSortBy,
