@@ -2,12 +2,13 @@ import type { Admin as PrismaAdmin } from '../../../generated/prisma-common';
 import type { PaginationRequest, Sorting } from '../common';
 import type { Locality } from '../locality';
 
-// IMPORTANTE: Prisma 7 tiene un bug donde el enum generado es { ADMIN: '1', LOCAL: '5' }
-// pero en runtime Prisma devuelve "ADMIN" | "LOCAL" (las keys del enum, NO los valores mapeados)
+// IMPORTANTE: Prisma 7 tiene un bug donde el enum generado es { ADMIN: '1', LOCAL: '5', ONLY_READ: '10' }
+// pero en runtime Prisma devuelve "ADMIN" | "LOCAL" | "ONLY_READ" (las keys del enum, NO los valores mapeados)
 // Por eso redefinimos AdminRole para que use las keys en vez de los valores de Prisma
 const AdminRole = {
-  ADMIN: 'ADMIN',
-  LOCAL: 'LOCAL',
+  ADMIN: 'ADMIN', // Acceso total
+  LOCAL: 'LOCAL', // Admin de localidad
+  ONLY_READ: 'ONLY_READ', // Solo lectura
 } as const;
 
 type AdminTypeRole = (typeof AdminRole)[keyof typeof AdminRole];
@@ -35,6 +36,11 @@ type UpdateAdmin = Partial<CreateAdmin>;
 
 type LoginAdmin = Pick<Admin, 'dni' | 'password'>;
 
+type ChangePassword = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 type AdminSortBy = keyof Omit<Admin, 'password'>;
 
 interface FindAdminsQuery
@@ -48,6 +54,7 @@ export type {
   CreateAdmin,
   UpdateAdmin,
   LoginAdmin,
+  ChangePassword,
   FindAdminsQuery,
   AdminSortBy,
   AdminTypeRole,

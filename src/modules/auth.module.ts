@@ -7,6 +7,7 @@ import {
   AdminDeleteService,
   JwtAuthService,
   LoginService,
+  ChangePasswordService,
 } from 'src/services/auth';
 
 const global = [
@@ -17,6 +18,7 @@ const global = [
   AdminUpdateService,
   AdminDeleteService,
   LoginService,
+  ChangePasswordService,
 ];
 @Global()
 @Module({

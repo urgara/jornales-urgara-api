@@ -43,7 +43,6 @@ import type { AgencyId } from 'src/types/agency';
 
 @ApiTags('Agencies')
 @Controller('agencies')
-@AccessLevel(AdminRole.ADMIN)
 export class AgencyController {
   constructor(
     private readonly agencyCreateService: AgencyCreateService,
@@ -53,6 +52,7 @@ export class AgencyController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all agencies',
     description:
@@ -74,6 +74,7 @@ export class AgencyController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of agencies',
     description: 'Get a list of active agencies for select dropdown',
@@ -94,6 +95,7 @@ export class AgencyController {
   }
 
   @Get('count')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get total count of active agencies',
     description: 'Returns the total number of active agencies',
@@ -112,6 +114,7 @@ export class AgencyController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new agency' })
   @ApiBody({ type: CreateAgencyDto })
   @ApiResponse({
@@ -136,6 +139,7 @@ export class AgencyController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get agency by ID' })
   @ApiParam({ name: 'id', description: 'Agency ID (UUID)' })
   @ApiResponse({
@@ -160,6 +164,7 @@ export class AgencyController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update agency by ID' })
   @ApiParam({ name: 'id', description: 'Agency ID (UUID)' })
   @ApiBody({ type: UpdateAgencyDto })
@@ -188,6 +193,7 @@ export class AgencyController {
   }
 
   @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Delete agency by ID' })
   @ApiParam({ name: 'id', description: 'Agency ID (UUID)' })
   @ApiResponse({

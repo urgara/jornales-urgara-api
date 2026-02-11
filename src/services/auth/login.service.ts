@@ -55,6 +55,7 @@ export class LoginService {
     });
 
     const clientToken = await this.jwtAuthService.createClientToken({
+      id: admin.id,
       role: admin.role as AdminTypeRole, // Cast necesario por bug de Prisma 7 con @map
       localityId: admin.localityId,
       sessionId: session.id,

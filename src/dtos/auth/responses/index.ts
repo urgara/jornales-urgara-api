@@ -12,3 +12,4 @@ export * from './locality-updated-response.dto';
 export * from './locality-select-response.dto';
 export * from './login-response.dto';
 export * from './logout-response.dto';
+export * from './change-password-response.dto';

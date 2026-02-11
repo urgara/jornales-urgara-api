@@ -47,7 +47,6 @@ import type { WorkShiftId } from '../types/work-shift';
 @ApiTags('Work Shifts')
 @Controller('work-shifts')
 @UseGuards(JwtGuard)
-@AccessLevel(AdminRole.ADMIN)
 export class WorkShiftController {
   constructor(
     private readonly createWorkShiftService: CreateWorkShiftService,
@@ -57,6 +56,7 @@ export class WorkShiftController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all work shifts',
     description:
@@ -90,6 +90,7 @@ export class WorkShiftController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of work shifts',
     description: 'Get a list of active work shifts',
@@ -122,6 +123,7 @@ export class WorkShiftController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new work shift' })
   @ApiBody({ type: CreateWorkShiftDto })
   @ApiResponse({
@@ -152,6 +154,7 @@ export class WorkShiftController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get work shift by ID' })
   @ApiParam({ name: 'id', description: 'Work shift ID (UUID)' })
   @ApiResponse({
@@ -184,6 +187,7 @@ export class WorkShiftController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update work shift by ID' })
   @ApiParam({ name: 'id', description: 'Work shift ID (UUID)' })
   @ApiBody({ type: UpdateWorkShiftDto })
@@ -217,6 +221,7 @@ export class WorkShiftController {
   }
 
   @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Delete work shift by ID' })
   @ApiParam({ name: 'id', description: 'Work shift ID (UUID)' })
   @ApiBody({ type: DeleteWorkShiftDto })

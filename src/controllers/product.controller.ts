@@ -43,7 +43,6 @@ import type { ProductId } from 'src/types/product';
 
 @ApiTags('Products')
 @Controller('products')
-@AccessLevel(AdminRole.ADMIN)
 export class ProductController {
   constructor(
     private readonly productCreateService: ProductCreateService,
@@ -53,6 +52,7 @@ export class ProductController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all products',
     description:
@@ -74,6 +74,7 @@ export class ProductController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of products',
     description: 'Get a list of active products for select dropdown',
@@ -94,6 +95,7 @@ export class ProductController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new product' })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({
@@ -112,6 +114,7 @@ export class ProductController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get product by ID' })
   @ApiParam({ name: 'id', description: 'Product ID (UUID)' })
   @ApiResponse({
@@ -130,6 +133,7 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update product by ID' })
   @ApiParam({ name: 'id', description: 'Product ID (UUID)' })
   @ApiBody({ type: UpdateProductDto })
@@ -155,6 +159,7 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Delete product by ID' })
   @ApiParam({ name: 'id', description: 'Product ID (UUID)' })
   @ApiResponse({

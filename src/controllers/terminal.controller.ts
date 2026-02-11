@@ -45,7 +45,6 @@ import type { TerminalId } from 'src/types/terminal';
 
 @ApiTags('Terminals')
 @Controller('terminals')
-@AccessLevel(AdminRole.ADMIN)
 export class TerminalController {
   constructor(
     private readonly terminalCreateService: TerminalCreateService,
@@ -55,6 +54,7 @@ export class TerminalController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all terminals',
     description:
@@ -82,6 +82,7 @@ export class TerminalController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of terminals',
     description: 'Get a list of active terminals for select dropdown',
@@ -108,6 +109,7 @@ export class TerminalController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new terminal' })
   @ApiBody({ type: CreateTerminalDto })
   @ApiResponse({
@@ -132,6 +134,7 @@ export class TerminalController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get terminal by ID' })
   @ApiParam({ name: 'id', description: 'Terminal ID (UUID)' })
   @ApiResponse({
@@ -158,6 +161,7 @@ export class TerminalController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update terminal by ID' })
   @ApiParam({ name: 'id', description: 'Terminal ID (UUID)' })
   @ApiBody({ type: UpdateTerminalDto })
@@ -185,6 +189,7 @@ export class TerminalController {
   }
 
   @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Delete terminal by ID' })
   @ApiParam({ name: 'id', description: 'Terminal ID (UUID)' })
   @ApiBody({ type: DeleteTerminalDto })

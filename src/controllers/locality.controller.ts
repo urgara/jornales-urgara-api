@@ -50,7 +50,7 @@ export class LocalityController {
   ) {}
 
   @Get()
-  @AccessLevel(AdminRole.LOCAL)
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all localities with pagination, sorting and filters',
   })
@@ -78,7 +78,7 @@ export class LocalityController {
   }
 
   @Get('select')
-  @AccessLevel(AdminRole.LOCAL)
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of localities',
     description: 'Get a list of all localities',
@@ -99,7 +99,7 @@ export class LocalityController {
   }
 
   @Get(':id')
-  @AccessLevel(AdminRole.LOCAL)
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get locality by ID' })
   @ApiParam({ name: 'id', description: 'Locality ID' })
   @ApiResponse({

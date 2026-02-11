@@ -5,3 +5,4 @@ export * from './localities-query.dto';
 export * from './login.dto';
 export * from './update-admin.dto';
 export * from './update-locality.dto';
+export * from './change-password.dto';

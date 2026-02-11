@@ -26,6 +26,7 @@ import {
   AdminReadService,
   AdminUpdateService,
   AdminDeleteService,
+  ChangePasswordService,
 } from '../services/auth';
 import { AccessLevel, Public } from '../decorators/common/auth';
 import type { ReqAdmin, ReqWithClientInfo } from '../types/auth';
@@ -37,6 +38,7 @@ import {
   AdminsQueryDto,
   LoginDto,
   UpdateAdminDto,
+  ChangePasswordDto,
 } from 'src/dtos/auth/requests';
 import {
   AdminCreatedResponseDto,
@@ -46,6 +48,7 @@ import {
   AdminUpdatedResponseDto,
   LoginResponseDto,
   LogoutResponseDto,
+  ChangePasswordResponseDto,
 } from 'src/dtos/auth/responses';
 import type { Response } from 'express';
 
@@ -58,6 +61,7 @@ export class AuthController {
     private readonly adminReadService: AdminReadService,
     private readonly adminUpdateService: AdminUpdateService,
     private readonly adminDeleteService: AdminDeleteService,
+    private readonly changePasswordService: ChangePasswordService,
   ) {}
 
   @Post('login')
@@ -92,6 +96,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Logout admin' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -132,7 +137,7 @@ export class AuthController {
   }
 
   @Get('admins')
-  @AccessLevel(AdminRole.ADMIN)
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all admins with pagination, sorting and filters',
   })
@@ -153,7 +158,7 @@ export class AuthController {
   }
 
   @Get('admin')
-  @AccessLevel(AdminRole.LOCAL) /* Aca tiene q estar el Rol mas bajo */
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Admin retrieved successfully',
@@ -216,6 +221,40 @@ export class AuthController {
     return plainToInstance(AdminDeletedResponseDto, {
       success: true,
       message: 'Admin deleted successfully',
+    });
+  }
+
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  @AccessLevel(
+    AdminRole.LOCAL,
+  ) /* Rol más bajo - todos pueden cambiar su propia contraseña */
+  @ApiOperation({
+    summary: 'Change own password',
+    description: 'Allows an authenticated user to change their own password',
+  })
+  @ApiBody({ type: ChangePasswordDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password changed successfully',
+    type: ChangePasswordResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Current password is incorrect',
+  })
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() request: ReqAdmin,
+  ) {
+    await this.changePasswordService.changePassword(
+      request.admin.id,
+      changePasswordDto,
+    );
+
+    return plainToInstance(ChangePasswordResponseDto, {
+      success: true,
+      message: 'Password changed successfully',
     });
   }
 }

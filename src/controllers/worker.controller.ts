@@ -47,7 +47,6 @@ import type { WorkerId } from 'src/types/worker';
 @ApiTags('Workers')
 @Controller('workers')
 @UseGuards(JwtGuard)
-@AccessLevel(AdminRole.ADMIN)
 export class WorkerController {
   constructor(
     private readonly workerCreateService: WorkerCreateService,
@@ -57,6 +56,7 @@ export class WorkerController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all workers',
     description:
@@ -90,6 +90,7 @@ export class WorkerController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of workers',
     description: 'Get a list of active workers for select dropdown',
@@ -119,6 +120,7 @@ export class WorkerController {
   }
 
   @Get('count')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get total count of active workers',
     description:
@@ -141,6 +143,7 @@ export class WorkerController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new worker' })
   @ApiBody({ type: CreateWorkerDto })
   @ApiResponse({
@@ -171,6 +174,7 @@ export class WorkerController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get worker by ID' })
   @ApiParam({ name: 'id', description: 'Worker ID (UUID)' })
   @ApiResponse({
@@ -203,6 +207,7 @@ export class WorkerController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update worker by ID' })
   @ApiParam({ name: 'id', description: 'Worker ID (UUID)' })
   @ApiBody({ type: UpdateWorkerDto })
@@ -236,6 +241,7 @@ export class WorkerController {
   }
 
   @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Delete worker by ID' })
   @ApiParam({ name: 'id', description: 'Worker ID (UUID)' })
   @ApiBody({ type: DeleteWorkerDto })

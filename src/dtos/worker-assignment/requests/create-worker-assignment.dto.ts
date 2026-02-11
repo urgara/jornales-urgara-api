@@ -77,7 +77,8 @@ export class CreateWorkerAssignmentDto
   category: Category;
 
   @ApiProperty({
-    description: 'Objeto con workShiftBaseValueId y coefficient para buscar el valor exacto',
+    description:
+      'Objeto con workShiftBaseValueId y coefficient para buscar el valor exacto',
     type: WorkShiftValueDto,
   })
   @IsNotEmpty()
@@ -86,7 +87,8 @@ export class CreateWorkerAssignmentDto
   value: WorkShiftValueDto;
 
   @ApiProperty({
-    description: 'Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)',
+    description:
+      'Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)',
     example: '15.00',
     type: 'string',
     required: false,

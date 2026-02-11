@@ -80,10 +80,7 @@ export class WorkerAssignmentUpdateService {
     /**
      * Recalcular totalAmount y baseValue si se actualizó algún campo que afecta el cálculo
      */
-    if (
-      data.value !== undefined ||
-      data.additionalPercent !== undefined
-    ) {
+    if (data.value !== undefined || data.additionalPercent !== undefined) {
       // Si se proporciona un nuevo value, buscar el WorkShiftCalculatedValue
       if (data.value !== undefined) {
         const calculatedValue = await db.workShiftCalculatedValue.findUnique({

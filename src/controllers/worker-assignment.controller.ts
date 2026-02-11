@@ -42,7 +42,6 @@ import type { WorkerAssignmentId } from 'src/types/worker-assignment';
 @ApiTags('Worker Assignments')
 @Controller('worker-assignments')
 @UseGuards(JwtGuard)
-@AccessLevel(AdminRole.ADMIN)
 export class WorkerAssignmentController {
   constructor(
     private readonly workerAssignmentCreateService: WorkerAssignmentCreateService,
@@ -51,6 +50,7 @@ export class WorkerAssignmentController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all worker assignments',
     description:
@@ -85,6 +85,7 @@ export class WorkerAssignmentController {
   }
 
   @Get('count')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get total count of worker assignments',
     description:
@@ -110,6 +111,7 @@ export class WorkerAssignmentController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new worker assignment' })
   @ApiBody({ type: CreateWorkerAssignmentDto })
   @ApiResponse({
@@ -140,6 +142,7 @@ export class WorkerAssignmentController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get worker assignment by ID' })
   @ApiParam({ name: 'id', description: 'Worker assignment ID' })
   @ApiResponse({
@@ -172,6 +175,7 @@ export class WorkerAssignmentController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update worker assignment by ID' })
   @ApiParam({ name: 'id', description: 'Worker assignment ID' })
   @ApiBody({ type: UpdateWorkerAssignmentDto })

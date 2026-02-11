@@ -46,7 +46,6 @@ import type { CompanyId } from 'src/types/company';
 @ApiTags('Companies')
 @Controller('companies')
 @UseGuards(JwtGuard)
-@AccessLevel(AdminRole.ADMIN)
 export class CompanyController {
   constructor(
     private readonly companyCreateService: CompanyCreateService,
@@ -56,6 +55,7 @@ export class CompanyController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all companies',
     description:
@@ -77,6 +77,7 @@ export class CompanyController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get list of companies',
     description: 'Get a list of active companies for select dropdown',
@@ -97,6 +98,7 @@ export class CompanyController {
   }
 
   @Get('count')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get total count of active companies',
     description: 'Returns the total number of active companies',
@@ -115,6 +117,7 @@ export class CompanyController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Create new company' })
   @ApiBody({ type: CreateCompanyDto })
   @ApiResponse({
@@ -133,6 +136,7 @@ export class CompanyController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get company by ID' })
   @ApiParam({ name: 'id', description: 'Company ID' })
   @ApiResponse({
@@ -151,6 +155,7 @@ export class CompanyController {
   }
 
   @Patch(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Update company by ID' })
   @ApiParam({ name: 'id', description: 'Company ID' })
   @ApiBody({ type: UpdateCompanyDto })
@@ -176,6 +181,7 @@ export class CompanyController {
   }
 
   @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({ summary: 'Delete company by ID' })
   @ApiParam({ name: 'id', description: 'Company ID' })
   @ApiResponse({

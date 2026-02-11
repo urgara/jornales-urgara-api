@@ -40,7 +40,6 @@ import type { WorkShiftBaseValueId } from '../types/work-shift-base-value';
 @ApiTags('Work Shift Base Values')
 @Controller('work-shift-base-values')
 @UseGuards(JwtGuard)
-@AccessLevel(AdminRole.ADMIN)
 export class WorkShiftBaseValueController {
   constructor(
     private readonly createService: CreateWorkShiftBaseValueService,
@@ -48,6 +47,7 @@ export class WorkShiftBaseValueController {
   ) {}
 
   @Get()
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get all work shift base values',
     description:
@@ -76,6 +76,7 @@ export class WorkShiftBaseValueController {
   }
 
   @Get('select')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({
     summary: 'Get work shift base values for select',
     description:
@@ -107,6 +108,7 @@ export class WorkShiftBaseValueController {
   }
 
   @Get(':id')
+  @AccessLevel(AdminRole.ONLY_READ)
   @ApiOperation({ summary: 'Get work shift base value by ID' })
   @ApiParam({ name: 'id', description: 'Work shift base value ID (UUID)' })
   @ApiResponse({
@@ -137,6 +139,7 @@ export class WorkShiftBaseValueController {
   }
 
   @Post()
+  @AccessLevel(AdminRole.LOCAL)
   @ApiOperation({
     summary: 'Create new work shift base value with calculated values',
   })
