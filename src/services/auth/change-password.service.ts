@@ -25,9 +25,9 @@ export class ChangePasswordService {
     }
 
     // Verificar contraseña actual
-    const isPasswordValid = await this.hashService.compare(
-      data.currentPassword,
+    const isPasswordValid = await this.hashService.validation(
       admin.password,
+      data.currentPassword,
     );
 
     if (!isPasswordValid) {
