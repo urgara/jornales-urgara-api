@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('1', '5');
+CREATE TYPE "Role" AS ENUM ('1', '5', '10');
 
 -- CreateTable
 CREATE TABLE "Admin" (
@@ -8,7 +8,7 @@ CREATE TABLE "Admin" (
     "surname" VARCHAR(30) NOT NULL,
     "dni" VARCHAR(9) NOT NULL,
     "password" VARCHAR NOT NULL,
-    "localityId" INTEGER,
+    "localityId" UUID,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMPTZ,
     "role" "Role" NOT NULL,
@@ -29,9 +29,11 @@ CREATE TABLE "Session" (
 
 -- CreateTable
 CREATE TABLE "Locality" (
-    "id" SERIAL NOT NULL,
+    "id" UUID NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "province" VARCHAR(100) NOT NULL,
+    "databaseName" VARCHAR(100) NOT NULL DEFAULT 'pending',
+    "isCalculateJc" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMPTZ,
 
@@ -39,25 +41,33 @@ CREATE TABLE "Locality" (
 );
 
 -- CreateTable
-CREATE TABLE "LegalEntity" (
-    "id" SERIAL NOT NULL,
-    "abbreviation" VARCHAR(15) NOT NULL,
-    "description" VARCHAR(150) NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT "LegalEntity_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Company" (
-    "id" SERIAL NOT NULL,
+    "id" UUID NOT NULL,
     "name" VARCHAR(150) NOT NULL,
     "cuit" VARCHAR(11),
-    "legalEntityId" INTEGER NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMPTZ,
 
     CONSTRAINT "Company_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Agency" (
+    "id" UUID NOT NULL,
+    "name" VARCHAR(150) NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMPTZ,
+
+    CONSTRAINT "Agency_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Product" (
+    "id" UUID NOT NULL,
+    "name" VARCHAR(40) NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -66,11 +76,11 @@ CREATE UNIQUE INDEX "Admin_dni_key" ON "Admin"("dni");
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_token_key" ON "Session"("token");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Locality_databaseName_key" ON "Locality"("databaseName");
+
 -- AddForeignKey
 ALTER TABLE "Admin" ADD CONSTRAINT "Admin_localityId_fkey" FOREIGN KEY ("localityId") REFERENCES "Locality"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "Admin"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Company" ADD CONSTRAINT "Company_legalEntityId_fkey" FOREIGN KEY ("legalEntityId") REFERENCES "LegalEntity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
