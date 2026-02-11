@@ -9,7 +9,6 @@ const workerSortBy: WorkerSortBy[] = [
   'surname',
   'dni',
   'localityId',
-  'baseHourlyRate',
   'category',
   'createdAt',
 ];
