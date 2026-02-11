@@ -52,13 +52,12 @@ model WorkShiftCalculatedValue {
 
 // Trabajador
 model Worker {
-  id             String   @id @db.Uuid
-  name           String   @db.VarChar(100)
-  surname        String   @db.VarChar(100)
-  dni            String   @unique @db.VarChar(10)
-  localityId     String   @db.Uuid // Referencia a Locality en prisma-common (sin FK)
-  baseHourlyRate Decimal  @db.Decimal(10, 2) // Tarifa base por hora (ej: 1500.00, máximo 99999999.99)
-  category       Category
+  id         String   @id @db.Uuid
+  name       String   @db.VarChar(100)
+  surname    String   @db.VarChar(100)
+  dni        String   @unique @db.VarChar(10)
+  localityId String   @db.Uuid // Referencia a Locality en prisma-common (sin FK)
+  category   Category
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
@@ -68,12 +67,16 @@ model Worker {
 
 // Asignación de trabajador (registro histórico, no se elimina)
 model WorkerAssignment {
-  id                String   @id @db.Uuid
-  workerId          String   @db.Uuid
-  workShiftId       String   @db.Uuid
-  date              DateTime @db.Date // Fecha de la asignación
-  additionalPercent Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%)
-  totalAmount       Decimal  @db.Decimal(10, 2) // Monto total calculado: (baseHourlyRate * durationHours) * (1 + additionalPercent/100)
+  id                     String   @id @db.Uuid
+  workerId               String   @db.Uuid
+  workShiftId            String   @db.Uuid
+  date                   DateTime @db.Date // Fecha de la asignación
+  category               Category // Categoría del trabajador en el momento de la asignación
+  workShiftBaseValueId   String   @db.Uuid // ID del valor base usado para el cálculo
+  coefficient            Decimal  @db.Decimal(5, 2) // Coeficiente usado para el cálculo (del turno)
+  baseValue              Decimal  @db.Decimal(10, 2) // Valor bruto total: remunerated + notRemunerated desde WorkShiftCalculatedValue
+  additionalPercent      Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)
+  totalAmount            Decimal  @db.Decimal(10, 2) // Monto final con el porcentaje aplicado si existiera: baseValue + (baseValue * additionalPercent/100)
 
   createdAt         DateTime @default(now()) @db.Timestamptz()
   companyId         String @db.Uuid

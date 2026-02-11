@@ -23,12 +23,20 @@ type CreateWorkerAssignment = Omit<
   | 'createdAt'
   | 'localityId'
   | 'totalAmount'
+  | 'baseValue'
   | 'date'
   | 'additionalPercent'
+  | 'workShiftBaseValueId'
+  | 'coefficient'
 > & {
   date: string; // YYYY-MM-DD format
   additionalPercent?: DecimalNumber;
-  // totalAmount se calcula automáticamente, no se incluye en el create
+  value: {
+    workShiftBaseValueId: string;
+    coefficient: DecimalNumber;
+  };
+  // totalAmount, baseValue se calculan automáticamente
+  // workShiftBaseValueId y coefficient vienen del objeto value
 };
 
 type UpdateWorkerAssignment = Partial<CreateWorkerAssignment>;
@@ -38,6 +46,10 @@ type WorkerAssignmentSortBy =
   | 'workerId'
   | 'workShiftId'
   | 'date'
+  | 'category'
+  | 'workShiftBaseValueId'
+  | 'coefficient'
+  | 'baseValue'
   | 'additionalPercent'
   | 'totalAmount'
   | 'companyId'
@@ -63,10 +75,12 @@ interface FindWorkerAssignmentQuery
 // Response type for transformed WorkerAssignment (Decimal → string, Date → string)
 type SimpleWorkerAssignmentResponse = Omit<
   WorkerAssignment,
-  'additionalPercent' | 'totalAmount' | 'date'
+  'additionalPercent' | 'totalAmount' | 'baseValue' | 'coefficient' | 'date'
 > & {
   date: string; // YYYY-MM-DD format
-  additionalPercent: string;
+  coefficient: string;
+  baseValue: string;
+  additionalPercent: string | null;
   totalAmount: string;
 };
 

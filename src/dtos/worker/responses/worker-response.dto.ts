@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import type { SimpleWorkerResponse } from 'src/types/worker';
 import { Category } from 'src/types/worker';
-import type { DecimalNumber } from 'src/types/common';
 
 export class WorkerResponseDto implements SimpleWorkerResponse {
   @ApiProperty({
@@ -41,16 +39,6 @@ export class WorkerResponseDto implements SimpleWorkerResponse {
     enum: Category,
   })
   category: Category;
-
-  @ApiProperty({
-    description: 'Tarifa base por hora del trabajador',
-    example: '1500.00',
-    type: 'string',
-  })
-  @Transform(({ value }: { value: DecimalNumber | undefined }) =>
-    value ? value.toString() : undefined,
-  )
-  baseHourlyRate: string;
 
   @ApiProperty({
     description: 'Fecha de creación',

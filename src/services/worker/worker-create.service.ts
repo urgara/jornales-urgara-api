@@ -36,7 +36,6 @@ export class WorkerCreateService {
         surname: data.surname,
         dni: data.dni,
         localityId: localityId,
-        baseHourlyRate: data.baseHourlyRate,
         category: data.category,
       },
     });

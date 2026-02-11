@@ -37,9 +37,6 @@ export class WorkerUpdateService {
         ...(data.name !== undefined && { name: data.name }),
         ...(data.surname !== undefined && { surname: data.surname }),
         ...(data.dni !== undefined && { dni: data.dni }),
-        ...(data.baseHourlyRate !== undefined && {
-          baseHourlyRate: data.baseHourlyRate,
-        }),
         ...(data.category !== undefined && { category: data.category }),
       },
     });

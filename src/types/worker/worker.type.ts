@@ -27,14 +27,11 @@ type WorkerSortBy =
   | 'surname'
   | 'dni'
   | 'localityId'
-  | 'baseHourlyRate'
   | 'category'
   | 'createdAt';
 
-// Response type for transformed Worker (Decimal → string)
-type SimpleWorkerResponse = Omit<Worker, 'baseHourlyRate'> & {
-  baseHourlyRate: string;
-};
+// Response type for Worker (no transformations needed now)
+type SimpleWorkerResponse = Worker;
 
 // Response types
 interface WorkerCreatedResponse {

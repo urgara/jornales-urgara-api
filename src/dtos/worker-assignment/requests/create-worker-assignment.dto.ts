@@ -4,14 +4,37 @@ import {
   IsOptional,
   IsUUID,
   Matches,
+  IsEnum,
+  ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import type { CreateWorkerAssignment } from 'src/types/worker-assignment';
 import type { LocalityOperationContext } from 'src/types/locality';
 import { DecimalService } from 'src/services/common';
 import type { DecimalNumber } from 'src/types/common';
 import { IsDecimalNumber } from 'src/decorators/common';
+import { Category } from 'generated/prisma-locality';
+
+class WorkShiftValueDto {
+  @ApiProperty({
+    description: 'ID del valor base del turno',
+    example: '345e6789-e89b-12d3-a456-426614174002',
+  })
+  @IsNotEmpty()
+  @IsUUID()
+  workShiftBaseValueId: string;
+
+  @ApiProperty({
+    description: 'Coeficiente del turno',
+    example: '1.5',
+    type: 'string',
+  })
+  @Transform(({ value }) => DecimalService.create(value))
+  @IsNotEmpty()
+  @IsDecimalNumber()
+  coefficient: DecimalNumber;
+}
 
 export class CreateWorkerAssignmentDto
   implements CreateWorkerAssignment, LocalityOperationContext
@@ -45,7 +68,25 @@ export class CreateWorkerAssignmentDto
   date: string;
 
   @ApiProperty({
-    description: 'Porcentaje adicional opcional (ej: 15.00 = 15%)',
+    description: 'Categoría del trabajador',
+    example: 'IDONEO',
+    enum: Category,
+  })
+  @IsNotEmpty()
+  @IsEnum(Category)
+  category: Category;
+
+  @ApiProperty({
+    description: 'Objeto con workShiftBaseValueId y coefficient para buscar el valor exacto',
+    type: WorkShiftValueDto,
+  })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => WorkShiftValueDto)
+  value: WorkShiftValueDto;
+
+  @ApiProperty({
+    description: 'Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)',
     example: '15.00',
     type: 'string',
     required: false,

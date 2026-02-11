@@ -69,66 +69,64 @@ export class WorkerAssignmentUpdateService {
       dataToUpdate.date = new Date(data.date);
     }
 
+    if (data.category !== undefined) {
+      dataToUpdate.category = data.category;
+    }
+
     if (data.additionalPercent !== undefined) {
       dataToUpdate.additionalPercent = data.additionalPercent;
     }
 
     /**
-     * Recalcular totalAmount si se actualizó algún campo que afecta el cálculo
+     * Recalcular totalAmount y baseValue si se actualizó algún campo que afecta el cálculo
      */
     if (
-      data.workerId !== undefined ||
-      data.workShiftId !== undefined ||
+      data.value !== undefined ||
       data.additionalPercent !== undefined
     ) {
-      // Obtener datos necesarios para el cálculo
-      const finalWorkerId = data.workerId ?? existingAssignment.workerId;
-      const finalWorkShiftId =
-        data.workShiftId ?? existingAssignment.workShiftId;
+      // Si se proporciona un nuevo value, buscar el WorkShiftCalculatedValue
+      if (data.value !== undefined) {
+        const calculatedValue = await db.workShiftCalculatedValue.findUnique({
+          where: {
+            coefficient_workShiftBaseValueId: {
+              coefficient: data.value.coefficient,
+              workShiftBaseValueId: data.value.workShiftBaseValueId,
+            },
+          },
+        });
+
+        if (!calculatedValue) {
+          throw new NotFoundException(
+            'Work shift calculated value not found for the given coefficient and base value',
+          );
+        }
+
+        dataToUpdate.workShiftBaseValueId = data.value.workShiftBaseValueId;
+        dataToUpdate.coefficient = data.value.coefficient;
+        // baseValue = remunerated + notRemunerated (valor bruto total)
+        dataToUpdate.baseValue = this.decimalService.add(
+          calculatedValue.remunerated,
+          calculatedValue.notRemunerated,
+        );
+      }
+
+      // Obtener baseValue final (nuevo o existente)
+      const finalBaseValue =
+        dataToUpdate.baseValue ?? existingAssignment.baseValue;
       const finalAdditionalPercent =
         data.additionalPercent !== undefined
           ? data.additionalPercent
           : existingAssignment.additionalPercent;
 
-      const [worker, workShift] = await Promise.all([
-        db.worker.findUnique({
-          where: { id: finalWorkerId },
-        }),
-        db.workShift.findUnique({
-          where: { id: finalWorkShiftId },
-        }),
-      ]);
-
-      if (!worker || !workShift) {
-        throw new NotFoundException('Worker or WorkShift not found');
-      }
-
       // Calcular totalAmount
-      const durationHours = this.decimalService.divide(
-        this.decimalService.create(workShift.durationMinutes),
-        60,
-      );
-
-      const baseAmount = this.decimalService.multiply(
-        worker.baseHourlyRate,
-        durationHours,
-      );
-
-      let totalAmount = baseAmount;
+      let totalAmount = finalBaseValue;
 
       if (finalAdditionalPercent) {
-        const percentMultiplier = this.decimalService.add(
-          this.decimalService.create(1),
-          this.decimalService.divide(
-            this.decimalService.create(finalAdditionalPercent),
-            100,
-          ),
+        const percentAmount = this.decimalService.multiply(
+          finalBaseValue,
+          this.decimalService.divide(finalAdditionalPercent, 100),
         );
-
-        totalAmount = this.decimalService.multiply(
-          baseAmount,
-          percentMultiplier,
-        );
+        totalAmount = this.decimalService.add(finalBaseValue, percentAmount);
       }
 
       dataToUpdate.totalAmount = totalAmount;

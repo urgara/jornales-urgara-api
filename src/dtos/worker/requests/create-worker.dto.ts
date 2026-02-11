@@ -1,12 +1,8 @@
 import { IsString, IsNotEmpty, Length, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import type { CreateWorker } from 'src/types/worker';
 import type { LocalityOperationContext } from 'src/types/locality';
 import { Category } from 'src/types/worker';
-import { DecimalService } from 'src/services/common';
-import type { DecimalNumber } from 'src/types/common';
-import { IsDecimalNumber } from 'src/decorators/common';
 
 export class CreateWorkerDto implements CreateWorker, LocalityOperationContext {
   @ApiProperty({
@@ -46,17 +42,6 @@ export class CreateWorkerDto implements CreateWorker, LocalityOperationContext {
   })
   @IsEnum(Category)
   category: Category;
-
-  @ApiProperty({
-    description: 'Tarifa base por hora del trabajador',
-    example: '1500.00',
-    type: 'string',
-  })
-  @Transform(({ value }) =>
-    value !== undefined ? DecimalService.create(value) : undefined,
-  )
-  @IsDecimalNumber()
-  baseHourlyRate: DecimalNumber;
 
   @ApiProperty({
     description: 'ID de la localidad (UUID)',

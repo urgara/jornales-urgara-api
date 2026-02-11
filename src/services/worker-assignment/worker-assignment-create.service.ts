@@ -29,6 +29,8 @@ export class WorkerAssignmentCreateService {
       workerId,
       workShiftId,
       date,
+      category,
+      value,
       additionalPercent,
       companyId,
       agencyId,
@@ -56,37 +58,50 @@ export class WorkerAssignmentCreateService {
       throw new NotFoundException('Work shift not found');
     }
 
+    // Buscar el valor calculado exacto con el workShiftBaseValueId y coefficient
+    const calculatedValue = await db.workShiftCalculatedValue.findUnique({
+      where: {
+        coefficient_workShiftBaseValueId: {
+          coefficient: value.coefficient,
+          workShiftBaseValueId: value.workShiftBaseValueId,
+        },
+      },
+    });
+
+    if (!calculatedValue) {
+      throw new NotFoundException(
+        'Work shift calculated value not found for the given coefficient and base value',
+      );
+    }
+
     /**
      * Calcular monto total:
-     * 1. Convertir durationMinutes a horas: durationMinutes / 60
-     * 2. Calcular monto base: baseHourlyRate * durationHours
-     * 3. Si hay additionalPercent, aplicar: montoBase * (1 + additionalPercent/100)
+     * 1. baseValue = calculatedValue.remunerated + calculatedValue.notRemunerated (valor bruto total)
+     * 2. Si hay additionalPercent:
+     *    - Si es positivo: totalAmount = baseValue + (baseValue * additionalPercent/100)
+     *    - Si es negativo: totalAmount = baseValue - (baseValue * abs(additionalPercent)/100)
      *
-     * Ejemplo: baseHourlyRate = 1500, durationMinutes = 480 (8 horas), additionalPercent = 15
-     * - durationHours = 480 / 60 = 8
-     * - montoBase = 1500 * 8 = 12000
-     * - totalAmount = 12000 * (1 + 15/100) = 12000 * 1.15 = 13800
+     * Ejemplo 1: remunerated = 10000, notRemunerated = 2000, baseValue = 12000, additionalPercent = 15.00
+     * - totalAmount = 12000 + (12000 * 15/100) = 12000 + 1800 = 13800
+     *
+     * Ejemplo 2: remunerated = 10000, notRemunerated = 2000, baseValue = 12000, additionalPercent = -10.00
+     * - totalAmount = 12000 - (12000 * 10/100) = 12000 - 1200 = 10800
      */
-    const durationHours = this.decimalService.divide(
-      this.decimalService.create(workShift.durationMinutes),
-      60,
+    const baseValue = this.decimalService.add(
+      calculatedValue.remunerated,
+      calculatedValue.notRemunerated,
     );
-
-    const baseAmount = this.decimalService.multiply(
-      worker.baseHourlyRate,
-      durationHours,
-    );
-
-    let totalAmount = baseAmount;
+    let totalAmount = baseValue;
 
     if (additionalPercent) {
-      // Calcular porcentaje: 1 + (additionalPercent / 100)
-      const percentMultiplier = this.decimalService.add(
-        this.decimalService.create(1),
+      // Calcular el valor del porcentaje: baseValue * (additionalPercent / 100)
+      const percentAmount = this.decimalService.multiply(
+        baseValue,
         this.decimalService.divide(additionalPercent, 100),
       );
 
-      totalAmount = this.decimalService.multiply(baseAmount, percentMultiplier);
+      // Sumar o restar según el signo del porcentaje
+      totalAmount = this.decimalService.add(baseValue, percentAmount);
     }
 
     // Convertir fecha string a Date
@@ -98,6 +113,10 @@ export class WorkerAssignmentCreateService {
         workerId,
         workShiftId,
         date: assignmentDate,
+        category,
+        workShiftBaseValueId: value.workShiftBaseValueId,
+        coefficient: value.coefficient,
+        baseValue,
         additionalPercent: additionalPercent ?? null,
         totalAmount,
         companyId,
