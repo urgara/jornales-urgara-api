@@ -56,8 +56,9 @@ RUN DATABASE_COMMON_URL="postgresql://placeholder:placeholder@localhost:5432/pla
     DATABASE_LOCALITY_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
     pnpm run prisma:generate:all
 
-# Copy entrypoint script
+# Copy entrypoint and initialization scripts
 COPY --chown=nestjs:nodejs scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY --chown=nestjs:nodejs scripts/init-admin.js ./scripts/init-admin.js
 RUN chmod +x docker-entrypoint.sh
 
 # Switch to non-root user

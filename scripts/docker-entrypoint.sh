@@ -32,42 +32,13 @@ prisma.\$connect()
   sleep 2
 done
 
-# Wait for locality database to be ready
-echo "⏳ Waiting for locality database to be ready..."
-until node -e "
-const { PrismaClient } = require('./generated/prisma-locality');
-const { PrismaPg } = require('@prisma/adapter-pg');
-const { Pool } = require('pg');
-
-const connectionString = process.env.DATABASE_LOCALITY_URL;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
-
-prisma.\$connect()
-  .then(() => {
-    console.log('✅ Locality database connection successful');
-    process.exit(0);
-  })
-  .catch((err) => {
-    console.log('❌ Locality database connection failed:', err.message);
-    process.exit(1);
-  })
-  .finally(() => {
-    prisma.\$disconnect().then(() => pool.end());
-  });
-"; do
-  echo "🔄 Locality database not ready, retrying in 2 seconds..."
-  sleep 2
-done
-
 # Run database migrations for common database
 echo "🔄 Running common database migrations..."
 pnpm run prisma:migrate:deploy:global
 
-# Run database migrations for locality database
-echo "🔄 Running locality database migrations..."
-pnpm run prisma:migrate:deploy:locality
+# Initialize default admin user
+echo "🔄 Initializing default admin user..."
+node scripts/init-admin.js
 
 # Start the application
 echo "🎯 Starting the application..."

@@ -357,7 +357,34 @@ curl http://localhost:9000
 curl https://api-jornales.urgara.org.ar
 ```
 
-### 7.4. Comandos útiles
+### 7.4. Aplicar migraciones a bases de datos locality
+
+**IMPORTANTE:** Las migraciones de locality deben aplicarse **después** de crear las localidades desde la UI.
+
+El proceso de deployment solo aplica migraciones a la base de datos global y crea el admin por defecto. Las migraciones de locality se aplican manualmente:
+
+```bash
+# 1. Iniciar sesión con el admin por defecto
+# DNI: 12345678, Password: Admin123!
+
+# 2. Crear las localidades desde la UI
+# Esto crea los registros en la tabla Locality con sus respectivos databaseName
+
+# 3. Crear las bases de datos locality en RDS (una por localidad)
+PGPASSWORD='your_db_password' psql -h your-rds-endpoint.region.rds.amazonaws.com -U your_db_user -d postgres
+CREATE DATABASE "locality-name-1";
+CREATE DATABASE "locality-name-2";
+\q
+
+# 4. Aplicar migraciones locality
+# Ejecutar desde EC2 usando docker exec con variable de entorno temporal
+docker exec -e DATABASE_LOCALITY_URL="postgresql://your_db_user:your_db_password@your-rds-endpoint.region.rds.amazonaws.com/locality-name-1?schema=public" urgara-jornales-api pnpm run prisma:migrate:deploy:locality
+
+# Repetir para cada base de datos locality creada
+docker exec -e DATABASE_LOCALITY_URL="postgresql://your_db_user:your_db_password@your-rds-endpoint.region.rds.amazonaws.com/locality-name-2?schema=public" urgara-jornales-api pnpm run prisma:migrate:deploy:locality
+```
+
+### 7.5. Comandos útiles
 
 ```bash
 # Ver logs en tiempo real
