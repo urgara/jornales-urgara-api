@@ -63,7 +63,7 @@ done
 
 # Run database migrations for common database
 echo "🔄 Running common database migrations..."
-pnpm run prisma:migrate:deploy:common
+pnpm run prisma:migrate:deploy:global
 
 # Run database migrations for locality database
 echo "🔄 Running locality database migrations..."
