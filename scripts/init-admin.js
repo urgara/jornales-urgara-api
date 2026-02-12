@@ -70,7 +70,8 @@ async function initAdmin() {
     console.log(`🔑 Password: ${defaultPassword}`);
     console.log('⚠️  IMPORTANT: Change the default password after first login!');
   } catch (error) {
-    console.error('❌ Error creating default admin:', error.message);
+    console.error('❌ Error creating default admin:');
+    console.error(JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
     process.exit(1);
   } finally {
     await prisma.$disconnect();

@@ -354,6 +354,58 @@ docker volume rm urgara-jornales-api_postgres_data
 docker-compose up -d
 ```
 
+### Database Migrations
+
+#### Global Database (automático)
+
+Las migraciones de la base de datos global se ejecutan automáticamente al iniciar el contenedor a través del `docker-entrypoint.sh`. No requiere intervención manual.
+
+```bash
+# Si necesitás ejecutarlas manualmente:
+docker exec -it urgara-jornales-api pnpm run prisma:migrate:deploy:global
+```
+
+#### Locality Database (manual, por localidad)
+
+La arquitectura es **multi-tenant**: cada localidad tiene su propia base de datos. La variable `DATABASE_LOCALITY_URL` usa un placeholder `{locality}` que se reemplaza dinámicamente en runtime. Por esto, las migraciones de locality **no se ejecutan automáticamente** en el entrypoint y deben correrse manualmente por cada localidad.
+
+Para migrar una base de datos de locality específica, se usa `docker exec` sobreescribiendo `DATABASE_LOCALITY_URL` con la URL completa (sin el placeholder `{locality}`, sino con el nombre real de la base de datos):
+
+```bash
+docker exec -it urgara-jornales-api \
+  sh -c "DATABASE_LOCALITY_URL='postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<LOCALITY_DATABASE_NAME>?schema=public'\
+  pnpm run prisma:migrate:deploy:locality"
+```
+
+**Opción 1 - Comando directo:**
+
+```bash
+docker exec -it urgara-jornales-api \
+  sh -c "DATABASE_LOCALITY_URL='postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<LOCALITY_DATABASE_NAME>?schema=public'\
+  pnpm run prisma:migrate:deploy:locality"
+```
+
+**Opción 2 - Con variable de entorno (recomendado si la terminal deforma el comando al pegarlo):**
+
+```bash
+export DB_URL='postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<LOCALITY_DATABASE_NAME>?schema=public'
+docker exec -it urgara-jornales-api sh -c "DATABASE_LOCALITY_URL='$DB_URL' pnpm run prisma:migrate:deploy:locality"
+```
+
+**Después de migrar, reiniciar el contenedor** para que la aplicación cargue la nueva conexión de locality:
+
+```bash
+docker restart urgara-jornales-api
+```
+
+Esto es necesario porque `DatabaseLocalityService` carga las conexiones a las bases de datos de cada localidad al iniciar la aplicación (`onModuleInit`). Sin reiniciar, la nueva locality migrada no estará disponible.
+
+**Importante:**
+- Repetir el comando de migración por cada localidad que tenga su base de datos creada
+- El `<LOCALITY_DATABASE_NAME>` corresponde al campo `databaseName` del modelo `Locality` en la base de datos global
+- Si la contraseña contiene caracteres especiales, asegurate de que esté entre comillas simples dentro del comando
+- No debe haber salto de línea entre la URL y `pnpm run` (el `\` al final de la línea de la URL debe estar pegado sin espacio)
+
 ## 🚀 Deployment
 
 ### Production Deployment Steps

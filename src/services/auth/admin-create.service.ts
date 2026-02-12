@@ -12,7 +12,7 @@ export class AdminCreateService {
   ) {}
 
   async create(adminData: CreateAdmin) {
-    const { name, surname, dni, password, role } = adminData;
+    const { name, surname, dni, password, role, localityId } = adminData;
 
     const existingAdmin = await this.databaseService.admin.findUnique({
       where: { dni },
@@ -36,6 +36,7 @@ export class AdminCreateService {
         // AdminTypeRole es 'ADMIN' | 'LOCAL'
         // pero Prisma espera Role que es '1' | '5'
         role: role as unknown as PrismaAdmin['role'],
+        localityId: localityId ?? null,
       },
     });
 
