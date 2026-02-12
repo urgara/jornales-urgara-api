@@ -300,8 +300,9 @@ NODE_ENV=production
 PORT=9000
 
 # Database URLs (Amazon RDS)
-DATABASE_COMMON_URL=postgresql://usuario:password@rds-endpoint:5432/urgara_common
-DATABASE_LOCALITY_URL=postgresql://usuario:password@rds-endpoint:5432/urgara_locality
+# IMPORTANTE: Agregar sslmode=no-verify para evitar error P1010 con Prisma 7 + @prisma/adapter-pg
+DATABASE_COMMON_URL=postgresql://usuario:password@rds-endpoint/urgara_common?sslmode=no-verify&schema=public
+DATABASE_LOCALITY_URL=postgresql://usuario:password@rds-endpoint/{locality}?sslmode=no-verify&schema=public
 
 # CORS
 CORS_ORIGIN=https://app.urgara.org.ar
@@ -311,6 +312,16 @@ COOKIE_SECRET=tu-cookie-secret-aqui
 JWT_SECRET_CLIENT=tu-jwt-secret-client-aqui
 JWT_SECRET_REFRESH=tu-jwt-refresh-secret-aqui
 ```
+
+**⚠️ Nota sobre sslmode=no-verify:**
+
+Este parámetro es **necesario** para evitar el error `P1010: User was denied access` al usar Prisma 7.x con `@prisma/adapter-pg` en AWS RDS.
+
+- **Problema conocido**: Bug reportado en Prisma Issues #28836 y #28795 (Diciembre 2025)
+- **Síntoma**: `psql` conecta correctamente, pero Prisma falla con error de permisos
+- **Causa**: Conflicto entre SSL enforcement de RDS y el adapter de PostgreSQL
+- **Solución**: Agregar `?sslmode=no-verify` mantiene la conexión SSL pero omite la verificación del certificado
+- **Seguridad**: Sigue siendo seguro para RDS ya que la conexión permanece encriptada
 
 **IMPORTANTE:** Genera secrets seguros para producción:
 
