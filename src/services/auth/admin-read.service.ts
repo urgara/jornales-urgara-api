@@ -66,7 +66,16 @@ export class AdminReadService {
           role: true,
           createdAt: true,
           deletedAt: true,
-          Locality: true,
+          Locality: {
+            select: {
+              id: true,
+              name: true,
+              province: true,
+              isCalculateJc: true,
+              createdAt: true,
+              deletedAt: true,
+            },
+          },
         },
         orderBy: {
           [sortBy]: sortOrder,
@@ -101,8 +110,25 @@ export class AdminReadService {
     }
     const admin = await this.databaseService.admin.findUnique({
       where: { id: session?.adminId },
-      include: {
-        Locality: true,
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        dni: true,
+        localityId: true,
+        role: true,
+        createdAt: true,
+        deletedAt: true,
+        Locality: {
+          select: {
+            id: true,
+            name: true,
+            province: true,
+            isCalculateJc: true,
+            createdAt: true,
+            deletedAt: true,
+          },
+        },
       },
     });
 
