@@ -382,6 +382,12 @@ docker exec -e DATABASE_LOCALITY_URL="postgresql://your_db_user:your_db_password
 
 # Repetir para cada base de datos locality creada
 docker exec -e DATABASE_LOCALITY_URL="postgresql://your_db_user:your_db_password@your-rds-endpoint.region.rds.amazonaws.com/locality-name-2?schema=public" urgara-jornales-api pnpm run prisma:migrate:deploy:locality
+
+# 5. Reiniciar el contenedor para que detecte las nuevas localidades
+docker compose -f docker-compose.prod.yml restart
+
+# Verificar que las localidades fueron detectadas
+docker logs urgara-jornales-api | grep -i locality
 ```
 
 ### 7.5. Comandos útiles

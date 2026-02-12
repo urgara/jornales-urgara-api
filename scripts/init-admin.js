@@ -36,6 +36,7 @@ async function initAdmin() {
     const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin123!';
     const defaultName = process.env.DEFAULT_ADMIN_NAME || 'Dynnamo';
     const defaultSurname = process.env.DEFAULT_ADMIN_SURNAME || 'Sistema';
+    const defaultRole = process.env.DEFAULT_ADMIN_ROLE || '1'; // 1 = ADMIN, 5 = LOCAL, 10 = ONLY_READ
 
     // Hashear la contraseña
     const hashedPassword = await argon2.hash(defaultPassword);
@@ -51,7 +52,7 @@ async function initAdmin() {
         name: defaultName,
         surname: defaultSurname,
         password: hashedPassword,
-        role: '1', // ADMIN role
+        role: defaultRole,
         localityId: null,
       },
     });

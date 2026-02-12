@@ -34,24 +34,37 @@ export class DatabaseLocalityService implements OnModuleInit, OnModuleDestroy {
       for (const locality of localities) {
         if (!locality.databaseName || locality.databaseName === 'pending') {
           console.warn(
-            `Skipping locality ${locality.name} (${locality.id}): databaseName is pending`,
+            `⚠️  Skipping locality ${locality.name} (${locality.id}): databaseName is pending`,
           );
           continue;
         }
 
-        // Reemplazar {locality} en la URL con el databaseName
-        const tenantUrl = baseUrl.replace('{locality}', locality.databaseName);
+        try {
+          // Reemplazar {locality} en la URL con el databaseName
+          const tenantUrl = baseUrl.replace('{locality}', locality.databaseName);
 
-        const pool = new Pool({ connectionString: tenantUrl });
-        const adapter = new PrismaPg(pool);
-        const client = new PrismaClient({ adapter });
+          const pool = new Pool({ connectionString: tenantUrl });
+          const adapter = new PrismaPg(pool);
+          const client = new PrismaClient({ adapter });
 
-        await client.$connect();
-        this.tenantConnections.set(locality.id, client);
+          await client.$connect();
+          this.tenantConnections.set(locality.id, client);
 
-        console.log(
-          `✓ Connected to tenant DB: ${locality.name} (${locality.databaseName})`,
-        );
+          console.log(
+            `✅ Connected to tenant DB: ${locality.name} (${locality.databaseName})`,
+          );
+        } catch (error) {
+          console.error(
+            `❌ Failed to connect to tenant DB: ${locality.name} (${locality.databaseName})`,
+          );
+          console.error(
+            `   Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
+          console.error(
+            `   Please create the database and run migrations before accessing this locality`,
+          );
+          // No lanzar error - continuar con otras localidades
+        }
       }
 
       console.log(
