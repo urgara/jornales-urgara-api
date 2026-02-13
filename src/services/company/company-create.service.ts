@@ -13,7 +13,7 @@ export class CompanyCreateService {
     return await this.databaseService.company.create({
       data: {
         id: this.uuidService.V6(),
-        name: data.name,
+        name: data.name.toUpperCase(),
         cuit: data.cuit ?? null,
       },
     });

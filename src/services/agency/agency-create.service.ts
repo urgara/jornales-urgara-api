@@ -13,7 +13,7 @@ export class AgencyCreateService {
     return await this.databaseService.agency.create({
       data: {
         id: this.uuidService.V6(),
-        name: data.name,
+        name: data.name.toUpperCase(),
       },
     });
   }

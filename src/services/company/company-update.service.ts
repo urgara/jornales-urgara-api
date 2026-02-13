@@ -22,7 +22,7 @@ export class CompanyUpdateService {
     return await this.databaseService.company.update({
       where: { id },
       data: {
-        ...(data.name !== undefined && { name: data.name }),
+        ...(data.name !== undefined && { name: data.name.toUpperCase() }),
         ...(data.cuit !== undefined && { cuit: data.cuit ?? null }),
       },
     });

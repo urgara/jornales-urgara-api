@@ -22,7 +22,7 @@ export class AgencyUpdateService {
     return await this.databaseService.agency.update({
       where: { id },
       data: {
-        ...(data.name !== undefined && { name: data.name }),
+        ...(data.name !== undefined && { name: data.name.toUpperCase() }),
       },
     });
   }

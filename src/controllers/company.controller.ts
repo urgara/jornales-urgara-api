@@ -6,7 +6,6 @@ import {
   UseGuards,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Query,
   Delete,
@@ -144,7 +143,7 @@ export class CompanyController {
     description: 'Company retrieved successfully',
     type: CompanySingleResponseDto,
   })
-  async getCompanyById(@Param('id', ParseIntPipe) id: CompanyId) {
+  async getCompanyById(@Param('id') id: CompanyId) {
     const company = await this.companyReadService.findById(id);
 
     return plainToInstance(CompanySingleResponseDto, {
@@ -165,7 +164,7 @@ export class CompanyController {
     type: CompanyUpdatedResponseDto,
   })
   async updateCompany(
-    @Param('id', ParseIntPipe) id: CompanyId,
+    @Param('id') id: CompanyId,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
     const company = await this.companyUpdateService.update(
@@ -189,7 +188,7 @@ export class CompanyController {
     description: 'Company deleted successfully',
     type: CompanyDeletedResponseDto,
   })
-  async deleteCompany(@Param('id', ParseIntPipe) id: CompanyId) {
+  async deleteCompany(@Param('id') id: CompanyId) {
     await this.companyDeleteService.delete(id);
 
     return plainToInstance(CompanyDeletedResponseDto, {
