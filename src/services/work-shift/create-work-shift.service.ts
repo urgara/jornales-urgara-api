@@ -38,16 +38,19 @@ export class CreateWorkShiftService {
 
     /**
      * Calcular duración en minutos desde startTime y endTime
-     * Fórmula: (endTime - startTime) en milisegundos / 1000 (ms a segundos) / 60 (segundos a minutos)
-     * Ejemplo: startTime=08:00, endTime=16:30 → 8.5 horas = 510 minutos
+     * Si endTime < startTime, el turno cruza medianoche (ej: 19:00 → 01:00 = 6 horas)
+     * Se suman 1440 minutos (24h) para obtener la diferencia correcta
      */
-    const durationMinutes =
+    let durationMinutes =
       (endTimeDate.getTime() - startTimeDate.getTime()) / 1000 / 60;
 
-    // Validar que la duración no sea negativa (endTime debe ser mayor a startTime)
-    if (durationMinutes <= 0) {
+    if (durationMinutes < 0) {
+      durationMinutes += 1440;
+    }
+
+    if (durationMinutes === 0) {
       throw new BadRequestException(
-        'End time must be greater than start time. Night shifts crossing midnight are not supported.',
+        'Start time and end time cannot be the same.',
       );
     }
 

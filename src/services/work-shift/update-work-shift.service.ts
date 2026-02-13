@@ -66,13 +66,17 @@ export class UpdateWorkShiftService {
       const finalEndTime = dataToUpdate.endTime || existingWorkShift.endTime;
 
       // Convertir Date a milisegundos y calcular diferencia en minutos
-      const durationMinutes =
+      // Si cruza medianoche (ej: 19:00 → 01:00), sumar 1440 min (24h)
+      let durationMinutes =
         (finalEndTime.getTime() - finalStartTime.getTime()) / 1000 / 60;
 
-      // Validar que la duración no sea negativa (endTime debe ser mayor a startTime)
-      if (durationMinutes <= 0) {
+      if (durationMinutes < 0) {
+        durationMinutes += 1440;
+      }
+
+      if (durationMinutes === 0) {
         throw new BadRequestException(
-          'End time must be greater than start time. Night shifts crossing midnight are not supported.',
+          'Start time and end time cannot be the same.',
         );
       }
 
