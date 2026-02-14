@@ -11,6 +11,8 @@ import type { Admin } from 'src/types/auth';
 
 @Injectable()
 export class CreateWorkShiftBaseValueService {
+  COEF_REM = 0.795;
+  COEF_NO_REM = 0.965;
   constructor(
     private readonly databaseService: DatabaseLocalityService,
     private readonly uuidService: UuidService,
@@ -44,14 +46,35 @@ export class CreateWorkShiftBaseValueService {
         endDate: new Date(new Date(endDate).setUTCHours(2, 59, 59, 999)),
         category,
         workShiftCalculatedValues: {
-          create: coefficients.map((coefficient) => ({
-            coefficient,
-            remunerated: this.decimalService.multiply(remunerated, coefficient),
-            notRemunerated: this.decimalService.multiply(
+          create: coefficients.map((coefficient) => {
+            const calcRemunerated = this.decimalService.multiply(
+              remunerated,
+              coefficient,
+            );
+            const calcNotRemunerated = this.decimalService.multiply(
               notRemunerated,
               coefficient,
-            ),
-          })),
+            );
+            const gross = this.decimalService.add(
+              calcRemunerated,
+              calcNotRemunerated,
+            );
+            const net = this.decimalService.add(
+              this.decimalService.multiply(calcRemunerated, this.COEF_REM),
+              this.decimalService.multiply(
+                calcNotRemunerated,
+                this.COEF_NO_REM,
+              ),
+            );
+
+            return {
+              coefficient,
+              remunerated: calcRemunerated,
+              notRemunerated: calcNotRemunerated,
+              gross,
+              net,
+            };
+          }),
         },
       },
       include: { workShiftCalculatedValues: true },

@@ -42,6 +42,8 @@ interface SimpleWorkShiftCalculatedValueResponse {
   coefficient: string;
   remunerated: string;
   notRemunerated: string;
+  gross: string;
+  net: string;
 }
 
 interface SimpleWorkShiftBaseValueResponse {
