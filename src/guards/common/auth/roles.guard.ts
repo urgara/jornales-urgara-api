@@ -12,9 +12,9 @@ import {
 @Injectable()
 export class RoleGuard implements CanActivate {
   private readonly roleHierarchy: Record<AdminTypeRole, number> = {
-    ADMIN: 1,       // Mayor nivel de acceso - acceso total
-    LOCAL: 5,       // Administrador local
-    ONLY_READ: 10,  // Solo lectura - menor nivel de acceso
+    ADMIN: 1, // Mayor nivel de acceso - acceso total
+    LOCAL: 5, // Administrador local
+    ONLY_READ: 10, // Solo lectura - menor nivel de acceso
   };
 
   constructor(private reflector: Reflector) {}
