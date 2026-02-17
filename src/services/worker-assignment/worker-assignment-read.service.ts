@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseLocalityService, LocalityResolverService } from '../common';
+import {
+  DatabaseLocalityService,
+  DatabaseCommonService,
+  LocalityResolverService,
+} from '../common';
 import type {
   WorkerAssignmentId,
   FindWorkerAssignmentQuery,
@@ -11,6 +15,7 @@ import { NotFoundException } from 'src/exceptions/common';
 export class WorkerAssignmentReadService {
   constructor(
     private readonly databaseService: DatabaseLocalityService,
+    private readonly databaseCommon: DatabaseCommonService,
     private readonly localityResolver: LocalityResolverService,
   ) {}
 
@@ -24,8 +29,10 @@ export class WorkerAssignmentReadService {
     const assignment = await db.workerAssignment.findUnique({
       where: { id },
       include: {
-        Worker: true,
         WorkShift: true,
+        WorkerAssignmentDetail: {
+          include: { Worker: true },
+        },
       },
     });
 
@@ -33,7 +40,15 @@ export class WorkerAssignmentReadService {
       throw new NotFoundException('Worker assignment not found');
     }
 
-    return assignment;
+    // Buscar nombre del barco en la DB común
+    const ship = await this.databaseCommon.ship.findUnique({
+      where: { id: assignment.shipId },
+      select: { name: true },
+    });
+
+    // Mapear WorkerAssignmentDetail → workers
+    const { WorkerAssignmentDetail, ...header } = assignment;
+    return { ...header, shipName: ship?.name ?? '', workers: WorkerAssignmentDetail };
   }
 
   async findAll(
@@ -49,9 +64,10 @@ export class WorkerAssignmentReadService {
       workerId,
       workShiftId,
       companyId,
-      agencyId,
+      companyRole,
       terminalId,
       productId,
+      shipId,
       dateFrom,
       dateTo,
     } = query;
@@ -60,8 +76,9 @@ export class WorkerAssignmentReadService {
 
     const where: any = {};
 
+    // workerId filtra vía relación detail
     if (workerId) {
-      where.workerId = workerId;
+      where.WorkerAssignmentDetail = { some: { workerId } };
     }
 
     if (workShiftId) {
@@ -72,8 +89,8 @@ export class WorkerAssignmentReadService {
       where.companyId = companyId;
     }
 
-    if (agencyId) {
-      where.agencyId = agencyId;
+    if (companyRole) {
+      where.companyRole = companyRole;
     }
 
     if (terminalId) {
@@ -82,6 +99,10 @@ export class WorkerAssignmentReadService {
 
     if (productId) {
       where.productId = productId;
+    }
+
+    if (shipId) {
+      where.shipId = shipId;
     }
 
     if (dateFrom || dateTo) {
@@ -101,12 +122,35 @@ export class WorkerAssignmentReadService {
         skip,
         take: limit,
         orderBy: { [sortBy]: sortOrder },
+        include: { WorkerAssignmentDetail: true },
       }),
       db.workerAssignment.count({ where }),
     ]);
 
+    // Recolectar shipIds únicos para una sola consulta batch
+    const uniqueShipIds = [
+      ...new Set(assignments.map((a: any) => a.shipId as string)),
+    ];
+
+    const ships = await this.databaseCommon.ship.findMany({
+      where: { id: { in: uniqueShipIds } },
+      select: { id: true, name: true },
+    });
+
+    const shipNameMap = new Map(ships.map((s) => [s.id, s.name]));
+
+    // Mapear WorkerAssignmentDetail → workers + shipName
+    const mappedAssignments = assignments.map((assignment: any) => {
+      const { WorkerAssignmentDetail, ...header } = assignment;
+      return {
+        ...header,
+        shipName: shipNameMap.get(header.shipId) ?? '',
+        workers: WorkerAssignmentDetail,
+      };
+    });
+
     return {
-      data: assignments,
+      data: mappedAssignments,
       pagination: {
         page,
         limit,

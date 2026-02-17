@@ -13,6 +13,7 @@ import type {
   FindWorkerAssignmentQuery,
   WorkerAssignmentSortBy,
 } from 'src/types/worker-assignment';
+import { CompanyRole } from 'generated/prisma-locality';
 
 export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
   @ApiProperty({
@@ -45,15 +46,13 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
     required: false,
     enum: [
       'id',
-      'workerId',
       'workShiftId',
       'date',
-      'additionalPercent',
-      'totalAmount',
       'companyId',
-      'agencyId',
+      'companyRole',
       'terminalId',
       'productId',
+      'shipId',
       'createdAt',
     ],
   })
@@ -61,15 +60,13 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
   @IsString()
   @IsEnum([
     'id',
-    'workerId',
     'workShiftId',
     'date',
-    'additionalPercent',
-    'totalAmount',
     'companyId',
-    'agencyId',
+    'companyRole',
     'terminalId',
     'productId',
+    'shipId',
     'createdAt',
   ])
   sortBy?: WorkerAssignmentSortBy;
@@ -137,13 +134,14 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
   companyId?: string;
 
   @ApiProperty({
-    description: 'Filtrar por ID de la agencia',
-    example: '550e8400-e29b-41d4-a716-446655440003',
+    description: 'Filtrar por rol de la empresa',
+    example: 'EXPORTER',
     required: false,
+    enum: CompanyRole,
   })
   @IsOptional()
-  @IsUUID()
-  agencyId?: string;
+  @IsEnum(CompanyRole)
+  companyRole?: string;
 
   @ApiProperty({
     description: 'Filtrar por ID de la terminal',
@@ -162,6 +160,15 @@ export class WorkerAssignmentsQueryDto implements FindWorkerAssignmentQuery {
   @IsOptional()
   @IsUUID()
   productId?: string;
+
+  @ApiProperty({
+    description: 'Filtrar por ID del barco',
+    example: '550e8400-e29b-41d4-a716-446655440006',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  shipId?: string;
 
   @ApiPropertyOptional({
     description: 'ID de localidad (requerido para ADMIN, ignorado para LOCAL)',

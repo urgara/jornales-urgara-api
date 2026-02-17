@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   DatabaseLocalityService,
-  DecimalService,
+  DatabaseCommonService,
   LocalityResolverService,
 } from '../common';
 import type {
@@ -10,14 +10,16 @@ import type {
 } from 'src/types/worker-assignment';
 import type { LocalityOperationContext } from 'src/types/locality';
 import type { Admin } from 'src/types/auth';
-import { NotFoundException } from 'src/exceptions/common';
+import { BadRequestException, NotFoundException } from 'src/exceptions/common';
+import { WorkerAssignmentCalculationService } from './worker-assignment-calculation.service';
 
 @Injectable()
 export class WorkerAssignmentUpdateService {
   constructor(
     private readonly databaseService: DatabaseLocalityService,
-    private readonly decimalService: DecimalService,
+    private readonly databaseCommon: DatabaseCommonService,
     private readonly localityResolver: LocalityResolverService,
+    private readonly calculationService: WorkerAssignmentCalculationService,
   ) {}
 
   async update(
@@ -25,9 +27,9 @@ export class WorkerAssignmentUpdateService {
     admin: Pick<Admin, 'role' | 'localityId'>,
     data: UpdateWorkerAssignment & Partial<LocalityOperationContext>,
   ) {
-    // localityId viene del body (data.localityId) - opcional para PATCH
     const localityId = this.localityResolver.resolve(admin, data.localityId);
     const db = this.databaseService.getTenantClient(localityId);
+
     // Verificar que la asignación existe
     const existingAssignment = await db.workerAssignment.findUnique({
       where: { id },
@@ -37,20 +39,7 @@ export class WorkerAssignmentUpdateService {
       throw new NotFoundException('Worker assignment not found');
     }
 
-    const dataToUpdate: any = {};
-
-    // Si se actualiza workerId, verificar que existe
-    if (data.workerId !== undefined) {
-      const worker = await db.worker.findUnique({
-        where: { id: data.workerId, deletedAt: null },
-      });
-
-      if (!worker) {
-        throw new NotFoundException('Worker not found');
-      }
-
-      dataToUpdate.workerId = data.workerId;
-    }
+    const headerUpdate: any = {};
 
     // Si se actualiza workShiftId, verificar que existe
     if (data.workShiftId !== undefined) {
@@ -62,78 +51,129 @@ export class WorkerAssignmentUpdateService {
         throw new NotFoundException('Work shift not found');
       }
 
-      dataToUpdate.workShiftId = data.workShiftId;
+      headerUpdate.workShiftId = data.workShiftId;
     }
 
     if (data.date !== undefined) {
-      dataToUpdate.date = new Date(data.date);
+      headerUpdate.date = new Date(data.date);
     }
 
-    if (data.category !== undefined) {
-      dataToUpdate.category = data.category;
+    if (data.companyId !== undefined) {
+      headerUpdate.companyId = data.companyId;
     }
 
-    if (data.additionalPercent !== undefined) {
-      dataToUpdate.additionalPercent = data.additionalPercent;
+    if (data.companyRole !== undefined) {
+      headerUpdate.companyRole = data.companyRole;
     }
 
-    /**
-     * Recalcular totalAmount y baseValue si se actualizó algún campo que afecta el cálculo
-     */
-    if (data.value !== undefined || data.additionalPercent !== undefined) {
-      // Si se proporciona un nuevo value, buscar el WorkShiftCalculatedValue
-      if (data.value !== undefined) {
-        const calculatedValue = await db.workShiftCalculatedValue.findUnique({
-          where: {
-            coefficient_workShiftBaseValueId: {
-              coefficient: data.value.coefficient,
-              workShiftBaseValueId: data.value.workShiftBaseValueId,
-            },
-          },
+    if (data.jc !== undefined) {
+      headerUpdate.jc = data.jc;
+    }
+
+    if (data.terminalId !== undefined) {
+      headerUpdate.terminalId = data.terminalId;
+    }
+
+    if (data.productId !== undefined) {
+      headerUpdate.productId = data.productId;
+    }
+
+    if (data.shipId !== undefined) {
+      headerUpdate.shipId = data.shipId;
+    }
+
+    // Full replacement de workers si vienen en el payload
+    if (data.workers !== undefined && data.workers.length > 0) {
+      const workers = data.workers;
+
+      // Validar no hay workerIds duplicados
+      const workerIds = workers.map((w) => w.workerId);
+      const uniqueWorkerIds = new Set(workerIds);
+      if (uniqueWorkerIds.size !== workerIds.length) {
+        throw new BadRequestException(
+          'Duplicate worker IDs found in the request',
+        );
+      }
+
+      // Verificar que todos los trabajadores existen
+      const existingWorkers = await db.worker.findMany({
+        where: { id: { in: workerIds }, deletedAt: null },
+        select: { id: true },
+      });
+
+      if (existingWorkers.length !== workerIds.length) {
+        const existingIds = new Set(
+          existingWorkers.map((w: { id: string }) => w.id),
+        );
+        const missingIds = workerIds.filter(
+          (wId: string) => !existingIds.has(wId),
+        );
+        throw new NotFoundException(
+          `Workers not found: ${missingIds.join(', ')}`,
+        );
+      }
+
+      // Determinar si el jc está activo (del update o del existente)
+      const isJc = data.jc !== undefined ? data.jc : existingAssignment.jc;
+      if (isJc) {
+        const locality = await this.databaseCommon.locality.findUnique({
+          where: { id: localityId },
+          select: { isCalculateJc: true },
         });
 
-        if (!calculatedValue) {
-          throw new NotFoundException(
-            'Work shift calculated value not found for the given coefficient and base value',
+        if (!locality || !locality.isCalculateJc) {
+          throw new BadRequestException(
+            'This locality does not have JC (jornal caído) enabled',
           );
         }
-
-        dataToUpdate.workShiftBaseValueId = data.value.workShiftBaseValueId;
-        dataToUpdate.coefficient = data.value.coefficient;
-        // baseValue = remunerated + notRemunerated (valor bruto total)
-        dataToUpdate.baseValue = this.decimalService.add(
-          calculatedValue.remunerated,
-          calculatedValue.notRemunerated,
-        );
       }
 
-      // Obtener baseValue final (nuevo o existente)
-      const finalBaseValue =
-        dataToUpdate.baseValue ?? existingAssignment.baseValue;
-      const finalAdditionalPercent =
-        data.additionalPercent !== undefined
-          ? data.additionalPercent
-          : existingAssignment.additionalPercent;
+      // Calcular amounts para cada worker
+      const detailsData = await Promise.all(
+        workers.map((worker) =>
+          this.calculationService.calculateWorkerDetail(db, worker, isJc),
+        ),
+      );
 
-      // Calcular totalAmount
-      let totalAmount = finalBaseValue;
+      // Transacción: actualizar header + reemplazar details
+      const assignment = await db.$transaction(async (tx: any) => {
+        // Actualizar header
+        await tx.workerAssignment.update({
+          where: { id },
+          data: headerUpdate,
+        });
 
-      if (finalAdditionalPercent) {
-        const percentAmount = this.decimalService.multiply(
-          finalBaseValue,
-          this.decimalService.divide(finalAdditionalPercent, 100),
-        );
-        totalAmount = this.decimalService.add(finalBaseValue, percentAmount);
-      }
+        // Eliminar details existentes
+        await tx.workerAssignmentDetail.deleteMany({
+          where: { workerAssignmentId: id },
+        });
 
-      dataToUpdate.totalAmount = totalAmount;
+        // Crear nuevos details
+        await tx.workerAssignmentDetail.createMany({
+          data: detailsData.map((detail) => ({
+            ...detail,
+            workerAssignmentId: id,
+          })),
+        });
+
+        return tx.workerAssignment.findUnique({
+          where: { id },
+          include: { WorkerAssignmentDetail: true },
+        });
+      });
+
+      const { WorkerAssignmentDetail, ...header } = assignment;
+      return { ...header, workers: WorkerAssignmentDetail };
     }
 
+    // Solo actualizar header (sin cambiar workers)
     const updatedAssignment = await db.workerAssignment.update({
       where: { id },
-      data: dataToUpdate,
+      data: headerUpdate,
+      include: { WorkerAssignmentDetail: true },
     });
 
-    return updatedAssignment;
+    const { WorkerAssignmentDetail, ...header } = updatedAssignment;
+    return { ...header, workers: WorkerAssignmentDetail };
   }
 }

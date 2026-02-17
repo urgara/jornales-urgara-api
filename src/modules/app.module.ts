@@ -20,9 +20,9 @@ import { CompanyModule } from './company.module';
 // import { LegalEntityModule } from './legal-entity.module'; // COMENTADO: LegalEntity eliminado del schema
 import { WorkerModule } from './worker.module';
 import { WorkerAssignmentModule } from './worker-assignment.module';
-import { AgencyModule } from './agency.module';
 import { ProductModule } from './product.module';
 import { TerminalModule } from './terminal.module';
+import { ShipModule } from './ship.module';
 import { WorkShiftBaseValueModule } from './work-shift-base-value.module';
 
 @Module({
@@ -41,9 +41,9 @@ import { WorkShiftBaseValueModule } from './work-shift-base-value.module';
     // LegalEntityModule, // COMENTADO: LegalEntity eliminado del schema
     WorkerModule,
     WorkerAssignmentModule,
-    AgencyModule,
     ProductModule,
     TerminalModule,
+    ShipModule,
   ],
   controllers: [AppController],
   providers: [

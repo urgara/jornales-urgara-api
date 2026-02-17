@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WorkerAssignmentController } from '../controllers/worker-assignment.controller';
 import {
+  WorkerAssignmentCalculationService,
   WorkerAssignmentCreateService,
   WorkerAssignmentReadService,
   WorkerAssignmentUpdateService,
@@ -9,6 +10,7 @@ import {
 @Module({
   controllers: [WorkerAssignmentController],
   providers: [
+    WorkerAssignmentCalculationService,
     WorkerAssignmentCreateService,
     WorkerAssignmentReadService,
     WorkerAssignmentUpdateService,
