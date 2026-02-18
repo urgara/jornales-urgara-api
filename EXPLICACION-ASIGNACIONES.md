@@ -80,14 +80,15 @@ workShiftBaseValueId = "base-value-uuid-ene-2026"
 remunerated = 265,228.00
 notRemunerated = 15,914.00
 
-// 3. Se calcula baseValue
-baseValue = 265,228.00 + 15,914.00 = 281,142.00
+// 3. Se obtiene gross y net desde calculatedValue
+gross = calculatedValue.gross  // 281,142.00
+net = calculatedValue.net      // (265,228.00 * 0.795) + (15,914.00 * 0.965) = 225,870.87
 
-// 4. Se aplica additionalPercent (si existe)
+// 4. Se aplica additionalPercent al net (si existe)
 // Ejemplo con +10%
 additionalPercent = 10.00
-percentAmount = 281,142.00 × 0.10 = 28,114.20
-totalAmount = 281,142.00 + 28,114.20 = 309,256.20
+percentAmount = 225,870.87 × 0.10 = 22,587.09
+net = 225,870.87 + 22,587.09 = 248,457.96
 ```
 
 **Resultado final guardado:**
@@ -95,9 +96,9 @@ totalAmount = 281,142.00 + 28,114.20 = 309,256.20
 {
   "workShiftBaseValueId": "base-value-uuid-ene-2026",
   "coefficient": "1.50",
-  "baseValue": "281142.00",      // rem + notRem
+  "gross": "281142.00",          // calculatedValue.gross
   "additionalPercent": "10.00",   // +10%
-  "totalAmount": "309256.20"      // baseValue + 10%
+  "net": "248457.96"             // calculatedValue.net + 10%
 }
 ```
 
@@ -169,9 +170,9 @@ model WorkerAssignment {
   category             Category
   workShiftBaseValueId String   @db.Uuid
   coefficient          Decimal  @db.Decimal(5, 2)
-  baseValue            Decimal  @db.Decimal(10, 2)    // rem + notRem
+  gross                Decimal  @db.Decimal(10, 2)    // calculatedValue.gross (si JC: * 0.70)
   additionalPercent    Decimal? @db.Decimal(5, 2)     // puede ser +/-
-  totalAmount          Decimal  @db.Decimal(10, 2)    // monto final
+  net                  Decimal  @db.Decimal(10, 2)    // calculatedValue.net (si JC: * 0.70) + porcentaje adicional
 
   // IDs de contexto
   companyId   String
@@ -223,42 +224,48 @@ const calculatedValue = await db.workShiftCalculatedValue.findUnique({
 });
 ```
 
-### Paso 3: Calcular baseValue
+### Paso 3: Obtener gross y net desde calculatedValue
 ```typescript
-baseValue = calculatedValue.remunerated + calculatedValue.notRemunerated
+gross = calculatedValue.gross  // remunerated + notRemunerated
+net = calculatedValue.net      // (remunerated * 0.795) + (notRemunerated * 0.965)
+
+// Si Jornal Caído (JC):
+if (jc) {
+  gross = gross * 0.70
+  net = net * 0.70
+}
 ```
 
 **Ejemplo:**
-- `remunerated` = 10,000.00
-- `notRemunerated` = 2,000.00
-- **`baseValue`** = **12,000.00**
+- `calculatedValue.gross` = 12,000.00
+- `calculatedValue.net` = 9,870.00
+- **`gross`** = **12,000.00**
+- **`net`** = **9,870.00**
 
-### Paso 4: Aplicar porcentaje adicional (si existe)
+### Paso 4: Aplicar porcentaje adicional al net (si existe)
 ```typescript
 if (additionalPercent) {
-  percentAmount = baseValue * (additionalPercent / 100)
-  totalAmount = baseValue + percentAmount
-} else {
-  totalAmount = baseValue
+  percentAmount = net * (additionalPercent / 100)
+  net = net + percentAmount
 }
 ```
 
 **Ejemplo 1: Porcentaje positivo (+15%)**
-- `baseValue` = 12,000.00
+- `net` = 9,870.00
 - `additionalPercent` = 15.00
-- `percentAmount` = 12,000 × 0.15 = 1,800.00
-- **`totalAmount`** = 12,000 + 1,800 = **13,800.00**
+- `percentAmount` = 9,870 × 0.15 = 1,480.50
+- **`net`** = 9,870 + 1,480.50 = **11,350.50**
 
 **Ejemplo 2: Porcentaje negativo (-10%)**
-- `baseValue` = 12,000.00
+- `net` = 9,870.00
 - `additionalPercent` = -10.00
-- `percentAmount` = 12,000 × -0.10 = -1,200.00
-- **`totalAmount`** = 12,000 + (-1,200) = **10,800.00**
+- `percentAmount` = 9,870 × -0.10 = -987.00
+- **`net`** = 9,870 + (-987) = **8,883.00**
 
 **Ejemplo 3: Sin porcentaje**
-- `baseValue` = 12,000.00
+- `net` = 9,870.00
 - `additionalPercent` = null
-- **`totalAmount`** = **12,000.00**
+- **`net`** = **9,870.00**
 
 ### Paso 5: Guardar en base de datos
 ```typescript
@@ -271,9 +278,9 @@ await db.workerAssignment.create({
     category,
     workShiftBaseValueId,
     coefficient,
-    baseValue,              // 12,000.00
+    gross,                  // 12,000.00
     additionalPercent,      // 15.00 o null
-    totalAmount,            // 13,800.00
+    net,                    // 11,350.50
     companyId,
     localityId,
     agencyId,
@@ -321,9 +328,9 @@ Crea una nueva asignación.
     "category": "IDONEO",
     "workShiftBaseValueId": "uuid",
     "coefficient": "1.50",
-    "baseValue": "12000.00",
+    "gross": "12000.00",
     "additionalPercent": "15.00",
-    "totalAmount": "13800.00",
+    "net": "11350.50",
     "companyId": "uuid",
     "localityId": "uuid",
     "agencyId": "uuid",
@@ -356,7 +363,7 @@ Lista todas las asignaciones con filtros y paginación.
 Obtiene una asignación por ID, incluyendo relaciones con Worker y WorkShift.
 
 ### PATCH /worker-assignments/:id
-Actualiza una asignación existente. Recalcula automáticamente `baseValue` y `totalAmount` si se modifican los campos relevantes.
+Actualiza una asignación existente. Recalcula automáticamente `gross` y `net` si se modifican los campos relevantes.
 
 ### GET /worker-assignments/count
 Retorna el total de asignaciones para una localidad.
@@ -368,9 +375,9 @@ Retorna el total de asignaciones para una localidad.
 | `category` | enum | "IDONEO" o "PERITO" |
 | `workShiftBaseValueId` | UUID | ID del valor base usado para el cálculo |
 | `coefficient` | string | Coeficiente del turno (ej: "1.50") |
-| `baseValue` | string | Valor bruto = remunerated + notRemunerated |
+| `gross` | string | Valor bruto: calculatedValue.gross (si JC: * 0.70) |
 | `additionalPercent` | string\|null | Porcentaje adicional (puede ser negativo) |
-| `totalAmount` | string | Monto final con porcentaje aplicado |
+| `net` | string | Valor neto: calculatedValue.net (si JC: * 0.70) + porcentaje adicional |
 
 ## Validaciones
 
@@ -386,25 +393,25 @@ Retorna el total de asignaciones para una localidad.
 ### 1. Asignación estándar (sin porcentaje adicional)
 Un trabajador con turno normal sin bonificaciones ni descuentos.
 ```
-baseValue = 12,000.00
+gross = 12,000.00
+net = 9,870.00
 additionalPercent = null
-totalAmount = 12,000.00
 ```
 
 ### 2. Asignación con bonificación (+15%)
-Un trabajador con buen desempeño recibe 15% adicional.
+Un trabajador con buen desempeño recibe 15% adicional sobre el neto.
 ```
-baseValue = 12,000.00
+gross = 12,000.00
+net = 9,870.00 + 15% = 11,350.50
 additionalPercent = 15.00
-totalAmount = 13,800.00
 ```
 
 ### 3. Asignación con descuento (-10%)
-Un trabajador con ausencia parcial recibe 10% menos.
+Un trabajador con ausencia parcial recibe 10% menos sobre el neto.
 ```
-baseValue = 12,000.00
+gross = 12,000.00
+net = 9,870.00 - 10% = 8,883.00
 additionalPercent = -10.00
-totalAmount = 10,800.00
 ```
 
 ## Arquitectura de Código
@@ -447,5 +454,5 @@ pnpm prisma migrate dev --schema=prisma-locality/schema.prisma --name add_worker
 
 Esto creará una migración que:
 - Elimina `baseHourlyRate` de `Worker`
-- Agrega `category`, `workShiftBaseValueId`, `coefficient`, `baseValue` a `WorkerAssignment`
+- Agrega `category`, `workShiftBaseValueId`, `coefficient`, `gross` a `WorkerAssignment`
 - Actualiza el campo `additionalPercent` para soportar negativos

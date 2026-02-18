@@ -47,12 +47,12 @@ export class WorkerAssignmentDetailResponseDto
   coefficient: string;
 
   @ApiProperty({
-    description: 'Valor base calculado desde WorkShiftCalculatedValue',
+    description: 'Valor bruto: calculatedValue.gross (si JC: * 0.70)',
     example: '12000.00',
     type: 'string',
   })
   @Transform(({ value }: { value: DecimalNumber }) => value.toString())
-  baseValue: string;
+  gross: string;
 
   @ApiProperty({
     description: 'Porcentaje adicional (puede ser positivo o negativo)',
@@ -63,13 +63,14 @@ export class WorkerAssignmentDetailResponseDto
   @Transform(({ value }: { value: DecimalNumber | null | undefined }) =>
     value ? value.toString() : null,
   )
-  additionalPercent: string | null;
+  additionalPercent: string;
 
   @ApiProperty({
-    description: 'Monto bruto total con el porcentaje aplicado si existiera',
+    description:
+      'Valor neto: calculatedValue.net (si JC: * 0.70) + porcentaje adicional',
     example: '13800.00',
     type: 'string',
   })
   @Transform(({ value }: { value: DecimalNumber }) => value.toString())
-  totalAmount: string;
+  net: string;
 }

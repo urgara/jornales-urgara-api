@@ -15,6 +15,7 @@ export enum ListErrors {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED', // 401 - El token de autenticación ha expirado.
   SECURITY_ALERT = 'SECURITY_ALERT', // 403 - Alerta de seguridad, como intento de acceso sospechoso.
   LOCALITY_ID_REQUIRED = 'LOCALITY_ID_REQUIRED', // 400 - El ADMIN debe especificar el parámetro localityId.
+  RESOURCE_CLOSED = 'RESOURCE_CLOSED', // 409 - El recurso está cerrado y no puede ser modificado.
 }
 type ErrorMessageTypes = keyof typeof ListErrors;
 export abstract class Exception extends HttpException {

@@ -79,6 +79,12 @@ export class WorkerAssignmentResponseDto
   jc: boolean;
 
   @ApiProperty({
+    description: 'Indica si la asignación está cerrada',
+    example: false,
+  })
+  isClosed: boolean;
+
+  @ApiProperty({
     description: 'Fecha de creación',
     example: '2024-01-15T10:30:00Z',
   })

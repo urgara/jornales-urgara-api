@@ -81,6 +81,7 @@ model WorkerAssignment {
   productId   String      @db.Uuid
   shipId      String      @db.Uuid // ID del barco (referencia a Ship en prisma-common, sin FK)
   jc          Boolean     @default(false) // Jornal caído
+  isClosed    Boolean     @default(false) // Una vez cerrada, no se puede modificar
 
   WorkShift              WorkShift              @relation(fields: [workShiftId], references: [id])
   Terminal               Terminal               @relation(fields: [terminalId], references: [id])
@@ -95,9 +96,9 @@ model WorkerAssignmentDetail {
   category             Category // Categoría del trabajador en el momento de la asignación
   workShiftBaseValueId String   @db.Uuid // ID del valor base usado para el cálculo
   coefficient          Decimal  @db.Decimal(5, 2) // Coeficiente usado para el cálculo (del turno)
-  baseValue            Decimal  @db.Decimal(10, 2) // Valor bruto total: remunerated + notRemunerated desde WorkShiftCalculatedValue
+  gross                Decimal  @db.Decimal(10, 2) // Valor bruto: calculatedValue.gross (si JC: * 0.70)
   additionalPercent    Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)
-  totalAmount          Decimal  @db.Decimal(10, 2) // Monto final con el porcentaje aplicado si existiera
+  net                  Decimal  @db.Decimal(10, 2) // Valor neto: calculatedValue.net (si JC: * 0.70) + porcentaje adicional
 
   WorkerAssignment WorkerAssignment @relation(fields: [workerAssignmentId], references: [id])
   Worker           Worker           @relation(fields: [workerId], references: [id])

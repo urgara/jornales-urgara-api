@@ -4,6 +4,7 @@ export * from './default.exception';
 export * from './duplicate.exception';
 export * from './internal-server.exception';
 export * from './not-found.exception';
+export * from './resource-closed.exception';
 export * from './resource-conflict.exception';
 export * from './service-unavailable.exception';
 export * from './validation.exception';
