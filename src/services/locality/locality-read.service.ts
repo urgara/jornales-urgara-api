@@ -94,6 +94,7 @@ export class LocalityReadService {
       select: {
         id: true,
         name: true,
+        isCalculateJc: true,
       },
       orderBy: {
         name: 'asc',

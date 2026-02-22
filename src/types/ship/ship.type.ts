@@ -4,9 +4,7 @@ import type { NullToUndefined } from '../common';
 type Ship = PrismaShip;
 type ShipId = Ship['id'];
 
-type CreateShip = NullToUndefined<
-  Omit<Ship, 'id' | 'createdAt' | 'deletedAt'>
->;
+type CreateShip = NullToUndefined<Omit<Ship, 'id' | 'createdAt' | 'deletedAt'>>;
 type UpdateShip = Partial<CreateShip>;
 
 interface FindShipsQuery {

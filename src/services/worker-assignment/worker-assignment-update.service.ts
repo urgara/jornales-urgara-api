@@ -10,7 +10,11 @@ import type {
 } from 'src/types/worker-assignment';
 import type { LocalityOperationContext } from 'src/types/locality';
 import type { Admin } from 'src/types/auth';
-import { BadRequestException, NotFoundException } from 'src/exceptions/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  ResourceClosedException,
+} from 'src/exceptions/common';
 import { WorkerAssignmentCalculationService } from './worker-assignment-calculation.service';
 
 @Injectable()
@@ -37,6 +41,12 @@ export class WorkerAssignmentUpdateService {
 
     if (!existingAssignment) {
       throw new NotFoundException('Worker assignment not found');
+    }
+
+    if (existingAssignment.isClosed) {
+      throw new ResourceClosedException(
+        'This worker assignment is closed and cannot be modified',
+      );
     }
 
     const headerUpdate: any = {};
@@ -80,6 +90,10 @@ export class WorkerAssignmentUpdateService {
 
     if (data.shipId !== undefined) {
       headerUpdate.shipId = data.shipId;
+    }
+
+    if (data.isClosed !== undefined) {
+      headerUpdate.isClosed = data.isClosed;
     }
 
     // Full replacement de workers si vienen en el payload

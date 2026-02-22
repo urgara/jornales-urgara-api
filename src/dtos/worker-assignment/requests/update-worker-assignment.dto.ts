@@ -116,4 +116,14 @@ export class UpdateWorkerAssignmentDto implements UpdateWorkerAssignment {
   @IsOptional()
   @IsUUID()
   shipId?: string;
+
+  @ApiProperty({
+    description:
+      'Cerrar la asignación (una vez cerrada, no se puede modificar)',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  isClosed?: boolean;
 }

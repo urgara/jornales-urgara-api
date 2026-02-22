@@ -30,24 +30,22 @@ export class WorkerAssignmentCalculationService {
       );
     }
 
-    let baseValue = this.decimalService.add(
-      calculatedValue.remunerated,
-      calculatedValue.notRemunerated,
-    );
+    let gross = calculatedValue.gross;
+    let net = calculatedValue.net;
 
-    // Jornal caído: aplicar 70% al bruto primero, el neto se deriva de ese bruto
+    // Jornal caído: aplicar 70% tanto al bruto como al neto
     if (jc) {
-      baseValue = this.decimalService.multiply(baseValue, 0.7);
+      gross = this.decimalService.multiply(gross, 0.7);
+      net = this.decimalService.multiply(net, 0.7);
     }
 
-    let totalAmount = baseValue;
-
+    // Aplicar porcentaje adicional solo al neto
     if (worker.additionalPercent) {
       const percentAmount = this.decimalService.multiply(
-        baseValue,
+        net,
         this.decimalService.divide(worker.additionalPercent, 100),
       );
-      totalAmount = this.decimalService.add(baseValue, percentAmount);
+      net = this.decimalService.add(net, percentAmount);
     }
 
     return {
@@ -56,9 +54,9 @@ export class WorkerAssignmentCalculationService {
       category: worker.category,
       workShiftBaseValueId: worker.value.workShiftBaseValueId,
       coefficient: worker.value.coefficient,
-      baseValue,
+      gross,
       additionalPercent: worker.additionalPercent ?? null,
-      totalAmount,
+      net,
     };
   }
 }

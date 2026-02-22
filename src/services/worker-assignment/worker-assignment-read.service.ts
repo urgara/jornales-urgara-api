@@ -48,7 +48,11 @@ export class WorkerAssignmentReadService {
 
     // Mapear WorkerAssignmentDetail → workers
     const { WorkerAssignmentDetail, ...header } = assignment;
-    return { ...header, shipName: ship?.name ?? '', workers: WorkerAssignmentDetail };
+    return {
+      ...header,
+      shipName: ship?.name ?? '',
+      workers: WorkerAssignmentDetail,
+    };
   }
 
   async findAll(

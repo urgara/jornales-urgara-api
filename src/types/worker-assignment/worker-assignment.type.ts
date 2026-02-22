@@ -30,7 +30,7 @@ type CreateWorkerAssignmentWorker = {
 
 type CreateWorkerAssignment = Omit<
   WorkerAssignment,
-  'id' | 'createdAt' | 'localityId' | 'date' | 'jc'
+  'id' | 'createdAt' | 'localityId' | 'date' | 'jc' | 'isClosed'
 > & {
   date: string; // YYYY-MM-DD format
   jc?: boolean; // Jornal caído (default false)
@@ -41,6 +41,7 @@ type UpdateWorkerAssignment = Partial<
   Omit<CreateWorkerAssignment, 'workers'>
 > & {
   workers?: CreateWorkerAssignmentWorker[];
+  isClosed?: boolean;
 };
 
 type WorkerAssignmentSortBy =
@@ -72,12 +73,12 @@ interface FindWorkerAssignmentQuery
 // Response type for a single detail row (Decimal → string)
 type SimpleWorkerAssignmentDetailResponse = Omit<
   WorkerAssignmentDetail,
-  'coefficient' | 'baseValue' | 'additionalPercent' | 'totalAmount'
+  'coefficient' | 'gross' | 'additionalPercent' | 'net'
 > & {
   coefficient: string;
-  baseValue: string;
+  gross: string;
   additionalPercent: string | null;
-  totalAmount: string;
+  net: string;
 };
 
 // Detail response with nested Worker
