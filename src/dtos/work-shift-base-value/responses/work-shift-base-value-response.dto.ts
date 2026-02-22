@@ -46,6 +46,26 @@ export class WorkShiftCalculatedValueResponseDto
     value ? value.toString() : undefined,
   )
   notRemunerated: string;
+
+  @ApiProperty({
+    description: 'Monto bruto (remunerated + notRemunerated)',
+    example: '3000.00',
+    type: 'string',
+  })
+  @Transform(({ value }: { value: DecimalNumber | undefined }) =>
+    value ? value.toString() : undefined,
+  )
+  gross: string;
+
+  @ApiProperty({
+    description: 'Monto neto (remunerated * 0.795 + notRemunerated * 0.965)',
+    example: '2270.75',
+    type: 'string',
+  })
+  @Transform(({ value }: { value: DecimalNumber | undefined }) =>
+    value ? value.toString() : undefined,
+  )
+  net: string;
 }
 
 export class WorkShiftBaseValueResponseDto

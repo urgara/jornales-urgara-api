@@ -41,7 +41,10 @@ export class DatabaseLocalityService implements OnModuleInit, OnModuleDestroy {
 
         try {
           // Reemplazar {locality} en la URL con el databaseName
-          const tenantUrl = baseUrl.replace('{locality}', locality.databaseName);
+          const tenantUrl = baseUrl.replace(
+            '{locality}',
+            locality.databaseName,
+          );
 
           const pool = new Pool({ connectionString: tenantUrl });
           const adapter = new PrismaPg(pool);

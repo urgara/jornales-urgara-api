@@ -1,3 +1,5 @@
+export * from './worker-assignment-detail-response.dto';
+export * from './worker-assignment-detail-with-worker-response.dto';
 export * from './worker-assignment-response.dto';
 export * from './worker-assignment-with-relations-response.dto';
 export * from './worker-assignment-created-response.dto';

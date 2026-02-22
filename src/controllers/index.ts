@@ -4,7 +4,7 @@ export * from './locality.controller';
 export * from './work-shift.controller';
 export * from './company.controller';
 export * from './worker.controller';
-export * from './agency.controller';
 export * from './product.controller';
 export * from './terminal.controller';
+export * from './ship.controller';
 export * from './work-shift-base-value.controller';

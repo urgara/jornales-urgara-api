@@ -40,10 +40,12 @@ model WorkShiftBaseValue {
 }
 
 model WorkShiftCalculatedValue {
-  workShiftBaseValueId String       @db.Uuid
-  coefficient          Decimal      @db.Decimal(5, 2)
+  workShiftBaseValueId String  @db.Uuid
+  coefficient          Decimal @db.Decimal(5, 2)
   remunerated          Decimal @db.Decimal(8, 2)
   notRemunerated       Decimal @db.Decimal(8, 2)
+  gross                Decimal @db.Decimal(10, 2) // Monto bruto: remunerated + notRemunerated
+  net                  Decimal @db.Decimal(10, 2) // Monto neto: (remunerated * 0.795) + (notRemunerated * 0.965)
 
   WorkShiftBaseValue WorkShiftBaseValue @relation(fields: [workShiftBaseValueId], references: [id])
 
@@ -62,32 +64,43 @@ model Worker {
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
 
-  WorkerAssignment WorkerAssignment[]
+  WorkerAssignmentDetail WorkerAssignmentDetail[]
 }
 
-// Asignación de trabajador (registro histórico, no se elimina)
+// Asignación de trabajador - Header (registro histórico, no se elimina)
 model WorkerAssignment {
-  id                     String   @id @db.Uuid
-  workerId               String   @db.Uuid
-  workShiftId            String   @db.Uuid
-  date                   DateTime @db.Date // Fecha de la asignación
-  category               Category // Categoría del trabajador en el momento de la asignación
-  workShiftBaseValueId   String   @db.Uuid // ID del valor base usado para el cálculo
-  coefficient            Decimal  @db.Decimal(5, 2) // Coeficiente usado para el cálculo (del turno)
-  baseValue              Decimal  @db.Decimal(10, 2) // Valor bruto total: remunerated + notRemunerated desde WorkShiftCalculatedValue
-  additionalPercent      Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)
-  totalAmount            Decimal  @db.Decimal(10, 2) // Monto final con el porcentaje aplicado si existiera: baseValue + (baseValue * additionalPercent/100)
+  id          String   @id @db.Uuid
+  workShiftId String   @db.Uuid
+  date        DateTime @db.Date // Fecha de la asignación
 
-  createdAt         DateTime @default(now()) @db.Timestamptz()
-  companyId         String @db.Uuid
-  localityId        String @db.Uuid
-  agencyId          String @db.Uuid
-  terminalId        String @db.Uuid
-  productId         String @db.Uuid
+  createdAt   DateTime    @default(now()) @db.Timestamptz()
+  companyId   String      @db.Uuid
+  companyRole CompanyRole
+  localityId  String      @db.Uuid
+  terminalId  String      @db.Uuid
+  productId   String      @db.Uuid
+  shipId      String      @db.Uuid // ID del barco (referencia a Ship en prisma-common, sin FK)
+  jc          Boolean     @default(false) // Jornal caído
 
-  Worker    Worker    @relation(fields: [workerId], references: [id])
-  WorkShift WorkShift @relation(fields: [workShiftId], references: [id])
-  Terminal  Terminal @relation(fields: [terminalId], references: [id])
+  WorkShift              WorkShift              @relation(fields: [workShiftId], references: [id])
+  Terminal               Terminal               @relation(fields: [terminalId], references: [id])
+  WorkerAssignmentDetail WorkerAssignmentDetail[]
+}
+
+// Detalle de asignación de trabajador - Detail (un trabajador por registro)
+model WorkerAssignmentDetail {
+  id                   String   @id @db.Uuid
+  workerAssignmentId   String   @db.Uuid
+  workerId             String   @db.Uuid
+  category             Category // Categoría del trabajador en el momento de la asignación
+  workShiftBaseValueId String   @db.Uuid // ID del valor base usado para el cálculo
+  coefficient          Decimal  @db.Decimal(5, 2) // Coeficiente usado para el cálculo (del turno)
+  baseValue            Decimal  @db.Decimal(10, 2) // Valor bruto total: remunerated + notRemunerated desde WorkShiftCalculatedValue
+  additionalPercent    Decimal? @db.Decimal(5, 2) // Porcentaje adicional opcional (ej: 15.00 = 15%, -10.00 = -10%)
+  totalAmount          Decimal  @db.Decimal(10, 2) // Monto final con el porcentaje aplicado si existiera
+
+  WorkerAssignment WorkerAssignment @relation(fields: [workerAssignmentId], references: [id])
+  Worker           Worker           @relation(fields: [workerId], references: [id])
 }
 
 model Terminal{
@@ -109,4 +122,9 @@ enum DayOfWeek {
 enum Category {
   IDONEO
   PERITO
+}
+
+enum CompanyRole {
+  EXPORTER
+  SURVEYOR
 }

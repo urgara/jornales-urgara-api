@@ -59,9 +59,9 @@ model Company {
 
 }
 
-model Agency {
-  id            String    @id  @db.Uuid
-  name          String    @unique @db.VarChar(150)
+model Ship {
+  id   String @id @db.Uuid
+  name String @unique @db.VarChar(150)
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   deletedAt DateTime? @db.Timestamptz()
