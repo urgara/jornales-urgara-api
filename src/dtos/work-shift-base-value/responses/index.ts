@@ -6,3 +6,4 @@ export { WorkShiftBaseValueCreatedResponseDto } from './work-shift-base-value-cr
 export { WorkShiftBaseValueSingleResponseDto } from './work-shift-base-value-single-response.dto';
 export { AllWorkShiftBaseValuesResponseDto } from './all-work-shift-base-values-response.dto';
 export { WorkShiftBaseValueSelectResponseDto } from './work-shift-base-value-select-response.dto';
+export { WorkShiftBaseValueDeletedResponseDto } from './work-shift-base-value-deleted-response.dto';
