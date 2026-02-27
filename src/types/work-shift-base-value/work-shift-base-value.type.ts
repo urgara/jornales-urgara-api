@@ -4,6 +4,7 @@ import type {
   Category as PrismaCategory,
 } from '../../../generated/prisma-locality';
 import type {
+  GenericResponse,
   PaginationRequest,
   Sorting,
   DecimalNumber,
@@ -92,6 +93,8 @@ interface WorkShiftBaseValueSelectResponse {
   data: SimpleWorkShiftBaseValueResponse[];
 }
 
+type WorkShiftBaseValueDeletedResponse = GenericResponse;
+
 export type {
   WorkShiftBaseValue,
   WorkShiftBaseValueId,
@@ -108,4 +111,5 @@ export type {
   AllWorkShiftBaseValuesResponse,
   FindWorkShiftBaseValueSelectQuery,
   WorkShiftBaseValueSelectResponse,
+  WorkShiftBaseValueDeletedResponse,
 };

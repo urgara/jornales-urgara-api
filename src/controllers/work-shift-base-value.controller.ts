@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Delete,
   Body,
   HttpStatus,
   UseGuards,
@@ -19,12 +20,14 @@ import {
 import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkShiftBaseValueDto,
+  DeleteWorkShiftBaseValueDto,
   WorkShiftBaseValuesQueryDto,
   WorkShiftBaseValueSelectQueryDto,
 } from 'src/dtos/work-shift-base-value/requests';
 import {
   AllWorkShiftBaseValuesResponseDto,
   WorkShiftBaseValueCreatedResponseDto,
+  WorkShiftBaseValueDeletedResponseDto,
   WorkShiftBaseValueSelectResponseDto,
   WorkShiftBaseValueSingleResponseDto,
 } from 'src/dtos/work-shift-base-value/responses';
@@ -33,6 +36,7 @@ import { JwtGuard } from 'src/guards/common/auth';
 import { AdminRole, type ReqAdmin } from 'src/types/auth';
 import {
   CreateWorkShiftBaseValueService,
+  DeleteWorkShiftBaseValueService,
   ReadWorkShiftBaseValueService,
 } from 'src/services/work-shift-base-value';
 import type { WorkShiftBaseValueId } from '../types/work-shift-base-value';
@@ -44,6 +48,7 @@ export class WorkShiftBaseValueController {
   constructor(
     private readonly createService: CreateWorkShiftBaseValueService,
     private readonly readService: ReadWorkShiftBaseValueService,
+    private readonly deleteService: DeleteWorkShiftBaseValueService,
   ) {}
 
   @Get()
@@ -133,6 +138,33 @@ export class WorkShiftBaseValueController {
         success: true,
         message: 'Work shift base value retrieved successfully',
         data: baseValue,
+      },
+      { enableImplicitConversion: true },
+    );
+  }
+
+  @Delete(':id')
+  @AccessLevel(AdminRole.LOCAL)
+  @ApiOperation({ summary: 'Delete work shift base value by ID' })
+  @ApiParam({ name: 'id', description: 'Work shift base value ID (UUID)' })
+  @ApiBody({ type: DeleteWorkShiftBaseValueDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Work shift base value deleted successfully',
+    type: WorkShiftBaseValueDeletedResponseDto,
+  })
+  async delete(
+    @Param('id') id: WorkShiftBaseValueId,
+    @Body() dto: DeleteWorkShiftBaseValueDto,
+    @Req() request: ReqAdmin,
+  ) {
+    await this.deleteService.delete(id, request.admin, dto.localityId);
+
+    return plainToInstance(
+      WorkShiftBaseValueDeletedResponseDto,
+      {
+        success: true,
+        message: 'Work shift base value deleted successfully',
       },
       { enableImplicitConversion: true },
     );
